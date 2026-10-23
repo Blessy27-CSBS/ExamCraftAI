@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamCraft AI — AI-Powered Question Paper Generation Platform</title>
+  <meta name="description" content="Intelligent, syllabus-grounded question paper generator with traceable evidence, editable marking schemes, and academic assessment blueprints.">
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  
+  <!-- jsPDF & jsPDF AutoTable CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  
+  <!-- Tesseract.js OCR CDN for Client-Side Optical Character Recognition -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Main Application Wrapper -->
+  <div class="app-layout">
+    
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <img src="logo.png" alt="ExamCraft AI Logo" class="brand-logo-img">
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">ExamCraft<span class="accent-text">AI</span></span>
+            <span class="brand-tagline">Academic Assessment Suite</span>
+          </div>
+        </div>
+        <button class="mobile-close-btn" id="mobileSidebarClose" aria-label="Close sidebar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <!-- Assessment Engine Status -->
+      <div class="status-badge-container">
+        <div class="system-status-badge" title="Curriculum Assessment Engine Ready">
+          <span class="status-indicator-dot"></span>
+          <span>Assessment Engine Active</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="sidebar-nav">
+        <div class="nav-group-title">MAIN NAVIGATION</div>
+        <button class="nav-item active" data-view="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="create">
+          <i data-lucide="file-plus-2"></i>
+          <span>Create Question Paper</span>
+          <span class="badge badge-primary">New</span>
+        </button>
+        <button class="nav-item" data-view="papers">
+          <i data-lucide="folder-kanban"></i>
+          <span>My Question Papers</span>
+          <span class="badge badge-subtle" id="navPaperCount">0</span>
+        </button>
+        <button class="nav-item" data-view="bank">
+          <i data-lucide="database"></i>
+          <span>Question Bank</span>
+          <span class="badge badge-subtle" id="navBankCount">0</span>
+        </button>
+        <button class="nav-item" data-view="syllabus">
+          <i data-lucide="book-marked"></i>
+          <span>Syllabus Library</span>
+        </button>
+        <button class="nav-item" data-view="reviews">
+          <i data-lucide="clipboard-check"></i>
+          <span>Review Queue</span>
+          <span class="badge badge-subtle" id="navReviewCount">0</span>
+        </button>
+        <button class="nav-item" data-view="analytics">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports and Analytics</span>
+        </button>
+
+        <div class="nav-group-title">CONFIGURATION</div>
+        <button class="nav-item" data-view="settings">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- Faculty Profile Footer -->
+      <div class="sidebar-profile">
+        <div class="profile-avatar">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Prof. Sarah Jenkins" id="profileImg">
+        </div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebarProfileName">Dr. Sarah Jenkins</span>
+          <span class="profile-role" id="sidebarProfileDept">Dept. of Computer Science</span>
+        </div>
+        <button class="profile-action-btn" id="btnQuickSettings" title="Profile Settings">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="mobileSidebarToggle" aria-label="Open sidebar">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="breadcrumb" id="topBreadcrumb">
+            <span class="breadcrumb-item">ExamCraft</span>
+            <i data-lucide="chevron-right" class="breadcrumb-sep"></i>
+            <span class="breadcrumb-item active" id="breadcrumbCurrent">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-search">
+          <i data-lucide="search"></i>
+          <input type="text" id="globalSearchInput" placeholder="Search papers, syllabus topics, questions...">
+          <kbd class="search-kbd">Ctrl+K</kbd>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Notification Bell -->
+          <div class="dropdown-wrapper">
+            <button class="icon-btn" id="btnNotifications" title="Notifications">
+              <i data-lucide="bell"></i>
+              <span class="notification-badge">2</span>
+            </button>
+            <div class="dropdown-menu notifications-menu" id="notificationsDropdown">
+              <div class="dropdown-header">
+                <h6>System Notifications</h6>
+                <button class="link-btn" id="btnMarkAllRead">Mark all read</button>
+              </div>
+              <div class="notification-list" id="notificationList">
+                <div class="notification-item unread">
+                  <div class="notif-icon notif-success"><i data-lucide="sparkles"></i></div>
+                  <div class="notif-content">
+                    <p class="notif-title">OCR & Assessment Engine Initialized</p>
+                    <span class="notif-time">Ready for syllabus upload</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Primary CTA Button -->
+          <button class="btn btn-primary" id="btnTopbarCreateNew">
+            <i data-lucide="plus"></i>
+            <span>Create New Paper</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content Container -->
+      <main class="content-container">
+
+        <!-- ========================================== -->
+        <!-- VIEW 1: DASHBOARD                          -->
+        <!-- ========================================== -->
+        <section class="view-section active" id="view-dashboard">
+          
+          <!-- Welcome Banner -->
+          <div class="dashboard-hero">
+            <div class="hero-content">
+              <div class="hero-badge">
+                <i data-lucide="shield-check"></i>
+                <span>Syllabus-Aligned Assessment Platform</span>
+              </div>
+              <h1 class="hero-title">Good morning, <span id="dashTeacherGreeting">Professor</span>.</h1>
+              <p class="hero-subtitle">Create balanced, syllabus-aligned assessments with confidence. Grounded in your curriculum with verified answer keys.</p>
+              
+              <div class="hero-actions">
+                <button class="btn btn-primary" id="btnHeroCreatePaper">
+                  <i data-lucide="file-plus"></i>
+                  <span>Start New Assessment Blueprint</span>
+                </button>
+                <button class="btn btn-secondary" id="btnHeroViewBank">
+                  <i data-lucide="database"></i>
+                  <span>Browse Question Bank</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="hero-stats-card">
+              <div class="stat-pill">
+                <span class="pill-label">Curriculum Compliance</span>
+                <span class="pill-val">100% Traceable</span>
+              </div>
+              <div class="hero-mini-steps">
+                <div class="mini-step active"><span class="step-num">1</span> Upload Syllabus</div>
+                <div class="mini-step-arrow">→</div>
+                <div class="mini-step active"><span class="step-num">2</span> Blueprint</div>
+                <div class="mini-step-arrow">→</div>
+                <div class="mini-step active"><span class="step-num">3</span> AI Draft</div>
+                <div class="mini-step-arrow">→</div>
+                <div class="mini-step active"><span class="step-num">4</span> Review & Export</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Summary Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card" data-action="filter-all">
+              <div class="metric-icon-wrap icon-emerald">
+                <i data-lucide="file-text"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Total Papers Created</span>
+                <h3 class="metric-value" id="statTotalPapers">0</h3>
+                <span class="metric-trend text-emerald">
+                  <i data-lucide="check"></i> Syllabus-Grounded
+                </span>
+              </div>
+            </div>
+
+            <div class="metric-card" data-action="filter-draft">
+              <div class="metric-icon-wrap icon-amber">
+                <i data-lucide="edit-3"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Draft Papers</span>
+                <h3 class="metric-value" id="statDraftPapers">0</h3>
+                <span class="metric-trend text-amber">
+                  <i data-lucide="clock"></i> In Faculty Review
+                </span>
+              </div>
+            </div>
+
+            <div class="metric-card" data-action="filter-approved">
+              <div class="metric-icon-wrap icon-teal">
+                <i data-lucide="check-check"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Approved Papers</span>
+                <h3 class="metric-value" id="statApprovedPapers">0</h3>
+                <span class="metric-trend text-teal">
+                  <i data-lucide="shield-check"></i> Ready for Examination
+                </span>
+              </div>
+            </div>
+
+            <div class="metric-card" data-action="filter-questions">
+              <div class="metric-icon-wrap icon-blue">
+                <i data-lucide="layers"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Questions Generated</span>
+                <h3 class="metric-value" id="statTotalQuestions">0</h3>
+                <span class="metric-trend text-blue">
+                  <i data-lucide="award"></i> With Rubric & Citations
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- How ExamCraft Works Infographic Card -->
+          <div class="pipeline-card">
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">Assessment Engineering Workflow</h2>
+                <p class="section-subtitle">How ExamCraft AI transforms raw course material into vetted examinations</p>
+              </div>
+              <span class="badge badge-outline">Standard Academic Protocol</span>
+            </div>
+
+            <div class="pipeline-grid">
+              <div class="pipeline-step">
+                <div class="pipeline-badge">01</div>
+                <div class="pipeline-icon"><i data-lucide="upload-cloud"></i></div>
+                <h4>Upload Materials</h4>
+                <p>Syllabus PDFs, lecture notes & previous question papers. Extracted client-side with PDF.js.</p>
+              </div>
+              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step">
+                <div class="pipeline-badge">02</div>
+                <div class="pipeline-icon"><i data-lucide="sliders"></i></div>
+                <h4>Configure Blueprint</h4>
+                <p>Define question groups, marks allocation, difficulty splits, and syllabus unit weights with live validation.</p>
+              </div>
+              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step">
+                <div class="pipeline-badge">03</div>
+                <div class="pipeline-icon"><i data-lucide="sparkles"></i></div>
+                <h4>Generate Questions</h4>
+                <p>Draft balanced questions linked directly to source paragraphs with Bloom's taxonomy tags.</p>
+              </div>
+              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
+
+              <div class="pipeline-step">
+                <div class="pipeline-badge">04</div>
+                <div class="pipeline-icon"><i data-lucide="clipboard-check"></i></div>
+                <h4>Review & Export</h4>
+                <p>Faculty approves marking rubrics, edits model answers, and exports clean paper & confidential key separately.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Question Papers Table Section -->
+          <div class="content-card">
+            <div class="card-header-flex">
+              <div>
+                <h3 class="card-title">Recent Question Papers</h3>
+                <p class="card-subtitle">Manage assessment drafts, approvals, and downloadable examination materials</p>
+              </div>
+              <div class="header-actions">
+                <button class="btn btn-sm btn-outline-secondary" id="btnRefreshDashboard">
+                  <i data-lucide="rotate-cw"></i> Refresh
+                </button>
+                <button class="btn btn-sm btn-primary" id="btnDashboardCreate">
+                  <i data-lucide="plus"></i> New Paper
+                </button>
+              </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="table-responsive">
+              <table class="data-table" id="dashboardPapersTable">
+                <thead>
+                  <tr>
+                    <th>Paper Title & Code</th>
+                    <th>Subject</th>
+                    <th>Units Covered</th>
+                    <th>Exam Type</th>
+                    <th>Total Marks</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardPapersTbody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty State for Dashboard Table -->
+            <div class="empty-state hidden" id="dashboardEmptyState">
+              <div class="empty-icon"><i data-lucide="inbox"></i></div>
+              <h4>No question papers found</h4>
+              <p>You haven't created any question papers yet. Click below to begin creating your first assessment.</p>
+              <button class="btn btn-primary" id="btnEmptyCreate">Create Question Paper</button>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 2: CREATE QUESTION PAPER (WIZARD)     -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-create">
+          
+          <!-- Wizard Stepper Navigation Header -->
+          <div class="stepper-header-card">
+            <div class="stepper-meta">
+              <span class="stepper-tag">ASSESSMENT CREATION WIZARD</span>
+              <h2 class="stepper-title" id="stepperMainTitle">Configure Blueprint & Assessment Rules</h2>
+            </div>
+            
+            <div class="stepper-progress-bar">
+              <div class="step-item active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">
+                  <span class="step-name">Upload Materials</span>
+                  <span class="step-desc">Syllabus & notes</span>
+                </div>
+              </div>
+              <div class="step-connector"></div>
+
+              <div class="step-item" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">
+                  <span class="step-name">Configure Blueprint</span>
+                  <span class="step-desc">Marks & groups</span>
+                </div>
+              </div>
+              <div class="step-connector"></div>
+
+              <div class="step-item" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">
+                  <span class="step-name">Generate Questions</span>
+                  <span class="step-desc">AI drafting</span>
+                </div>
+              </div>
+              <div class="step-connector"></div>
+
+              <div class="step-item" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">
+                  <span class="step-name">Review & Export</span>
+                  <span class="step-desc">Rubric & PDF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wizard Step Containers -->
+          <div class="wizard-steps-container">
+
+            <!-- STEP 1: UPLOAD MATERIALS -->
+            <div class="wizard-step-pane active" id="wizardStep1">
+              <div class="wizard-two-col">
+                
+                <!-- Left: Upload Areas -->
+                <div class="step-col-main">
+                  <div class="card mb-4">
+                    <div class="card-header-flex">
+                      <div>
+                        <h3 class="card-title">1. Course Syllabus & Reference Document</h3>
+                        <p class="card-subtitle">Upload your course syllabus (PDF, TXT) or paste curriculum topics to establish the grounded knowledge base.</p>
+                      </div>
+                      <div class="d-flex align-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" id="btnUseStandardCurriculum" title="Load standard university curriculum structure">
+                          <i data-lucide="book-open"></i>
+                          <span>Curriculum Template</span>
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" id="btnTogglePasteSyllabus">
+                          <i data-lucide="edit-3"></i>
+                          <span>Paste / Type Syllabus</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Collapsible Direct Paste Textarea -->
+                    <div class="paste-syllabus-box hidden mb-3" id="pasteSyllabusBox">
+                      <label class="text-xs mb-1 d-flex justify-between">
+                        <strong>Paste Course Syllabus / Modules Text:</strong>
+                        <span class="text-muted">Extracts units and topics automatically</span>
+                      </label>
+                      <textarea id="pastedSyllabusText" class="form-control" rows="6" placeholder="Paste your course units, learning objectives, and topics here...&#10;e.g.&#10;UNIT 1: Introduction to Data Security...&#10;UNIT 2: Symmetric and Asymmetric Cryptography..."></textarea>
+                      <div class="d-flex justify-end gap-2 mt-2">
+                        <button class="btn btn-sm btn-primary" id="btnApplyPastedSyllabus">
+                          <i data-lucide="check"></i> Apply Syllabus Text
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Drag & Drop Box -->
+                    <div class="dropzone" id="syllabusDropzone">
+                      <input type="file" id="syllabusFileInput" accept=".pdf,.txt,.docx" class="dropzone-input">
+                      <div class="dropzone-content">
+                        <div class="dropzone-icon">
+                          <i data-lucide="upload-cloud"></i>
+                        </div>
+                        <h4>Drop syllabus file here, or <span class="text-primary underline">browse</span></h4>
+                        <p class="dropzone-sub">Supports PDF (text-extractable via PDF.js), TXT, and DOCX • Up to 25MB</p>
+                      </div>
+                    </div>
+
+                    <!-- Scanned PDF warning notice with instant OCR resolution -->
+                    <div class="alert alert-warning hidden" id="scannedPdfAlert">
+                      <i data-lucide="scan"></i>
+                      <div class="alert-content">
+                        <strong>Scanned Document Detected (No Digital Text Layer)</strong>
+                        <p>This PDF contains scanned image pages. ExamCraft AI can run client-side Optical Character Recognition (OCR) to extract curriculum text, units, and learning objectives.</p>
+                        <div class="alert-action-buttons mt-2 d-flex flex-wrap gap-2">
+                          <button class="btn btn-xs btn-primary" id="btnRunOcrRecovery">
+                            <i data-lucide="scan-line"></i>
+                            <span>Run OCR Now (Extract Curriculum Data)</span>
+                          </button>
+                          <button class="btn btn-xs btn-outline-secondary" id="btnAlertOpenPaste">
+                            <i data-lucide="edit-3"></i>
+                            <span>Paste / Type Syllabus Manually</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- OCR Processing Progress Box -->
+                    <div class="ocr-progress-card hidden" id="ocrProgressCard">
+                      <div class="ocr-progress-header">
+                        <div class="ocr-spinner">
+                          <i data-lucide="scan" class="spin-icon"></i>
+                        </div>
+                        <div class="ocr-progress-meta">
+                          <h5 id="ocrProgressTitle">Running Optical Character Recognition (OCR)...</h5>
+                          <p id="ocrProgressSub">Rendering PDF pages to canvas and scanning text via Tesseract.js engine</p>
+                        </div>
+                        <div class="ocr-progress-pct" id="ocrProgressPct">0%</div>
+                      </div>
+                      <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="ocrProgressBar" style="width: 0%"></div>
+                      </div>
+                      <div class="ocr-status-footer">
+                        <span id="ocrStatusMsg">Initializing Tesseract OCR worker...</span>
+                        <button class="btn btn-xs btn-outline-danger" id="btnCancelOcr">Cancel OCR</button>
+                      </div>
+                    </div>
+
+                    <!-- File Details Card (Visible when file loaded) -->
+                    <div class="file-card hidden" id="uploadedFileCard">
+                      <div class="file-icon">
+                        <i data-lucide="file-text"></i>
+                      </div>
+                      <div class="file-info">
+                        <div class="file-name" id="uploadedFileName">Uploaded_Curriculum.pdf</div>
+                        <div class="file-meta">
+                          <span id="uploadedFileSize">0 MB</span> • 
+                          <span id="uploadedFilePages">0 Pages</span> • 
+                          <span class="badge badge-success" id="uploadedFileStatus">Text Extracted</span>
+                        </div>
+                      </div>
+                      <div class="file-actions">
+                        <button class="btn btn-sm btn-outline-primary" id="btnRunOcrOnLoadedDoc" title="Re-scan or run OCR on this document">
+                          <i data-lucide="scan"></i> Run OCR
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" id="btnPreviewExtractedText">
+                          <i data-lucide="eye"></i> View Text
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" id="btnRemoveFile">
+                          <i data-lucide="trash-2"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Extracted Text Preview Drawer (Collapsible) -->
+                    <div class="extracted-preview-box hidden" id="extractedPreviewBox">
+                      <div class="preview-header">
+                        <h6><i data-lucide="align-left"></i> Extracted Syllabus Text Content</h6>
+                        <span class="char-count" id="extractedCharCount">0 characters</span>
+                      </div>
+                      <pre class="extracted-text" id="extractedTextContent"></pre>
+                    </div>
+
+                  </div>
+
+                  <!-- Optional Reference Notes & Past Papers Upload -->
+                  <div class="card mb-4">
+                    <div class="card-header-flex">
+                      <div>
+                        <h3 class="card-title">2. Supplemental Reference Notes & Question Repositories (Optional)</h3>
+                        <p class="card-subtitle">Add lecture transcripts or question banks to improve phrasing and question depth.</p>
+                      </div>
+                      <span class="badge badge-subtle">Recommended for Numerical/Case-Study</span>
+                    </div>
+
+                    <div class="dropzone dropzone-sm" id="referenceDropzone">
+                      <input type="file" id="referenceFileInput" accept=".pdf,.txt" class="dropzone-input" multiple>
+                      <div class="dropzone-content">
+                        <i data-lucide="paperclip" class="dropzone-icon-sm"></i>
+                        <p class="dropzone-text-sm">Attach supplementary lecture notes or previous term exams (PDF/TXT)</p>
+                      </div>
+                    </div>
+                    <div class="supplemental-list" id="supplementalList">
+                      <!-- Dynamically added reference items -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right: Guidelines & Knowledge Base Summary -->
+                <div class="step-col-side">
+                  <div class="card">
+                    <h4 class="card-title"><i data-lucide="info"></i> Syllabus Grounding Guarantee</h4>
+                    <p class="text-sm text-muted mb-3">ExamCraft AI strictly adheres to your provided syllabus to prevent hallucinated concepts or out-of-syllabus testing.</p>
+
+                    <div class="feature-checklist">
+                      <div class="check-item">
+                        <i data-lucide="check-circle" class="text-emerald"></i>
+                        <span>Every question links to exact unit & section</span>
+                      </div>
+                      <div class="check-item">
+                        <i data-lucide="check-circle" class="text-emerald"></i>
+                        <span>Traceable paragraph citations for audit</span>
+                      </div>
+                      <div class="check-item">
+                        <i data-lucide="check-circle" class="text-emerald"></i>
+                        <span>Zero unsupported claims or fabricated pages</span>
+                      </div>
+                      <div class="check-item">
+                        <i data-lucide="check-circle" class="text-emerald"></i>
+                        <span>Client-side extraction preserves academic privacy</span>
+                      </div>
+                    </div>
+
+                    <div class="info-callout mt-4">
+                      <strong>Curriculum Grounding:</strong> Upload your course syllabus PDF, TXT file, or paste course learning objectives to ground all generated questions and marking schemes directly in your syllabus.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 1 Actions -->
+              <div class="step-footer-actions">
+                <div></div>
+                <button class="btn btn-primary" id="btnStep1Next">
+                  <span>Continue to Blueprint</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 2: CONFIGURE BLUEPRINT -->
+            <div class="wizard-step-pane" id="wizardStep2">
+              <div class="wizard-two-col">
+                
+                <!-- Left: Assessment Configuration Form -->
+                <div class="step-col-main">
+                  
+                  <!-- Basic Exam Metadata -->
+                  <div class="card mb-4">
+                    <div class="card-header-flex">
+                      <h3 class="card-title">Course & Examination Details</h3>
+                      <button class="btn btn-sm btn-outline-primary" id="btnLoadSuggestedBlueprint">
+                        <i data-lucide="wand-2"></i>
+                        <span>Load Recommended Blueprint</span>
+                      </button>
+                    </div>
+
+                    <div class="form-grid-3">
+                      <div class="form-group">
+                        <label for="inputSubjectName">Subject Name <span class="req">*</span></label>
+                        <input type="text" id="inputSubjectName" class="form-control" placeholder="e.g. Data Structures & Algorithms, Network Security, etc." value="">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputCourseCode">Course / Class <span class="req">*</span></label>
+                        <input type="text" id="inputCourseCode" class="form-control" placeholder="e.g. CS301 / B.Tech CSE" value="">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputAcademicYear">Academic Year</label>
+                        <input type="text" id="inputAcademicYear" class="form-control" value="2025 - 2026">
+                      </div>
+                    </div>
+
+                    <div class="form-grid-3 mt-3">
+                      <div class="form-group">
+                        <label for="selectExamType">Examination Type <span class="req">*</span></label>
+                        <select id="selectExamType" class="form-control">
+                          <option value="Internal Assessment 1">Internal Assessment 1</option>
+                          <option value="Model Examination" selected>Model Examination</option>
+                          <option value="End Semester Examination">End Semester Examination</option>
+                          <option value="Unit Class Test">Unit Class Test</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputTotalMarks">Target Total Marks <span class="req">*</span></label>
+                        <input type="number" id="inputTotalMarks" class="form-control" value="50" min="10" max="150" step="5">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="inputDuration">Duration (Minutes) <span class="req">*</span></label>
+                        <input type="number" id="inputDuration" class="form-control" value="90" min="30" max="240" step="15">
+                      </div>
+                    </div>
+
+                    <!-- Syllabus Units Covered Selector -->
+                    <div class="form-group mt-3">
+                      <div class="d-flex justify-between align-center mb-1">
+                        <label class="mb-0">Units / Modules to Assess <span class="req">*</span></label>
+                        <button type="button" class="btn btn-xs btn-outline-primary" id="btnAddUnitManually">
+                          <i data-lucide="plus"></i> Add Unit
+                        </button>
+                      </div>
+                      <div class="units-chip-group" id="unitsChipContainer">
+                        <div class="units-empty-state" id="unitsEmptyState">
+                          <i data-lucide="book-open"></i>
+                          <span>Upload a syllabus PDF or TXT above to extract units automatically, or click <strong>+ Add Unit</strong> to specify modules manually.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Difficulty Distribution Sliders -->
+                    <div class="form-group mt-4">
+                      <div class="d-flex justify-between align-center mb-1">
+                        <label class="mb-0">Target Cognitive Difficulty Split (%)</label>
+                        <span class="badge" id="difficultySumBadge">Total: 100%</span>
+                      </div>
+                      <div class="difficulty-sliders-grid">
+                        <div class="diff-slider-box">
+                          <div class="diff-header">
+                            <span class="diff-name text-emerald">Easy (Remember/Understand)</span>
+                            <span class="diff-val" id="valDiffEasy">30%</span>
+                          </div>
+                          <input type="range" id="sliderDiffEasy" min="10" max="70" step="5" value="30" class="range-slider slider-easy">
+                        </div>
+
+                        <div class="diff-slider-box">
+                          <div class="diff-header">
+                            <span class="diff-name text-blue">Medium (Apply/Analyze)</span>
+                            <span class="diff-val" id="valDiffMed">50%</span>
+                          </div>
+                          <input type="range" id="sliderDiffMed" min="10" max="80" step="5" value="50" class="range-slider slider-med">
+                        </div>
+
+                        <div class="diff-slider-box">
+                          <div class="diff-header">
+                            <span class="diff-name text-amber">Hard (Evaluate/Design)</span>
+                            <span class="diff-val" id="valDiffHard">20%</span>
+                          </div>
+                          <input type="range" id="sliderDiffHard" min="5" max="60" step="5" value="20" class="range-slider slider-hard">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Question Groups / Sections Builder -->
+                  <div class="card">
+                    <div class="card-header-flex">
+                      <div>
+                        <h3 class="card-title">Question Paper Sections & Groups</h3>
+                        <p class="card-subtitle">Define sections (Part A, Part B, etc.), question styles, marks per question, and unit allocations.</p>
+                      </div>
+                      <button class="btn btn-sm btn-outline-primary" id="btnAddQuestionGroup">
+                        <i data-lucide="plus-circle"></i>
+                        <span>Add Section / Group</span>
+                      </button>
+                    </div>
+
+                    <div class="question-groups-list" id="questionGroupsContainer">
+                      <!-- Rendered via JS -->
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right: Live Blueprint Validation & Analytics -->
+                <div class="step-col-side">
+                  <div class="card sticky-sidebar">
+                    <h4 class="card-title"><i data-lucide="pie-chart"></i> Live Assessment Blueprint</h4>
+                    
+                    <!-- Real-Time Validation Box -->
+                    <div class="validation-status-box valid" id="blueprintValidationBox">
+                      <div class="val-icon" id="valStatusIcon"><i data-lucide="check-circle-2"></i></div>
+                      <div class="val-text">
+                        <strong id="valStatusTitle">Blueprint Perfectly Balanced</strong>
+                        <p id="valStatusMsg">Allocated marks match the target total of 50 marks.</p>
+                      </div>
+                    </div>
+
+                    <div class="summary-stat-row">
+                      <span>Total Questions:</span>
+                      <strong id="liveSummaryQCount">7 Questions</strong>
+                    </div>
+                    <div class="summary-stat-row">
+                      <span>Target Marks:</span>
+                      <strong id="liveSummaryTargetMarks">50 Marks</strong>
+                    </div>
+                    <div class="summary-stat-row">
+                      <span>Allocated Marks:</span>
+                      <strong id="liveSummaryAllocatedMarks" class="text-emerald">50 Marks</strong>
+                    </div>
+                    <div class="summary-stat-row">
+                      <span>Exam Duration:</span>
+                      <strong id="liveSummaryDuration">90 mins</strong>
+                    </div>
+
+                    <hr class="divider">
+
+                    <!-- Breakdown by Unit -->
+                    <h5 class="sub-heading">Unit Distribution</h5>
+                    <div class="distribution-bars" id="unitDistributionBars">
+                      <!-- Injected via JS -->
+                    </div>
+
+                    <!-- Breakdown by Question Type -->
+                    <h5 class="sub-heading mt-3">Question Type Distribution</h5>
+                    <div class="distribution-bars" id="typeDistributionBars">
+                      <!-- Injected via JS -->
+                    </div>
+
+                    <div class="blueprint-help-callout">
+                      <i data-lucide="help-circle"></i>
+                      <span>You can adjust any question group, marks, or difficulty anytime before final export.</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Step 2 Actions -->
+              <div class="step-footer-actions">
+                <button class="btn btn-outline-secondary" id="btnStep2Back">
+                  <i data-lucide="arrow-left"></i>
+                  <span>Back to Upload</span>
+                </button>
+                <button class="btn btn-primary" id="btnStep2Next">
+                  <span>Confirm Blueprint & Proceed</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- STEP 3: GENERATE QUESTIONS -->
+            <div class="wizard-step-pane" id="wizardStep3">
+              
+              <!-- Blueprint Summary Strip -->
+              <div class="blueprint-summary-strip">
+                <div class="strip-item">
+                  <span class="strip-label">Subject & Code</span>
+                  <strong class="strip-value" id="stripSubject">Curriculum Assessment (Awaiting Blueprint)</strong>
+                </div>
+                <div class="strip-item">
+                  <span class="strip-label">Exam Type</span>
+                  <strong class="strip-value" id="stripExamType">Model Examination</strong>
+                </div>
+                <div class="strip-item">
+                  <span class="strip-label">Total Marks</span>
+                  <strong class="strip-value" id="stripMarks">50 Marks</strong>
+                </div>
+                <div class="strip-item">
+                  <span class="strip-label">Planned Questions</span>
+                  <strong class="strip-value" id="stripQCount">7 Questions</strong>
+                </div>
+                <div class="strip-item">
+                  <span class="strip-label">AI Generation Engine</span>
+                  <span class="badge badge-emerald"><i data-lucide="sparkles"></i> AI Assessment Engine</span>
+                </div>
+              </div>
+
+              <!-- Generation Trigger / Loading Container -->
+              <div class="generation-card" id="generationTriggerCard">
+                <div class="gen-graphic">
+                  <div class="pulse-ring"></div>
+                  <i data-lucide="cpu" class="gen-icon"></i>
+                </div>
+                <h3 class="gen-title">Ready to Synthesize Syllabus-Grounded Questions</h3>
+                <p class="gen-subtitle">ExamCraft will analyze your uploaded curriculum, apply Bloom's cognitive criteria, and generate traceable questions with model answers and scoring schemes.</p>
+                
+                <div class="gen-controls">
+                  <button class="btn btn-lg btn-primary" id="btnStartGeneration">
+                    <i data-lucide="sparkles"></i>
+                    <span>Generate Assessment Draft</span>
+                  </button>
+                  <p class="text-xs text-muted mt-2">
+                    <i data-lucide="shield-check"></i> Questions and rubrics are synthesized and grounded strictly in your provided course syllabus.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Loading & Animation State (Hidden initially) -->
+              <div class="generation-progress-card hidden" id="generationProgressCard">
+                <div class="loading-spinner"></div>
+                <h3 class="loading-title" id="loadingStageTitle">Analyzing Syllabus Modules...</h3>
+                <p class="loading-sub" id="loadingStageSub">Aligning questions with Units 1 through 4 and target difficulty ratios.</p>
+                
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill" id="genProgressBar"></div>
+                </div>
+                <div class="progress-steps-list">
+                  <div class="prog-step done" id="progStep1"><i data-lucide="check"></i> Parse learning objectives</div>
+                  <div class="prog-step active" id="progStep2"><i data-lucide="loader"></i> Synthesize scenario & theory questions</div>
+                  <div class="prog-step" id="progStep3"><i data-lucide="circle"></i> Structure model answers & key concepts</div>
+                  <div class="prog-step" id="progStep4"><i data-lucide="circle"></i> Generate criterion-based marking rubrics</div>
+                </div>
+              </div>
+
+              <!-- Generated Results Workspace (Shown after generation) -->
+              <div class="generated-results-container hidden" id="generatedResultsContainer">
+                <div class="results-header-bar">
+                  <div>
+                    <h3 class="results-title">Generated Assessment Questions Draft</h3>
+                    <p class="results-sub">Review questions, examine source citations, or regenerate individual questions before entering the detailed review workspace.</p>
+                  </div>
+                  <div class="results-actions">
+                    <button class="btn btn-outline-danger btn-sm" id="btnRegenerateAll">
+                      <i data-lucide="rotate-ccw"></i> Regenerate All
+                    </button>
+                    <button class="btn btn-primary" id="btnProceedToReview">
+                      <span>Proceed to Full Review & Export</span>
+                      <i data-lucide="arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Questions Preview Cards List -->
+                <div class="generated-questions-list" id="generatedQuestionsList">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+
+              <!-- Step 3 Footer Actions -->
+              <div class="step-footer-actions mt-4">
+                <button class="btn btn-outline-secondary" id="btnStep3Back">
+                  <i data-lucide="arrow-left"></i>
+                  <span>Back to Blueprint</span>
+                </button>
+                <button class="btn btn-primary hidden" id="btnStep3Next">
+                  <span>Go to Review Workspace</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- STEP 4: REVIEW AND EXPORT -->
+            <div class="wizard-step-pane" id="wizardStep4">
+              
+              <!-- Review Workspace Controls & Status Bar -->
+              <div class="review-status-bar">
+                <div class="review-status-left">
+                  <div class="review-status-pill" id="paperReviewStatusBadge">
+                    <i data-lucide="alert-circle" class="text-amber"></i>
+                    <span>In Faculty Review (Draft)</span>
+                  </div>
+                  <div class="review-checklist-item" id="chkTotalMarksValid">
+                    <i data-lucide="check-circle" class="text-emerald"></i>
+                    <span>Marks: <strong id="reviewAllocatedMarks">50</strong> / <strong id="reviewTargetMarks">50</strong></span>
+                  </div>
+                  <div class="review-checklist-item" id="chkReviewedCount">
+                    <i data-lucide="check-circle" class="text-emerald"></i>
+                    <span>Approved: <strong id="reviewApprovedCount">0</strong> / <strong id="reviewTotalQCount">7</strong></span>
+                  </div>
+                  <div class="review-checklist-item" id="chkRubricValid">
+                    <i data-lucide="check-circle" class="text-emerald"></i>
+                    <span>Rubric Allocations Balanced</span>
+                  </div>
+                </div>
+
+                <div class="review-status-right">
+                  <button class="btn btn-sm btn-outline-secondary" id="btnApproveAllQuestions">
+                    <i data-lucide="check-check"></i> Approve All Questions
+                  </button>
+                  <button class="btn btn-sm btn-emerald" id="btnFinalApprovePaper">
+                    <i data-lucide="shield-check"></i> Final Paper Approval
+                  </button>
+                </div>
+              </div>
+
+              <!-- Printable Exam Metadata Customizer (Editable instructions, college name, etc.) -->
+              <div class="card mb-4">
+                <div class="card-header-flex cursor-pointer" id="toggleExamDetails">
+                  <div>
+                    <h3 class="card-title"><i data-lucide="settings-2"></i> Examination Header & Candidate Instructions</h3>
+                    <p class="card-subtitle">Customize institution name, date, and candidate instructions printed on the question paper.</p>
+                  </div>
+                  <i data-lucide="chevron-down" id="examDetailsChevron"></i>
+                </div>
+
+                <div class="exam-header-editor-body" id="examDetailsBody">
+                  <div class="form-grid-3">
+                    <div class="form-group">
+                      <label for="editInstName">Institution Name</label>
+                      <input type="text" id="editInstName" class="form-control" value="INSTITUTE OF SCIENCE & TECHNOLOGY">
+                    </div>
+                    <div class="form-group">
+                      <label for="editDeptName">Department</label>
+                      <input type="text" id="editDeptName" class="form-control" value="Department of Computer Science & Engineering">
+                    </div>
+                    <div class="form-group">
+                      <label for="editExamDate">Examination Date</label>
+                      <input type="date" id="editExamDate" class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label for="editInstructions">General Candidate Instructions (Printed at top of paper)</label>
+                    <textarea id="editInstructions" class="form-control" rows="3">1. Answer all questions in Part A and any THREE questions from Part B.
+2. Assume suitable missing data if necessary and state the assumptions clearly.
+3. Programmable calculators and electronic gadgets are strictly prohibited.</textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Full Interactive Question Review List -->
+              <div class="review-questions-container" id="reviewQuestionsContainer">
+                <!-- Dynamically rendered editable question blocks -->
+              </div>
+
+              <!-- Add Custom Question Button -->
+              <div class="add-question-cta-card">
+                <button class="btn btn-outline-primary" id="btnAddNewQuestion">
+                  <i data-lucide="plus"></i>
+                  <span>Add Another Question Manually</span>
+                </button>
+              </div>
+
+              <!-- Download & Export Section -->
+              <div class="export-options-card">
+                <div class="card-header-flex">
+                  <div>
+                    <h3 class="card-title"><i data-lucide="printer"></i> Academic PDF Export Suite</h3>
+                    <p class="card-subtitle">Separate, cleanly formatted downloads for student question paper and confidential faculty marking key.</p>
+                  </div>
+                  <span class="badge badge-primary">Audit-Ready jsPDF</span>
+                </div>
+
+                <div class="export-cards-grid">
+                  
+                  <!-- Option 1: Student Question Paper PDF -->
+                  <div class="export-box">
+                    <div class="export-icon text-emerald"><i data-lucide="file-text"></i></div>
+                    <h4>Student Question Paper PDF</h4>
+                    <p>Clean academic format with college header, instructions, parts, numbered questions, and marks. <strong>No answers or hints included.</strong></p>
+                    <div class="export-box-actions">
+                      <button class="btn btn-primary btn-sm" id="btnDownloadQuestionPaper">
+                        <i data-lucide="download"></i> Download Question Paper
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm" id="btnPreviewQuestionPaper">
+                        <i data-lucide="eye"></i> Preview
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Option 2: Faculty Answer Key & Marking Scheme PDF -->
+                  <div class="export-box">
+                    <div class="export-icon text-teal"><i data-lucide="award"></i></div>
+                    <h4>Model Answer & Marking Key PDF</h4>
+                    <p>Confidential faculty evaluation guide featuring complete model answers, key keywords, expected steps, and criterion mark splits.</p>
+                    <div class="export-box-actions">
+                      <button class="btn btn-teal btn-sm" id="btnDownloadAnswerKey">
+                        <i data-lucide="download"></i> Download Faculty Key
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm" id="btnPreviewAnswerKey">
+                        <i data-lucide="eye"></i> Preview
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Option 3: Grounding & Syllabus Traceability Matrix -->
+                  <div class="export-box">
+                    <div class="export-icon text-blue"><i data-lucide="compass"></i></div>
+                    <h4>Curriculum Traceability Audit PDF</h4>
+                    <p>Verification dossier showing direct mapping of each question to syllabus unit, Bloom's level, source paragraph, and confidence metrics.</p>
+                    <div class="export-box-actions">
+                      <button class="btn btn-outline-primary btn-sm" id="btnDownloadTraceability">
+                        <i data-lucide="download"></i> Download Audit Matrix
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Step 4 Footer Actions -->
+              <div class="step-footer-actions">
+                <button class="btn btn-outline-secondary" id="btnStep4Back">
+                  <i data-lucide="arrow-left"></i>
+                  <span>Back to Generation</span>
+                </button>
+                <button class="btn btn-primary" id="btnStep4SaveExit">
+                  <i data-lucide="save"></i>
+                  <span>Save Assessment to My Papers</span>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: MY QUESTION PAPERS                 -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-papers">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">My Question Papers</h2>
+              <p class="section-subtitle">Manage, duplicate, edit, and export saved examination papers stored in local persistence.</p>
+            </div>
+            <button class="btn btn-primary" id="btnCreateFromPapersView">
+              <i data-lucide="plus"></i> Create New Paper
+            </button>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="filter-toolbar card">
+            <div class="filter-search">
+              <i data-lucide="search"></i>
+              <input type="text" id="paperSearchInput" placeholder="Filter by paper title, subject, or code...">
+            </div>
+
+            <div class="filter-selectors">
+              <select id="filterSubjectSelect" class="form-control form-control-sm">
+                <option value="all">All Subjects</option>
+                <option value="Data & Information Security">Data & Information Security</option>
+                <option value="Operating Systems">Operating Systems</option>
+                <option value="Machine Learning">Machine Learning</option>
+              </select>
+
+              <select id="filterStatusSelect" class="form-control form-control-sm">
+                <option value="all">All Statuses</option>
+                <option value="Draft">Draft</option>
+                <option value="In Review">In Review</option>
+                <option value="Approved">Approved</option>
+              </select>
+
+              <select id="sortPapersSelect" class="form-control form-control-sm">
+                <option value="newest">Sort: Recently Created</option>
+                <option value="oldest">Sort: Oldest</option>
+                <option value="marks-high">Marks: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Papers List Grid -->
+          <div class="papers-grid" id="myPapersGrid">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state hidden" id="myPapersEmptyState">
+            <div class="empty-icon"><i data-lucide="folder-x"></i></div>
+            <h4>No matching question papers</h4>
+            <p>Try clearing your filters or create a new assessment blueprint.</p>
+            <button class="btn btn-outline-primary" id="btnResetPaperFilters">Reset Filters</button>
+          </div>
+
+          <div class="persistence-notice">
+            <i data-lucide="shield-check"></i>
+            <span>All generated assessment drafts and approved question papers are securely saved to your local faculty workspace.</span>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: QUESTION BANK                      -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-bank">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Institutional Question Bank</h2>
+              <p class="section-subtitle">Browse, filter, and reuse vetted questions indexed by Bloom's cognitive taxonomy and syllabus module.</p>
+            </div>
+            <button class="btn btn-primary" id="btnBankAddQuestion">
+              <i data-lucide="plus"></i> Add New Question
+            </button>
+          </div>
+
+          <!-- Question Bank Filters -->
+          <div class="filter-toolbar card">
+            <div class="filter-search">
+              <i data-lucide="search"></i>
+              <input type="text" id="bankSearchInput" placeholder="Search questions by keyword, topic, or concept...">
+            </div>
+
+            <div class="filter-selectors">
+              <select id="bankFilterSubject" class="form-control form-control-sm">
+                <option value="all">All Subjects</option>
+                <option value="Data & Information Security">Data & Information Security</option>
+                <option value="Operating Systems">Operating Systems</option>
+              </select>
+
+              <select id="bankFilterType" class="form-control form-control-sm">
+                <option value="all">All Question Types</option>
+                <option value="Theory">Theory</option>
+                <option value="Scenario-Based">Scenario-Based</option>
+                <option value="Numerical/Problem-Solving">Numerical/Problem-Solving</option>
+                <option value="MCQ">MCQ</option>
+              </select>
+
+              <select id="bankFilterDifficulty" class="form-control form-control-sm">
+                <option value="all">All Difficulties</option>
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Question Bank Table / Cards List -->
+          <div class="bank-list" id="bankQuestionsContainer">
+            <!-- Rendered via JS -->
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 5: SYLLABUS LIBRARY                   -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-syllabus">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Syllabus & Curriculum Library</h2>
+              <p class="section-subtitle">Manage extracted syllabi, lecture notes, and source documents available for assessment generation.</p>
+            </div>
+            <button class="btn btn-primary" id="btnUploadSyllabusDoc">
+              <i data-lucide="upload"></i> Upload New Document
+            </button>
+          </div>
+
+          <!-- Syllabus Grid -->
+          <div class="syllabus-grid" id="syllabusLibraryGrid">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 6: REVIEW QUEUE                       -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-reviews">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Assessment Review & Certification Queue</h2>
+              <p class="section-subtitle">Formal faculty moderation workflow to verify syllabus grounding, validate rubric balancing, and grant final exam certification.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <select id="reviewQueueStatusFilter" class="form-control form-control-sm" style="width: auto;">
+                <option value="all">All Moderation States</option>
+                <option value="In Review" selected>Awaiting Review</option>
+                <option value="Approved">Certified & Approved</option>
+                <option value="Draft">Draft Papers</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Review Summary Metrics -->
+          <div class="metrics-grid" style="margin-bottom: 24px;">
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-amber">
+                <i data-lucide="clock"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Awaiting Moderation</span>
+                <h3 class="metric-value" id="statReviewPending">0</h3>
+                <span class="metric-trend text-amber">Active Review</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-emerald">
+                <i data-lucide="check-circle-2"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Certified & Approved</span>
+                <h3 class="metric-value" id="statReviewApproved">0</h3>
+                <span class="metric-trend text-emerald">Production Ready</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-cyan">
+                <i data-lucide="shield-check"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Traceability Compliance</span>
+                <h3 class="metric-value">100%</h3>
+                <span class="metric-trend text-cyan">Verified Grounding</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Review Queue Grid -->
+          <div class="my-papers-grid" id="reviewQueueGrid">
+            <!-- Dynamically populated via JS -->
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state hidden" id="reviewQueueEmptyState">
+            <div class="empty-icon"><i data-lucide="check-circle"></i></div>
+            <h3>Review Queue Clear</h3>
+            <p>All examination papers have been verified, balanced, and approved for production administration.</p>
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 7: REPORTS AND ANALYTICS              -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-analytics">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Institutional Assessment Reports & Analytics</h2>
+              <p class="section-subtitle">Real-time curriculum coverage, Bloom's Taxonomy cognitive distribution, and assessment rigor metrics computed from actual database records.</p>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" id="btnRefreshAnalytics">
+              <i data-lucide="refresh-cw"></i> Refresh Data
+            </button>
+          </div>
+
+          <!-- Top Analytics Cards -->
+          <div class="metrics-grid" style="margin-bottom: 24px;">
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-cyan">
+                <i data-lucide="file-text"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Assessment Papers</span>
+                <h3 class="metric-value" id="analyticsTotalPapers">0</h3>
+                <span class="metric-trend text-cyan">Database Verified</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-emerald">
+                <i data-lucide="help-circle"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Generated Questions</span>
+                <h3 class="metric-value" id="analyticsTotalQuestions">0</h3>
+                <span class="metric-trend text-emerald">Curriculum Mapped</span>
+              </div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-icon-wrap icon-indigo">
+                <i data-lucide="award"></i>
+              </div>
+              <div class="metric-data">
+                <span class="metric-label">Approval Rate</span>
+                <h3 class="metric-value" id="analyticsApprovalRate">0%</h3>
+                <span class="metric-trend text-indigo">Faculty Certified</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deep Analytic Breakdowns Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+            
+            <!-- Card 1: Bloom's Taxonomy Cognitive Distribution -->
+            <div class="card p-4">
+              <div class="d-flex justify-between align-center mb-3">
+                <h4 style="font-size: 15px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="brain" class="text-primary" style="width: 18px; height: 18px;"></i>
+                  Cognitive Complexity (Bloom's Taxonomy)
+                </h4>
+                <span class="badge badge-subtle">Curriculum Rigor</span>
+              </div>
+              <div id="analyticsBloomContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Filled via JS -->
+              </div>
+            </div>
+
+            <!-- Card 2: Difficulty Distribution -->
+            <div class="card p-4">
+              <div class="d-flex justify-between align-center mb-3">
+                <h4 style="font-size: 15px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="gauge" class="text-amber" style="width: 18px; height: 18px;"></i>
+                  Question Difficulty Distribution
+                </h4>
+                <span class="badge badge-subtle">Blueprint Balance</span>
+              </div>
+              <div id="analyticsDifficultyContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Filled via JS -->
+              </div>
+            </div>
+
+            <!-- Card 3: Question Types Breakdown -->
+            <div class="card p-4">
+              <div class="d-flex justify-between align-center mb-3">
+                <h4 style="font-size: 15px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="layers" class="text-cyan" style="width: 18px; height: 18px;"></i>
+                  Assessment Item Modalities
+                </h4>
+                <span class="badge badge-subtle">Formative & Summative</span>
+              </div>
+              <div id="analyticsTypeContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Filled via JS -->
+              </div>
+            </div>
+
+            <!-- Card 4: Subject Distribution -->
+            <div class="card p-4">
+              <div class="d-flex justify-between align-center mb-3">
+                <h4 style="font-size: 15px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="book-open" class="text-emerald" style="width: 18px; height: 18px;"></i>
+                  Subject Portfolio
+                </h4>
+                <span class="badge badge-subtle">Academic Coverage</span>
+              </div>
+              <div id="analyticsSubjectContainer" style="display: flex; flex-direction: column; gap: 12px;">
+                <!-- Filled via JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 8: SETTINGS                           -->
+        <!-- ========================================== -->
+        <section class="view-section" id="view-settings">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Platform & Faculty Settings</h2>
+              <p class="section-subtitle">Configure academic credentials, exam default parameters, and export appearance preferences.</p>
+            </div>
+            <button class="btn btn-primary" id="btnSaveSettings">
+              <i data-lucide="check"></i> Save Settings
+            </button>
+          </div>
+
+          <div class="settings-grid">
+            
+            <!-- Theme & Appearance Customization Card (Matching Reference UI) -->
+            <div class="card appearance-panel-card full-width-card">
+              <div class="appearance-layout">
+                
+                <!-- Left: Appearance Controls -->
+                <div class="appearance-controls-col">
+                  <h3 class="appearance-section-title">Appearance</h3>
+
+                  <!-- Theme Toggle Pills -->
+                  <div class="appearance-row">
+                    <span class="appearance-label">Theme</span>
+                    <div class="theme-pill-track" id="themePillTrack">
+                      <button type="button" class="theme-pill-btn" data-theme="system">System</button>
+                      <button type="button" class="theme-pill-btn active" data-theme="light">Light</button>
+                      <button type="button" class="theme-pill-btn" data-theme="dark">Dark</button>
+                    </div>
+                  </div>
+
+                  <!-- Color Swatches Row -->
+                  <div class="appearance-row">
+                    <div class="d-flex justify-between align-center mb-1">
+                      <span class="appearance-label">Swatch</span>
+                      <span class="swatch-active-name" id="swatchActiveName">Ocean</span>
+                    </div>
+                    <div class="swatches-palette-row" id="swatchesPalette">
+                      <button type="button" class="swatch-btn swatch-aurora" data-swatch="aurora" title="Pastel Aurora"></button>
+                      <button type="button" class="swatch-btn swatch-mist" data-swatch="mist" title="Mist White"></button>
+                      <button type="button" class="swatch-btn swatch-pearl" data-swatch="pearl" title="Soft Pearl"></button>
+                      <button type="button" class="swatch-btn swatch-sage" data-swatch="sage" title="Sage Green"></button>
+                      <button type="button" class="swatch-btn swatch-ocean active" data-swatch="ocean" title="Ocean Blue"></button>
+                      <button type="button" class="swatch-btn swatch-periwinkle" data-swatch="periwinkle" title="Periwinkle"></button>
+                      <button type="button" class="swatch-btn swatch-lilac" data-swatch="lilac" title="Lilac"></button>
+                      <button type="button" class="swatch-btn swatch-mocha" data-swatch="mocha" title="Warm Mocha"></button>
+                      <button type="button" class="swatch-btn swatch-slate" data-swatch="slate" title="Slate Glass"></button>
+                    </div>
+                  </div>
+
+                  <!-- Density Slider -->
+                  <div class="appearance-row">
+                    <div class="d-flex justify-between align-center mb-1">
+                      <span class="appearance-label">Density</span>
+                    </div>
+                    <input type="range" class="glass-slider" id="appearanceDensity" min="1" max="3" step="1" value="2">
+                  </div>
+
+                  <!-- Typeface Dropdown -->
+                  <div class="appearance-row">
+                    <span class="appearance-label">Typeface</span>
+                    <div class="select-wrapper">
+                      <select id="appearanceTypeface" class="form-control select-pill">
+                        <option value="Inter" selected>Inter</option>
+                        <option value="Outfit">Outfit</option>
+                        <option value="System">System Sans</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Corner Radius Slider -->
+                  <div class="appearance-row">
+                    <span class="appearance-label">Corner radius</span>
+                    <div class="radius-slider-wrap">
+                      <input type="range" class="glass-slider" id="appearanceRadius" min="8" max="28" step="2" value="16">
+                      <span class="radius-val-badge" id="radiusValBadge">16</span>
+                    </div>
+                  </div>
+
+                  <!-- Toggle Switches -->
+                  <div class="appearance-toggles-list">
+                    <label class="glass-toggle-row">
+                      <input type="checkbox" id="toggleReduceMotion">
+                      <span class="glass-switch-slider"></span>
+                      <div class="toggle-text">
+                        <strong>Reduce motion</strong>
+                        <span>Reduce animated aura & transitions</span>
+                      </div>
+                    </label>
+
+                    <label class="glass-toggle-row">
+                      <input type="checkbox" id="toggleHighContrast" checked>
+                      <span class="glass-switch-slider"></span>
+                      <div class="toggle-text">
+                        <strong>High contrast outlines</strong>
+                        <span>Crisp glass specular borders</span>
+                      </div>
+                    </label>
+
+                    <label class="glass-toggle-row">
+                      <input type="checkbox" id="toggleRowDividers">
+                      <span class="glass-switch-slider"></span>
+                      <div class="toggle-text">
+                        <strong>Show row dividers</strong>
+                        <span>Show row dividers and subtle partitions</span>
+                      </div>
+                    </label>
+
+                    <label class="glass-toggle-row">
+                      <input type="checkbox" id="toggleLargeIcons" checked>
+                      <span class="glass-switch-slider"></span>
+                      <div class="toggle-text">
+                        <strong>Use large sidebar icons</strong>
+                        <span>Enlarge navigation icon targets</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Right: Realistic Live Canvas Preview (Matching Screenshot) -->
+                <div class="appearance-preview-col">
+                  <div class="preview-glass-tablet" id="previewGlassTablet">
+                    <div class="preview-mini-header">
+                      <div class="mini-brand-tag">
+                        <span class="mini-aurora-avatar"></span>
+                        <span class="mini-brand-name">Team</span>
+                      </div>
+                      <div class="mini-search-bar">
+                        <i data-lucide="search"></i>
+                        <span>Search</span>
+                      </div>
+                    </div>
+                    <div class="preview-body-layout">
+                      <div class="preview-mini-sidebar">
+                        <div class="mini-nav-item"><i data-lucide="home"></i> Home</div>
+                        <div class="mini-nav-item active"><i data-lucide="layout"></i> Projects</div>
+                        <div class="mini-sub-heading">Projects <i data-lucide="plus"></i></div>
+                        <div class="mini-sub-item"><span class="dot dot-blue"></span> Project 1</div>
+                        <div class="mini-sub-item"><span class="dot dot-amber"></span> Exams 2026</div>
+                        <div class="mini-sub-item"><span class="dot dot-purple"></span> Syllabi</div>
+                      </div>
+                      <div class="preview-mini-content">
+                        <div class="mini-content-top">
+                          <strong>Project <i data-lucide="chevron-down"></i></strong>
+                          <button class="mini-btn-pill">+ New task</button>
+                        </div>
+                        <div class="mini-task-card">
+                          <div class="mini-task-header">
+                            <span class="mini-task-title">Curriculum OCR & Audit</span>
+                          </div>
+                          <div class="mini-task-footer">
+                            <span class="mini-avatar-group">👤 📑</span>
+                            <span class="mini-tag">Done</span>
+                          </div>
+                        </div>
+                        <div class="mini-task-card">
+                          <div class="mini-task-header">
+                            <span class="mini-task-title">Generate Assessment Key</span>
+                          </div>
+                          <div class="mini-task-footer">
+                            <span class="mini-avatar-group">🎓</span>
+                            <span class="mini-tag">18</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Miniature Floating Saved Pill -->
+                    <div class="mini-device-toast">
+                      <span>👏</span>
+                      <span>Saved to this device</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Faculty Information Card -->
+            <div class="card">
+              <h3 class="card-title mb-3"><i data-lucide="user"></i> Faculty Profile</h3>
+              
+              <div class="form-group mb-3">
+                <label for="setTeacherName">Faculty Name & Title</label>
+                <input type="text" id="setTeacherName" class="form-control" value="Dr. Sarah Jenkins">
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="setDepartment">Department</label>
+                <input type="text" id="setDepartment" class="form-control" value="Department of Computer Science & Engineering">
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="setInstitution">Institution / University Name</label>
+                <input type="text" id="setInstitution" class="form-control" value="INSTITUTE OF SCIENCE & TECHNOLOGY">
+              </div>
+            </div>
+
+            <!-- Examination Defaults Card -->
+            <div class="card">
+              <h3 class="card-title mb-3"><i data-lucide="sliders"></i> Assessment Defaults</h3>
+              
+              <div class="form-group mb-3">
+                <label for="setDefaultDuration">Default Examination Duration (Minutes)</label>
+                <input type="number" id="setDefaultDuration" class="form-control" value="90">
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="setDefaultMarks">Default Total Marks</label>
+                <input type="number" id="setDefaultMarks" class="form-control" value="50">
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="setDefaultExamType">Default Exam Type</label>
+                <select id="setDefaultExamType" class="form-control">
+                  <option value="Model Examination" selected>Model Examination</option>
+                  <option value="Internal Assessment 1">Internal Assessment 1</option>
+                  <option value="End Semester Examination">End Semester Examination</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- PDF Export Preferences -->
+            <div class="card">
+              <h3 class="card-title mb-3"><i data-lucide="file-output"></i> PDF Export Standards</h3>
+              
+              <label class="setting-checkbox-row">
+                <input type="checkbox" id="setIncludeInstructions" checked>
+                <div>
+                  <strong>Include Candidate Instructions Header</strong>
+                  <p class="text-xs text-muted">Prints standard academic instructions on the first page.</p>
+                </div>
+              </label>
+
+              <label class="setting-checkbox-row">
+                <input type="checkbox" id="setShowBloomTags" checked>
+                <div>
+                  <strong>Include Bloom's Taxonomy in Faculty Answer Key</strong>
+                  <p class="text-xs text-muted">Displays cognitive skill levels for departmental moderation.</p>
+                </div>
+              </label>
+
+              <label class="setting-checkbox-row">
+                <input type="checkbox" id="setIncludeSignatureLine" checked>
+                <div>
+                  <strong>Include Faculty Signature Block</strong>
+                  <p class="text-xs text-muted">Adds Controller of Examinations and Course Instructor signoffs.</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Workspace & Data Management -->
+            <div class="card">
+              <h3 class="card-title mb-3"><i data-lucide="database"></i> Workspace Data & Storage</h3>
+              <p class="text-sm text-muted mb-4">Manage saved examination blueprints, question bank items, and faculty configuration.</p>
+              
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-danger btn-sm" id="btnResetAllData">
+                  <i data-lucide="trash-2"></i> Clear Workspace Data
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" id="btnExportJson">
+                  <i data-lucide="download"></i> Export Data (JSON)
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODALS & OVERLAYS                          -->
+  <!-- ========================================== -->
+
+  <!-- Modal 1: Source Grounding & Traceability Modal -->
+  <div class="modal-overlay hidden" id="modalSourceEvidence">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="d-flex align-center gap-2">
+          <i data-lucide="compass" class="text-emerald"></i>
+          <div>
+            <h4 class="modal-title">Source Grounding Evidence</h4>
+            <span class="text-xs text-muted" id="modalEvidenceSubtitle">Traceable excerpt from syllabus document</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalSourceEvidence"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="evidence-meta-pill mb-3">
+          <span class="badge badge-emerald" id="evidenceDocName">CS402_Data_Security_Syllabus.pdf</span>
+          <span class="badge badge-subtle" id="evidenceUnit">Unit 2: Symmetric & Asymmetric Encryption</span>
+          <span class="badge badge-outline" id="evidenceSection">Section 2.3 • Page 14</span>
+        </div>
+
+        <div class="evidence-box">
+          <h6><i data-lucide="quote"></i> Exact Source Excerpt in Syllabus:</h6>
+          <blockquote id="evidenceExcerptText">
+            "Symmetric cryptosystems rely on a shared private key for confidentiality. Modes of operation including CBC (Cipher Block Chaining) require an initialization vector (IV) to prevent replay and pattern leaks. Asymmetric cryptography (RSA, ECC) addresses key distribution challenges by utilizing mathematically linked public and private key pairs."
+          </blockquote>
+        </div>
+
+        <div class="evidence-reasoning mt-3">
+          <h6><i data-lucide="check-circle"></i> Cognitive Alignment & Verification:</h6>
+          <p id="evidenceReasoning">The generated question directly verifies student comprehension of initialization vectors and cipher block modes as outlined in syllabus learning objective LO2.1.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-close-modal="modalSourceEvidence">Close Evidence Viewer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Printable PDF Preview Modal -->
+  <div class="modal-overlay hidden" id="modalPdfPreview">
+    <div class="modal-card modal-xl">
+      <div class="modal-header">
+        <div class="d-flex align-center gap-2">
+          <i data-lucide="file-text" class="text-primary"></i>
+          <div>
+            <h4 class="modal-title" id="pdfPreviewTitle">Document Preview</h4>
+            <span class="text-xs text-muted">Formatted academic presentation</span>
+          </div>
+        </div>
+        <div class="d-flex gap-2 align-center">
+          <button class="btn btn-sm btn-primary" id="btnModalDownloadPdf">
+            <i data-lucide="download"></i> Download PDF
+          </button>
+          <button class="modal-close-btn" data-close-modal="modalPdfPreview"><i data-lucide="x"></i></button>
+        </div>
+      </div>
+
+      <div class="modal-body pdf-preview-body">
+        <div class="paper-sheet" id="pdfPaperSheet">
+          <!-- Formatted Paper Injected Here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add / Edit Question Modal -->
+  <div class="modal-overlay hidden" id="modalEditQuestion">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modalQuestionTitle">Edit Question & Scoring Rubric</h4>
+        <button class="modal-close-btn" data-close-modal="modalEditQuestion"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="editQIndex" value="-1">
+
+        <div class="form-group mb-3">
+          <label for="modalQText">Question Prompt Text <span class="req">*</span></label>
+          <textarea id="modalQText" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-grid-4 mb-3">
+          <div class="form-group">
+            <label for="modalQType">Question Type</label>
+            <select id="modalQType" class="form-control">
+              <option value="Theory">Theory</option>
+              <option value="Scenario-Based">Scenario-Based</option>
+              <option value="Numerical/Problem-Solving">Numerical/Problem-Solving</option>
+              <option value="MCQ">MCQ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="modalQDifficulty">Difficulty</label>
+            <select id="modalQDifficulty" class="form-control">
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="modalQMarks">Marks</label>
+            <input type="number" id="modalQMarks" class="form-control" min="1" max="50" value="5">
+          </div>
+
+          <div class="form-group">
+            <label for="modalQUnit">Unit Allocation</label>
+            <select id="modalQUnit" class="form-control">
+              <option value="Unit 1">Unit 1</option>
+              <option value="Unit 2">Unit 2</option>
+              <option value="Unit 3">Unit 3</option>
+              <option value="Unit 4">Unit 4</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="modalQModelAnswer">Model Answer</label>
+          <textarea id="modalQModelAnswer" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="modalQKeyConcepts">Key Concepts & Keywords (Comma-separated)</label>
+          <input type="text" id="modalQKeyConcepts" class="form-control" placeholder="e.g. Nonce, Initialization Vector, Avalanche Effect">
+        </div>
+
+        <div class="form-group mb-3">
+          <label for="modalQExpectedPoints">Expected Answer Points (One point per line)</label>
+          <textarea id="modalQExpectedPoints" class="form-control" rows="3" placeholder="- Defines the core concept&#10;- Provides architectural diagram&#10;- Explains failure modes"></textarea>
+        </div>
+
+        <!-- Marking Scheme Criteria Editor -->
+        <div class="marking-rubric-editor">
+          <div class="d-flex justify-between align-center mb-2">
+            <label class="mb-0"><strong>Marking Scheme Criteria</strong></label>
+            <div class="d-flex align-center gap-2">
+              <span class="badge" id="modalRubricSumBadge">Rubric Sum: 5 / 5 Marks</span>
+              <button type="button" class="btn btn-xs btn-outline-primary" id="btnModalAddCriterion">
+                <i data-lucide="plus"></i> Add Criterion
+              </button>
+            </div>
+          </div>
+          <div class="criteria-list" id="modalCriteriaList">
+            <!-- Dynamic criteria rows -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-close-modal="modalEditQuestion">Cancel</button>
+        <button class="btn btn-primary" id="btnModalSaveQuestion">Save Question</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Generic Confirmation Modal -->
+  <div class="modal-overlay hidden" id="modalConfirm">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h4 class="modal-title" id="confirmModalTitle">Please Confirm</h4>
+        <button class="modal-close-btn" data-close-modal="modalConfirm"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <p id="confirmModalMessage">Are you sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-close-modal="modalConfirm">Cancel</button>
+        <button class="btn btn-danger" id="btnConfirmAction">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Extracted Text Modal -->
+  <div class="modal-overlay hidden" id="modalTextPreview">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h4 class="modal-title" id="textPreviewModalTitle">Syllabus Text Preview</h4>
+        <button class="modal-close-btn" data-close-modal="modalTextPreview"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <pre class="extracted-text-view" id="textPreviewModalBody"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-close-modal="modalTextPreview">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Faculty Authentication & Account Access -->
+  <div class="modal-overlay hidden" id="modalAuth">
+    <div class="modal-card modal-md">
+      <div class="modal-header">
+        <div class="d-flex align-center gap-2">
+          <i data-lucide="shield-check" class="text-primary"></i>
+          <h4 class="modal-title" id="authModalTitle">Faculty Authentication</h4>
+        </div>
+        <button class="modal-close-btn" data-close-modal="modalAuth"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="auth-tabs mb-3 d-flex gap-2">
+          <button type="button" class="btn btn-sm btn-primary flex-1" id="tabAuthLogin">Sign In</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary flex-1" id="tabAuthRegister">Register New Account</button>
+        </div>
+
+        <!-- Quick 1-Click Faculty Demo Login -->
+        <div class="quick-login-banner mb-3 p-3 bg-subtle rounded-md border border-light">
+          <div class="d-flex justify-between align-center">
+            <div>
+              <strong class="text-sm">Demo / Jury Presentation Mode:</strong>
+              <p class="text-xs text-muted mb-0">One-click instant login as primary faculty account.</p>
+            </div>
+            <button type="button" class="btn btn-xs btn-primary" id="btnQuickDemoLogin">
+              <i data-lucide="zap"></i> Quick Sign In
+            </button>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="formAuthLogin">
+          <div class="form-group mb-3">
+            <label for="authLoginEmail">Institutional Email <span class="req">*</span></label>
+            <input type="email" id="authLoginEmail" class="form-control" placeholder="teacher@examcraft.ai" required>
+          </div>
+          <div class="form-group mb-3">
+            <label for="authLoginPassword">Password <span class="req">*</span></label>
+            <input type="password" id="authLoginPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="btnSubmitLogin">
+            <i data-lucide="log-in"></i> Sign In to Academic Suite
+          </button>
+        </form>
+
+        <!-- Register Form (Initially Hidden) -->
+        <form id="formAuthRegister" class="hidden">
+          <div class="form-group mb-2">
+            <label for="authRegName">Full Name & Title <span class="req">*</span></label>
+            <input type="text" id="authRegName" class="form-control" placeholder="Dr. Sarah Jenkins" required>
+          </div>
+          <div class="form-group mb-2">
+            <label for="authRegEmail">Institutional Email <span class="req">*</span></label>
+            <input type="email" id="authRegEmail" class="form-control" placeholder="faculty@university.edu" required>
+          </div>
+          <div class="form-group mb-2">
+            <label for="authRegDept">Department</label>
+            <input type="text" id="authRegDept" class="form-control" placeholder="Dept. of Computer Science">
+          </div>
+          <div class="form-group mb-3">
+            <label for="authRegPassword">Password (Min 6 chars) <span class="req">*</span></label>
+            <input type="password" id="authRegPassword" class="form-control" placeholder="••••••••" required minlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="btnSubmitRegister">
+            <i data-lucide="user-plus"></i> Create Faculty Account
+          </button>
+        </form>
+      </div>
+
+      <div class="modal-footer justify-between">
+        <span class="text-xs text-muted" id="authFooterStatus">Protected by BCrypt & JWT session tokens</span>
+        <button class="btn btn-sm btn-outline-secondary" data-close-modal="modalAuth">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating Saved to Device Pill Toast (Matching Reference Image) -->
+  <div class="glass-device-toast hidden" id="glassDeviceToast">
+    <span class="device-toast-icon">👏</span>
+    <span class="device-toast-text" id="glassDeviceToastText">Saved to this device</span>
+  </div>
+
+  <!-- App REST API Client & Main Script -->
+  <script src="api.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

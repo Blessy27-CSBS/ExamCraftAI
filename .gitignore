@@ -1,0 +1,19 @@
+# Environment configuration
+.env
+.env.local
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Database & Storage
+*.db
+*.sqlite
+uploads/
+server/storage/uploads/*
+!server/storage/uploads/.gitkeep
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.log
