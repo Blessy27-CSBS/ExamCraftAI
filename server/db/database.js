@@ -138,8 +138,8 @@ async function seedDefaultFaculty() {
       'usr-faculty-default',
       teacherEmail,
       teacherHash,
-      'Dr. Sarah Jenkins',
-      'Department of Computer Science & Engineering',
+      'Faculty Member',
+      'Academic Department',
       'INSTITUTE OF SCIENCE & TECHNOLOGY',
       'teacher'
     ]);
@@ -160,7 +160,7 @@ async function seedDefaultFaculty() {
 
     // Seed default application settings
     const defaultSettings = {
-      teacherName: 'Dr. Sarah Jenkins',
+      teacherName: 'Faculty Member',
       department: 'Department of Computer Science & Engineering',
       institution: 'INSTITUTE OF SCIENCE & TECHNOLOGY',
       defaultDuration: 90,

@@ -1,0 +1,31 @@
+COURSE TITLE: ADVANCED DISTRIBUTED SYSTEMS
+COURSE CODE: CS601
+ACADEMIC YEAR: 2025-2026
+
+UNIT 1: Distributed Consensus and the Raft Protocol
+Leader Election Mechanism, Split-Brain Resolution, Heartbeat Timers, Log Replication, Quorum Calculation, Commit Index State Transitions.
+Distributed consensus ensures all non-faulty nodes agree on state transitions despite message loss or network partitions.
+In the Raft consensus algorithm, nodes exist in one of three states: Follower, Candidate, or Leader.
+Leader election triggers when randomized heartbeat timers expire without receiving AppendEntries RPCs from the current leader.
+A candidate wins an election by receiving votes from a strict majority quorum of (N/2 + 1) nodes.
+Split-brain scenarios are resolved by requiring term monotonicity; requests bearing outdated terms are rejected immediately.
+Log entries are committed only when safely replicated across a quorum of operational nodes.
+
+UNIT 2: Database Storage Engines and Log-Structured Merge Trees
+LSM-Tree Write Path, MemTable Operations, Write-Ahead Logging (WAL), Immutable SSTables, Compaction Strategies, Bloom Filter Query Optimization.
+Modern distributed storage systems utilize Log-Structured Merge (LSM) trees to optimize write-intensive operational workloads.
+Incoming mutations append sequentially to an in-memory MemTable and a concurrent Write-Ahead Log (WAL) for durability.
+When the MemTable reaches its capacity threshold, it flushes to persistent disk storage as an immutable Sorted String Table (SSTable).
+Read operations inspect Bloom filters to avoid unnecessary disk I/O lookups for non-existent keys.
+Compaction processes (Size-Tiered or Leveled Compaction) merge overlapping SSTables in the background to purge tombstoned entries and reclaim disk space.
+Compaction induces write amplification, which trade-offs disk write throughput for sustained read latency.
+
+UNIT 3: Microservices Resiliency and Circuit Breaker Architectures
+Cascade Failure Dynamics, Circuit Breaker State Transitions (Closed, Open, Half-Open), Failure Rate Thresholds, Fallback Degradation, Distributed Tracing Context.
+Microservices architectures prevent cascading failures across downstream dependencies using automated circuit breakers.
+A circuit breaker monitors downstream call failures within a rolling time window.
+In the Closed state, requests pass through normally while error counters accumulate.
+When the failure rate breaches a configured threshold (e.g. 50% errors over 20 calls), the breaker transitions to the Open state.
+In the Open state, calls fail fast immediately without dispatching network requests, invoking a fallback method to preserve client responsiveness.
+After a reset timeout duration, the breaker enters the Half-Open state, permitting a limited probe trial of canary requests.
+If probe calls succeed, the circuit resets to Closed; persistent errors trip it back to Open.

@@ -104,7 +104,7 @@ async function runTestSuite() {
     assert.ok(chunks.length >= 2, 'Should create at least 2 distinct chunks');
     assert.strictEqual(chunks[0].pageNumber, 1);
     assert.strictEqual(chunks[1].pageNumber, 2);
-    assert.ok(chunks[0].sectionTitle.includes('UNIT 1') || chunks[0].sectionTitle.includes('Page 1'));
+    assert.ok(chunks[0].sectionTitle.toUpperCase().includes('UNIT 1') || chunks[0].sectionTitle.includes('Page 1'));
   });
 
   // 4. Source Retrieval & Verified Citations
@@ -268,10 +268,172 @@ async function runTestSuite() {
   });
 
   // 9. Dashboard Analytics Calculation
-  console.log('\n📊 [9/9] Real Database Metrics & Aggregations');
+  console.log('\n📊 [9/15] Real Database Metrics & Aggregations');
   await it('should calculate real dashboard metrics matching stored records', async () => {
     const totalRow = await queryOne('SELECT COUNT(*) as count FROM question_papers WHERE user_id = ?', [testUserId]);
     assert.strictEqual(parseInt(totalRow.count, 10), 1, 'Should have exactly 1 paper for test user');
+  });
+
+  // 10. Structured Syllabus Understanding & Module Detection
+  console.log('\n🧠 [10/15] Structured Syllabus Understanding Engine');
+  const { extractSyllabusStructure } = require('../server/services/documentProcessor');
+  const testSyllabusText = `COURSE CODE: CS402 | COURSE NAME: DATA & INFORMATION SECURITY
+ACADEMIC YEAR: 2025-2026 | REGULATION 2024
+OBJECTIVES: Understand confidentiality, integrity, and availability (CIA). Analyze cryptographic algorithms.
+
+UNIT 1: INFOSEC FUNDAMENTALS & THREAT LANDSCAPE
+Foundations of Information Security: The CIA Triad, Parkerian Hexad. Threat Modeling: STRIDE and DREAD frameworks. Attack Surfaces: Social engineering, phishing, ransomware.
+
+UNIT 2: SYMMETRIC & ASYMMETRIC ENCRYPTION
+Modern Symmetric Encryption: AES internal round operations (SubBytes, ShiftRows, MixColumns), key schedules. Block Cipher Modes: ECB pattern leakage, CBC with IV, GCM. Asymmetric Cryptography: RSA Algorithm, modular exponentiation, ECC.
+
+UNIT 3: KEY MANAGEMENT & CRYPTOGRAPHIC HASHES
+Diffie-Hellman Key Exchange, Man-in-the-Middle vulnerabilities. PKI: Certificate Authorities, X.509 hierarchy, CRL, OCSP. Hash Functions: SHA-256 collision resistance. Digital Signatures: RSA Signatures.`;
+
+  let detectedStructure = null;
+  await it('should extract course code, subject name, units, and discrete topics from syllabus', async () => {
+    detectedStructure = extractSyllabusStructure(testSyllabusText, samplePages, 'CS402_Syllabus.pdf');
+    assert.ok(detectedStructure, 'Structure must be generated');
+    assert.ok(detectedStructure.subject.toLowerCase().includes('security'), 'Subject must detect security');
+    assert.strictEqual(detectedStructure.courseCode, 'CS402', 'Course code must be CS402');
+    assert.ok(detectedStructure.units.length >= 3, 'Must detect at least 3 distinct units');
+    assert.ok(detectedStructure.units[0].topics.length >= 2, 'Unit 1 must contain extracted topics');
+  });
+
+  // 11. Assessment Generation Plan & Non-Repeating Topic Distribution
+  console.log('\n📋 [11/15] Assessment Generation Planning & Distinct Slot Allocation');
+  const { constructAssessmentPlan, balanceRubricMarks, generateAssessmentQuestions } = require('../server/services/aiGenerator');
+
+  await it('should construct a slot-by-slot generation plan where each slot receives a distinct topic', async () => {
+    const blueprint = {
+      subject: 'Data & Information Security',
+      courseCode: 'CS402',
+      totalMarks: 20,
+      duration: 60,
+      unitsCovered: ['Unit 1', 'Unit 2'],
+      groups: [
+        { name: 'Part A (Short Answer)', count: 5, marksPerQ: 2, type: 'Theory', difficulty: 'Easy', unit: 'Unit 1' },
+        { name: 'Part B (Analytical)', count: 2, marksPerQ: 5, type: 'Scenario-Based', difficulty: 'Medium', unit: 'Unit 2' }
+      ]
+    };
+
+    const plan = constructAssessmentPlan(blueprint, detectedStructure);
+    assert.strictEqual(plan.slots.length, 7, 'Must generate exactly 7 question slots');
+
+    // Verify all 5 slots in Unit 1 target distinct topics
+    const unit1Slots = plan.slots.filter(s => s.unit === 'Unit 1');
+    assert.strictEqual(unit1Slots.length, 5);
+    const unit1Topics = unit1Slots.map(s => s.targetTopic.toLowerCase());
+    const uniqueTopics = new Set(unit1Topics);
+    assert.strictEqual(uniqueTopics.size, 5, 'Every slot in Unit 1 must have a unique non-repeating target topic');
+
+    // Verify marks and cognitive demand scoping
+    assert.strictEqual(unit1Slots[0].marks, 2);
+    assert.ok(unit1Slots[0].targetCognitiveDemand.includes('recall') || unit1Slots[0].targetCognitiveDemand.includes('definition'));
+  });
+
+  // 12. Multi-Stage Duplicate & Near-Duplicate Detection
+  console.log('\n🛡️ [12/15] Multi-Stage Duplicate & Semantic Near-Duplicate Prevention');
+  const { checkQuestionSimilarity, calculateJaccardSimilarity, calculateNGramSimilarity } = require('../server/services/retrieval');
+
+  await it('should detect exact duplicate questions immediately', async () => {
+    const q1 = { questionText: 'Define the principle of Least Privilege and explain how it limits insider threats.' };
+    const qDuplicate = { questionText: 'Define the principle of Least Privilege and explain how it limits insider threats.' };
+
+    const check = checkQuestionSimilarity(qDuplicate, [q1]);
+    assert.strictEqual(check.isDuplicate, true, 'Exact duplicate must be rejected');
+    assert.ok(check.reason.toLowerCase().includes('exact'), 'Reason must indicate exact match');
+  });
+
+  await it('should detect paraphrased near-duplicate questions with high token and n-gram overlap', async () => {
+    const q1 = { questionText: 'Define the principle of Least Privilege and explain how it mitigates insider threats in an enterprise network.' };
+    const qParaphrase = { questionText: 'Explain the Least Privilege principle and discuss how it mitigates insider threats across enterprise network architectures.' };
+
+    const jaccard = calculateJaccardSimilarity(q1.questionText, qParaphrase.questionText);
+    const ngram = calculateNGramSimilarity(q1.questionText, qParaphrase.questionText, 3);
+    assert.ok(jaccard > 0.50, `Jaccard similarity should exceed 0.50 (got ${jaccard.toFixed(2)})`);
+
+    const check = checkQuestionSimilarity(qParaphrase, [q1], 0.52);
+    assert.strictEqual(check.isDuplicate, true, 'Near-duplicate paraphrase must be caught');
+    assert.ok(check.reason.includes('Near-duplicate'));
+  });
+
+  await it('should approve distinct questions covering different syllabus concepts without false positives', async () => {
+    const q1 = { questionText: 'Analyze RSA public-key generation, modular arithmetic, and Euler totient calculation.' };
+    const q2 = { questionText: 'Contrast Certificate Revocation Lists (CRL) and Online Certificate Status Protocol (OCSP) in PKI architectures.' };
+
+    const check = checkQuestionSimilarity(q2, [q1], 0.52);
+    assert.strictEqual(check.isDuplicate, false, 'Distinct concepts must not be falsely flagged as duplicates');
+  });
+
+  // 13. Question Type & Mark Depth Validation
+  console.log('\n🎯 [13/15] Question Type & Mark Depth Compliance');
+  await it('should balance rubric criteria to sum exactly to total question marks', async () => {
+    const unbalancedRubric = [
+      { criterion: 'Algorithm definition & explanation', marks: 2 },
+      { criterion: 'Computational complexity analysis', marks: 3 }
+    ];
+    // Target marks is 8, current sum is 5
+    balanceRubricMarks(unbalancedRubric, 8);
+    const sum = unbalancedRubric.reduce((acc, r) => acc + r.marks, 0);
+    assert.strictEqual(sum, 8, 'Sum of balanced rubric must equal 8 marks');
+  });
+
+  // 14. Real Grounded Assessment Generation Pipeline
+  console.log('\n⚡ [14/15] Real Grounded Assessment Synthesis Pipeline');
+  await it('should generate syllabus-grounded questions with real citations, model answers, and balanced rubrics', async () => {
+    const testDoc = {
+      id: 'doc-rag-test',
+      original_name: 'CS402_Security.pdf',
+      extracted_text: testSyllabusText
+    };
+
+    const bp = {
+      subject: 'Data & Information Security',
+      courseCode: 'CS402',
+      totalMarks: 16,
+      duration: 45,
+      unitsCovered: ['Unit 1', 'Unit 2'],
+      groups: [
+        { name: 'Part A', count: 2, marksPerQ: 2, type: 'Theory', difficulty: 'Easy', unit: 'Unit 1' },
+        { name: 'Part B', count: 1, marksPerQ: 4, type: 'MCQ', difficulty: 'Medium', unit: 'Unit 2' },
+        { name: 'Part C', count: 1, marksPerQ: 8, type: 'Scenario-Based', difficulty: 'Hard', unit: 'Unit 1' }
+      ]
+    };
+
+    const result = await generateAssessmentQuestions(bp, testDoc, testUserId);
+    assert.ok(result.questions, 'Result must contain questions');
+    assert.strictEqual(result.questions.length, 4, 'Must generate all 4 planned questions');
+
+    // Validate that questions are distinct
+    const texts = result.questions.map(q => q.questionText);
+    const uniqueTexts = new Set(texts);
+    assert.strictEqual(uniqueTexts.size, 4, 'All generated questions must be completely distinct');
+
+    // Validate rubric sums for every question
+    result.questions.forEach(q => {
+      const rSum = (q.rubric || []).reduce((acc, r) => acc + parseFloat(r.marks), 0);
+      assert.strictEqual(rSum, q.marks, `Rubric sum for question #${q.questionNumber} must equal marks (${q.marks})`);
+      assert.ok(q.sourceDocName, 'Must have source document reference');
+      assert.ok(q.evidenceStatus, 'Must have evidence validation status');
+    });
+
+    // Validate MCQ has 4 options
+    const mcq = result.questions.find(q => q.type === 'MCQ');
+    assert.ok(mcq, 'MCQ question must exist');
+    assert.strictEqual(mcq.options.length, 4, 'MCQ must have 4 options');
+    assert.ok(mcq.correctOption, 'MCQ must specify correct option');
+    assert.ok(mcq.explanation, 'MCQ must have explanation');
+  });
+
+  // 15. Negative / Edge Case Handling
+  console.log('\n🛡️ [15/15] Edge Case & Negative Constraint Handling');
+  await it('should reject fabricated citations not present in syllabus source', async () => {
+    const chunk = 'Block Cipher Modes of Operation: Electronic Codebook (ECB) pattern leakage, Cipher Block Chaining (CBC) with IV.';
+    const fakeExcerpt = 'Quantum teleportation using entanglement swapping across photonic channels.';
+
+    const verification = verifyExcerptInChunk(fakeExcerpt, chunk);
+    assert.strictEqual(verification.valid, false, 'Unfounded excerpt must fail validation');
   });
 
   // Cleanup test user records

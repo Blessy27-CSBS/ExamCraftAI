@@ -24,11 +24,646 @@
   <!-- Tesseract.js OCR CDN for Client-Side Optical Character Recognition -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=5.0">
+
+  <!-- Self-Contained Critical Styles for Login Portal (Guarantees zero browser-cache misalignment) -->
+  <style id="authPortalCriticalStyles">
+    .auth-portal-wrapper {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 99999;
+      background: radial-gradient(120% 120% at 15% 15%, #dbeafe 0%, #ede9fe 35%, #fef3c7 65%, #e0f2fe 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    .auth-portal-wrapper.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      display: none !important;
+    }
+    .auth-ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+      animation: floatAmbient 12s ease-in-out infinite alternate;
+    }
+    .auth-orb-1 {
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(147, 197, 253, 0.55) 0%, rgba(196, 181, 253, 0.25) 70%, transparent 100%);
+      top: -80px;
+      left: 3%;
+    }
+    .auth-orb-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(253, 186, 116, 0.4) 0%, rgba(244, 114, 182, 0.2) 70%, transparent 100%);
+      bottom: -100px;
+      left: 28%;
+    }
+    .auth-orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.45) 0%, rgba(192, 132, 252, 0.2) 70%, transparent 100%);
+      top: 10%;
+      right: 5%;
+    }
+    @keyframes floatAmbient {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(25px, -20px) scale(1.04); }
+      100% { transform: translate(-20px, 15px) scale(0.97); }
+    }
+    .auth-portal-container {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.18fr 0.88fr;
+      max-width: 1080px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      border-radius: 32px;
+      box-shadow: 0 30px 80px -15px rgba(30, 58, 138, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+      padding: 1.75rem 1.75rem;
+      gap: 1.5rem;
+      align-items: stretch;
+      box-sizing: border-box;
+      margin: auto;
+    }
+    .auth-hero-card {
+      padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+    .auth-brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .auth-brand-logo-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 18px -4px rgba(2, 132, 199, 0.4);
+      padding: 4px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+    }
+    .auth-brand-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .auth-brand-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+    .auth-brand-accent {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .auth-brand-sub {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #64748b;
+      margin-top: 0.2rem;
+      text-transform: uppercase;
+    }
+    .auth-hero-headline {
+      font-size: 2.05rem;
+      font-weight: 800;
+      line-height: 1.22;
+      letter-spacing: -0.035em;
+      color: #0f172a;
+      margin: 0.6rem 0 0.4rem 0;
+    }
+    .hero-highlight {
+      display: block;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .auth-hero-desc {
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: #475569;
+      max-width: 430px;
+      margin: 0 0 1rem 0;
+    }
+    .auth-bottom-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: flex-end;
+      gap: 0.85rem;
+      margin-top: auto;
+    }
+    .auth-pills-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .auth-feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      padding: 0.5rem 0.85rem;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-sizing: border-box;
+    }
+    .auth-feature-pill:hover {
+      transform: translateX(4px);
+      box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.08);
+    }
+    .auth-pill-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .auth-pill-icon svg,
+    .auth-pill-icon i {
+      width: 18px;
+      height: 18px;
+    }
+    .auth-pill-icon.icon-blue { background: #e0f2fe; color: #0284c7; }
+    .auth-pill-icon.icon-purple { background: #f3e8ff; color: #9333ea; }
+    .auth-pill-icon.icon-mint { background: #ccfbf1; color: #0d9488; }
+    .auth-pill-icon.icon-amber { background: #fef3c7; color: #d97706; }
+    .auth-pill-content strong {
+      display: block;
+      font-size: 0.825rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+    .auth-pill-content span {
+      font-size: 0.72rem;
+      color: #64748b;
+      line-height: 1.2;
+    }
+    .auth-art-col {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 100%;
+    }
+    .auth-hero-3d-img {
+      width: 100%;
+      max-width: 275px;
+      height: auto;
+      max-height: 250px;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 22px rgba(37, 99, 235, 0.18));
+      animation: floatSubtle 6s ease-in-out infinite alternate;
+      display: block;
+    }
+    @keyframes floatSubtle {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+    .auth-form-grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 540px) {
+      .auth-form-grid-2col {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+    .auth-form-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 2.2rem 2.2rem;
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+    .auth-card-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: #0f172a;
+      margin: 0 0 0.3rem 0;
+    }
+    .auth-card-subtitle {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin: 0 0 1.5rem 0;
+    }
+    .auth-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.35rem;
+    }
+    .auth-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .auth-input-icon {
+      position: absolute;
+      left: 0.85rem;
+      width: 18px;
+      height: 18px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    .auth-input {
+      width: 100%;
+      height: 44px;
+      padding: 0.55rem 0.85rem 0.55rem 2.6rem;
+      font-size: 0.875rem;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      background-color: #f8fafc;
+      color: #0f172a;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .auth-input:focus {
+      border-color: #0284c7;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+      outline: none;
+    }
+    .btn-toggle-password {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 0.35rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: color 0.2s ease;
+    }
+    .btn-toggle-password:hover {
+      color: #334155;
+    }
+    .auth-forgot-row {
+      display: flex;
+      justify-content: flex-end;
+      margin: 0.3rem 0 1.25rem 0;
+    }
+    .auth-forgot-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #0284c7;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .auth-forgot-link:hover {
+      color: #0369a1;
+      text-decoration: underline;
+    }
+    .btn-hero-signin {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px -4px rgba(2, 132, 199, 0.45);
+      transition: all 0.25s ease;
+      box-sizing: border-box;
+    }
+    .btn-hero-signin:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -4px rgba(2, 132, 199, 0.55);
+      filter: brightness(1.05);
+    }
+    .btn-hero-signin:active {
+      transform: translateY(0);
+    }
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      margin: 1.15rem 0;
+      text-align: center;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .auth-divider span {
+      padding: 0 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #94a3b8;
+    }
+    .btn-social-google {
+      width: 100%;
+      height: 46px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      color: #334155;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .btn-social-google:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    }
+    .auth-bottom-switch {
+      margin-top: 1.35rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .auth-link-bold {
+      color: #0284c7;
+      font-weight: 700;
+      text-decoration: none;
+      margin-left: 0.35rem;
+      transition: color 0.2s ease;
+    }
+    .auth-link-bold:hover {
+      color: #0369a1;
+      text-decoration: underline;
+    }
+    @media (max-width: 960px) {
+      .auth-portal-container {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        padding: 1.25rem;
+      }
+      .auth-hero-card {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- ======================================================== -->
+  <!-- DEDICATED FACULTY LOGIN & AUTHENTICATION LANDING SCREEN  -->
+  <!-- ======================================================== -->
+  <div class="auth-portal-wrapper" id="authPortalView">
+    <!-- Ambient glowing backdrop orbs -->
+    <div class="auth-ambient-orb auth-orb-1"></div>
+    <div class="auth-ambient-orb auth-orb-2"></div>
+    <div class="auth-ambient-orb auth-orb-3"></div>
+
+    <div class="auth-portal-container">
+      
+      <!-- Brand & Capabilities Left Column -->
+      <div class="auth-hero-card">
+        <div class="auth-brand-badge">
+          <div class="auth-brand-logo-wrap">
+            <img src="logo.png" alt="ExamCraft AI Logo" class="auth-brand-logo">
+          </div>
+          <div>
+            <div class="auth-brand-name">ExamCraft<span class="auth-brand-accent">AI</span></div>
+            <div class="auth-brand-sub">ACADEMIC ASSESSMENT SUITE</div>
+          </div>
+        </div>
+
+        <div class="auth-hero-text">
+          <h1 class="auth-hero-headline">
+            From syllabus to structured assessments —
+            <span class="hero-highlight">intelligently.</span>
+          </h1>
+          <p class="auth-hero-desc">
+            Create accurate, syllabus-aligned question papers, model answers, and marking schemes with the power of AI.
+          </p>
+        </div>
+
+        <div class="auth-bottom-grid">
+          <!-- 4 Feature Pills -->
+          <div class="auth-pills-col">
+            <div class="auth-feature-pill">
+              <div class="auth-pill-icon icon-blue">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+              </div>
+              <div class="auth-pill-content">
+                <strong>Upload Syllabus</strong>
+                <span>PDF, DOCX or TXT</span>
+              </div>
+            </div>
+
+            <div class="auth-feature-pill">
+              <div class="auth-pill-icon icon-purple">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+              </div>
+              <div class="auth-pill-content">
+                <strong>AI-Powered Generation</strong>
+                <span>Relevant, structured questions</span>
+              </div>
+            </div>
+
+            <div class="auth-feature-pill">
+              <div class="auth-pill-icon icon-mint">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              </div>
+              <div class="auth-pill-content">
+                <strong>Model Answers & Rubrics</strong>
+                <span>Detailed and editable</span>
+              </div>
+            </div>
+
+            <div class="auth-feature-pill">
+              <div class="auth-pill-icon icon-amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+              </div>
+              <div class="auth-pill-content">
+                <strong>Export with Ease</strong>
+                <span>Question papers, answer keys & reports</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3D Book & Cap Illustration -->
+          <div class="auth-art-col">
+            <img src="login-hero-3d.png" alt="ExamCraft AI Academic Illustration" class="auth-hero-3d-img" width="275" height="245" style="max-width: 275px; max-height: 250px; width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 14px 22px rgba(37, 99, 235, 0.18));">
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign In / Register Right Column Card -->
+      <div class="auth-form-card">
+        <!-- Hidden tab switches to preserve automated test compatibility -->
+        <div class="auth-nav-tabs visually-hidden" style="display: none;">
+          <button type="button" class="auth-tab-btn active" id="portalTabLogin">Sign In</button>
+          <button type="button" class="auth-tab-btn" id="portalTabRegister">New Faculty Registration</button>
+        </div>
+
+        <!-- ================= Sign In Form ================= -->
+        <div id="portalLoginContainer" class="auth-view-pane">
+          <div class="auth-form-header">
+            <h2 class="auth-card-title">Welcome Back 👋</h2>
+            <p class="auth-card-subtitle">Sign in to your ExamCraft AI account</p>
+          </div>
+
+          <form id="portalFormLogin" class="auth-form-body">
+            <div class="form-group mb-3">
+              <label for="portalLoginEmail" class="auth-label">Email Address</label>
+              <div class="auth-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input type="email" id="portalLoginEmail" class="auth-input" placeholder="Enter your email address" required autocomplete="email">
+              </div>
+            </div>
+
+            <div class="form-group mb-2">
+              <label for="portalLoginPassword" class="auth-label">Password</label>
+              <div class="auth-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="portalLoginPassword" class="auth-input" placeholder="Enter your password" required autocomplete="current-password">
+                <button type="button" class="btn-toggle-password" id="btnTogglePortalPassword" title="Toggle password visibility">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="iconPortalPasswordEye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="auth-forgot-row">
+              <a href="#" class="auth-forgot-link" id="linkForgotPassword">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-hero-signin" id="btnPortalSubmitLogin">
+              <span>Sign In</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+
+            <div class="auth-bottom-switch">
+              <span>Don't have an account?</span>
+              <a href="#" id="linkSwitchToRegister" class="auth-link-bold">Create an account</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- ================= New Faculty Registration Form ================= -->
+        <div id="portalRegisterContainer" class="auth-view-pane hidden">
+          <div class="auth-form-header">
+            <h2 class="auth-card-title">Create Account 🎓</h2>
+            <p class="auth-card-subtitle">Join ExamCraft AI to generate curriculum assessments</p>
+          </div>
+
+          <form id="portalFormRegister" class="auth-form-body">
+            <div class="form-group mb-2">
+              <label for="portalRegName" class="auth-label">Full Name & Academic Title</label>
+              <div class="auth-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input type="text" id="portalRegName" class="auth-input" placeholder="Dr. Jane Doe" required>
+              </div>
+            </div>
+
+            <div class="form-group mb-2">
+              <label for="portalRegEmail" class="auth-label">Institutional Email</label>
+              <div class="auth-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <input type="email" id="portalRegEmail" class="auth-input" placeholder="jane.doe@university.edu" required>
+              </div>
+            </div>
+
+            <div class="form-group mb-2">
+              <label for="portalRegPassword" class="auth-label">Create Password</label>
+              <div class="auth-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="portalRegPassword" class="auth-input" placeholder="Minimum 6 characters" required minlength="6">
+              </div>
+            </div>
+
+            <div class="auth-form-grid-2col mb-2">
+              <div class="form-group">
+                <label for="portalRegDept" class="auth-label">Department</label>
+                <div class="auth-input-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+                  <input type="text" id="portalRegDept" class="auth-input" placeholder="Computer Science" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="portalRegInstitution" class="auth-label">University / Institution</label>
+                <div class="auth-input-wrap">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                  <input type="text" id="portalRegInstitution" class="auth-input" placeholder="National Institute of Technology" required>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-hero-signin mb-3" id="btnPortalSubmitRegister">
+              <span>Create Faculty Account</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+            </button>
+
+            <div class="auth-bottom-switch">
+              <span>Already have an account?</span>
+              <a href="#" id="linkSwitchToLogin" class="auth-link-bold">Sign In</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Application Wrapper -->
-  <div class="app-layout">
+  <div class="app-layout" id="appLayout" style="display: none;">
     
     <!-- Left Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -45,14 +680,6 @@
         <button class="mobile-close-btn" id="mobileSidebarClose" aria-label="Close sidebar">
           <i data-lucide="x"></i>
         </button>
-      </div>
-
-      <!-- Assessment Engine Status -->
-      <div class="status-badge-container">
-        <div class="system-status-badge" title="Curriculum Assessment Engine Ready">
-          <span class="status-indicator-dot"></span>
-          <span>Assessment Engine Active</span>
-        </div>
       </div>
 
       <!-- Navigation Links -->
@@ -101,15 +728,20 @@
       <!-- Faculty Profile Footer -->
       <div class="sidebar-profile">
         <div class="profile-avatar">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Prof. Sarah Jenkins" id="profileImg">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Faculty Profile" id="profileImg">
         </div>
         <div class="profile-info">
-          <span class="profile-name" id="sidebarProfileName">Dr. Sarah Jenkins</span>
-          <span class="profile-role" id="sidebarProfileDept">Dept. of Computer Science</span>
+          <span class="profile-name" id="sidebarProfileName">Faculty</span>
+          <span class="profile-role" id="sidebarProfileDept">Academic Faculty</span>
         </div>
-        <button class="profile-action-btn" id="btnQuickSettings" title="Profile Settings">
-          <i data-lucide="more-vertical"></i>
-        </button>
+        <div class="d-flex gap-1">
+          <button class="profile-action-btn" id="btnSidebarLogout" title="Sign Out Faculty Session">
+            <i data-lucide="log-out"></i>
+          </button>
+          <button class="profile-action-btn" id="btnQuickSettings" title="Profile Settings">
+            <i data-lucide="more-vertical"></i>
+          </button>
+        </div>
       </div>
     </aside>
 
@@ -140,7 +772,7 @@
           <div class="dropdown-wrapper">
             <button class="icon-btn" id="btnNotifications" title="Notifications">
               <i data-lucide="bell"></i>
-              <span class="notification-badge">2</span>
+              <span class="notification-badge" style="display: none;">0</span>
             </button>
             <div class="dropdown-menu notifications-menu" id="notificationsDropdown">
               <div class="dropdown-header">
@@ -148,13 +780,7 @@
                 <button class="link-btn" id="btnMarkAllRead">Mark all read</button>
               </div>
               <div class="notification-list" id="notificationList">
-                <div class="notification-item unread">
-                  <div class="notif-icon notif-success"><i data-lucide="sparkles"></i></div>
-                  <div class="notif-content">
-                    <p class="notif-title">OCR & Assessment Engine Initialized</p>
-                    <span class="notif-time">Ready for syllabus upload</span>
-                  </div>
-                </div>
+                <div class="empty-state p-3 text-center text-xs text-muted" id="notificationEmptyState">No new notifications</div>
               </div>
             </div>
           </div>
@@ -163,6 +789,12 @@
           <button class="btn btn-primary" id="btnTopbarCreateNew">
             <i data-lucide="plus"></i>
             <span>Create New Paper</span>
+          </button>
+
+          <!-- Faculty Sign Out Button -->
+          <button class="btn btn-outline-secondary" id="btnTopbarLogout" title="Sign Out Faculty Session">
+            <i data-lucide="log-out"></i>
+            <span>Sign Out</span>
           </button>
         </div>
       </header>
@@ -182,7 +814,7 @@
                 <i data-lucide="shield-check"></i>
                 <span>Syllabus-Aligned Assessment Platform</span>
               </div>
-              <h1 class="hero-title">Good morning, <span id="dashTeacherGreeting">Professor</span>.</h1>
+              <h1 class="hero-title">Good morning, <span id="dashTeacherGreeting">Faculty</span>.</h1>
               <p class="hero-subtitle">Create balanced, syllabus-aligned assessments with confidence. Grounded in your curriculum with verified answer keys.</p>
               
               <div class="hero-actions">
@@ -194,22 +826,6 @@
                   <i data-lucide="database"></i>
                   <span>Browse Question Bank</span>
                 </button>
-              </div>
-            </div>
-            
-            <div class="hero-stats-card">
-              <div class="stat-pill">
-                <span class="pill-label">Curriculum Compliance</span>
-                <span class="pill-val">100% Traceable</span>
-              </div>
-              <div class="hero-mini-steps">
-                <div class="mini-step active"><span class="step-num">1</span> Upload Syllabus</div>
-                <div class="mini-step-arrow">→</div>
-                <div class="mini-step active"><span class="step-num">2</span> Blueprint</div>
-                <div class="mini-step-arrow">→</div>
-                <div class="mini-step active"><span class="step-num">3</span> AI Draft</div>
-                <div class="mini-step-arrow">→</div>
-                <div class="mini-step active"><span class="step-num">4</span> Review & Export</div>
               </div>
             </div>
           </div>
@@ -265,50 +881,6 @@
                 <span class="metric-trend text-blue">
                   <i data-lucide="award"></i> With Rubric & Citations
                 </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- How ExamCraft Works Infographic Card -->
-          <div class="pipeline-card">
-            <div class="section-header">
-              <div>
-                <h2 class="section-title">Assessment Engineering Workflow</h2>
-                <p class="section-subtitle">How ExamCraft AI transforms raw course material into vetted examinations</p>
-              </div>
-              <span class="badge badge-outline">Standard Academic Protocol</span>
-            </div>
-
-            <div class="pipeline-grid">
-              <div class="pipeline-step">
-                <div class="pipeline-badge">01</div>
-                <div class="pipeline-icon"><i data-lucide="upload-cloud"></i></div>
-                <h4>Upload Materials</h4>
-                <p>Syllabus PDFs, lecture notes & previous question papers. Extracted client-side with PDF.js.</p>
-              </div>
-              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
-
-              <div class="pipeline-step">
-                <div class="pipeline-badge">02</div>
-                <div class="pipeline-icon"><i data-lucide="sliders"></i></div>
-                <h4>Configure Blueprint</h4>
-                <p>Define question groups, marks allocation, difficulty splits, and syllabus unit weights with live validation.</p>
-              </div>
-              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
-
-              <div class="pipeline-step">
-                <div class="pipeline-badge">03</div>
-                <div class="pipeline-icon"><i data-lucide="sparkles"></i></div>
-                <h4>Generate Questions</h4>
-                <p>Draft balanced questions linked directly to source paragraphs with Bloom's taxonomy tags.</p>
-              </div>
-              <div class="pipeline-divider"><i data-lucide="arrow-right"></i></div>
-
-              <div class="pipeline-step">
-                <div class="pipeline-badge">04</div>
-                <div class="pipeline-icon"><i data-lucide="clipboard-check"></i></div>
-                <h4>Review & Export</h4>
-                <p>Faculty approves marking rubrics, edits model answers, and exports clean paper & confidential key separately.</p>
               </div>
             </div>
           </div>
@@ -428,10 +1000,7 @@
                         <p class="card-subtitle">Upload your course syllabus (PDF, TXT) or paste curriculum topics to establish the grounded knowledge base.</p>
                       </div>
                       <div class="d-flex align-center gap-2">
-                        <button class="btn btn-sm btn-outline-secondary" id="btnUseStandardCurriculum" title="Load standard university curriculum structure">
-                          <i data-lucide="book-open"></i>
-                          <span>Curriculum Template</span>
-                        </button>
+                        
                         <button class="btn btn-sm btn-outline-primary" id="btnTogglePasteSyllabus">
                           <i data-lucide="edit-3"></i>
                           <span>Paste / Type Syllabus</span>
@@ -445,7 +1014,7 @@
                         <strong>Paste Course Syllabus / Modules Text:</strong>
                         <span class="text-muted">Extracts units and topics automatically</span>
                       </label>
-                      <textarea id="pastedSyllabusText" class="form-control" rows="6" placeholder="Paste your course units, learning objectives, and topics here...&#10;e.g.&#10;UNIT 1: Introduction to Data Security...&#10;UNIT 2: Symmetric and Asymmetric Cryptography..."></textarea>
+                      <textarea id="pastedSyllabusText" class="form-control" rows="6" placeholder="Paste your course units, learning objectives, and topics here...&#10;e.g.&#10;UNIT 1: Core Principles and Foundations...&#10;UNIT 2: Applied Architecture and Methodologies..."></textarea>
                       <div class="d-flex justify-end gap-2 mt-2">
                         <button class="btn btn-sm btn-primary" id="btnApplyPastedSyllabus">
                           <i data-lucide="check"></i> Apply Syllabus Text
@@ -461,7 +1030,7 @@
                           <i data-lucide="upload-cloud"></i>
                         </div>
                         <h4>Drop syllabus file here, or <span class="text-primary underline">browse</span></h4>
-                        <p class="dropzone-sub">Supports PDF (text-extractable via PDF.js), TXT, and DOCX • Up to 25MB</p>
+                        <p class="dropzone-sub">Supports PDF, TXT, and DOCX • Up to 25MB</p>
                       </div>
                     </div>
 
@@ -470,7 +1039,7 @@
                       <i data-lucide="scan"></i>
                       <div class="alert-content">
                         <strong>Scanned Document Detected (No Digital Text Layer)</strong>
-                        <p>This PDF contains scanned image pages. ExamCraft AI can run client-side Optical Character Recognition (OCR) to extract curriculum text, units, and learning objectives.</p>
+                        <p>This PDF contains scanned image pages. ExamCraft AI can run Optical Character Recognition (OCR) to extract curriculum text, units, and learning objectives.</p>
                         <div class="alert-action-buttons mt-2 d-flex flex-wrap gap-2">
                           <button class="btn btn-xs btn-primary" id="btnRunOcrRecovery">
                             <i data-lucide="scan-line"></i>
@@ -492,7 +1061,7 @@
                         </div>
                         <div class="ocr-progress-meta">
                           <h5 id="ocrProgressTitle">Running Optical Character Recognition (OCR)...</h5>
-                          <p id="ocrProgressSub">Rendering PDF pages to canvas and scanning text via Tesseract.js engine</p>
+                          <p id="ocrProgressSub">Extracting curriculum text and learning objectives from document</p>
                         </div>
                         <div class="ocr-progress-pct" id="ocrProgressPct">0%</div>
                       </div>
@@ -500,7 +1069,7 @@
                         <div class="progress-bar-fill" id="ocrProgressBar" style="width: 0%"></div>
                       </div>
                       <div class="ocr-status-footer">
-                        <span id="ocrStatusMsg">Initializing Tesseract OCR worker...</span>
+                        <span id="ocrStatusMsg">Extracting text...</span>
                         <button class="btn btn-xs btn-outline-danger" id="btnCancelOcr">Cancel OCR</button>
                       </div>
                     </div>
@@ -540,6 +1109,24 @@
                       <pre class="extracted-text" id="extractedTextContent"></pre>
                     </div>
 
+                    <!-- Detected Syllabus Units & Topics Verification (Editable before generation) -->
+                    <div class="card mb-4 hidden" id="syllabusStructureCard" style="background: rgba(240, 253, 250, 0.6); border: 1px solid rgba(13, 148, 136, 0.3);">
+                      <div class="card-header-flex">
+                        <div>
+                          <h4 class="card-title text-emerald" style="display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="check-check"></i> 2. Verify Syllabus Units & Topics
+                          </h4>
+                          <p class="card-subtitle">ExamCraft AI extracted the following curriculum units and topics. Review, edit titles, or add topics before constructing the blueprint.</p>
+                        </div>
+                        <button class="btn btn-xs btn-outline-primary" id="btnAddUnitToStructure">
+                          <i data-lucide="plus"></i> Add Unit
+                        </button>
+                      </div>
+
+                      <div id="syllabusUnitsListContainer" class="d-flex flex-column gap-3 mt-3">
+                        <!-- Populated dynamically via JS -->
+                      </div>
+                    </div>
                   </div>
 
                   <!-- Optional Reference Notes & Past Papers Upload -->
@@ -827,6 +1414,40 @@
                 </div>
               </div>
 
+              <!-- Assessment Generation Plan (Slot-by-Slot Curriculum Mapping) -->
+              <div class="card mb-4" id="assessmentPlanCard">
+                <div class="card-header-flex">
+                  <div>
+                    <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
+                      <i data-lucide="clipboard-list" class="text-primary"></i> Assessment Generation Plan
+                    </h3>
+                    <p class="card-subtitle">Review planned question slots, mapped curriculum topics, question types, and marks. Every slot targets a distinct topic to eliminate repeats.</p>
+                  </div>
+                  <button class="btn btn-xs btn-outline-secondary" id="btnRefreshPlan">
+                    <i data-lucide="refresh-cw"></i> Recalculate Plan
+                  </button>
+                </div>
+
+                <div class="table-responsive mt-3" style="max-height: 380px; overflow-y: auto;">
+                  <table class="table" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                    <thead>
+                      <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                        <th style="padding: 8px 12px;">Slot #</th>
+                        <th style="padding: 8px 12px;">Section</th>
+                        <th style="padding: 8px 12px;">Unit</th>
+                        <th style="padding: 8px 12px;">Target Syllabus Topic</th>
+                        <th style="padding: 8px 12px;">Question Type</th>
+                        <th style="padding: 8px 12px;">Marks</th>
+                        <th style="padding: 8px 12px;">Cognitive Demand</th>
+                      </tr>
+                    </thead>
+                    <tbody id="assessmentPlanTableBody">
+                      <!-- Populated dynamically via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
               <!-- Generation Trigger / Loading Container -->
               <div class="generation-card" id="generationTriggerCard">
                 <div class="gen-graphic">
@@ -991,7 +1612,7 @@
                     <h3 class="card-title"><i data-lucide="printer"></i> Academic PDF Export Suite</h3>
                     <p class="card-subtitle">Separate, cleanly formatted downloads for student question paper and confidential faculty marking key.</p>
                   </div>
-                  <span class="badge badge-primary">Audit-Ready jsPDF</span>
+                  <span class="badge badge-primary">Official Academic Format</span>
                 </div>
 
                 <div class="export-cards-grid">
@@ -1067,7 +1688,7 @@
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">My Question Papers</h2>
-              <p class="section-subtitle">Manage, duplicate, edit, and export saved examination papers stored in local persistence.</p>
+              <p class="section-subtitle">Manage, duplicate, edit, and export saved examination papers saved to your faculty account.</p>
             </div>
             <button class="btn btn-primary" id="btnCreateFromPapersView">
               <i data-lucide="plus"></i> Create New Paper
@@ -1119,7 +1740,7 @@
 
           <div class="persistence-notice">
             <i data-lucide="shield-check"></i>
-            <span>All generated assessment drafts and approved question papers are securely saved to your local faculty workspace.</span>
+            <span>All generated assessment drafts and approved question papers are securely saved to your faculty account.</span>
           </div>
 
         </section>
@@ -1352,9 +1973,9 @@
               <div class="d-flex justify-between align-center mb-3">
                 <h4 style="font-size: 15px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px;">
                   <i data-lucide="layers" class="text-cyan" style="width: 18px; height: 18px;"></i>
-                  Assessment Item Modalities
+                  Question Types Breakdown
                 </h4>
-                <span class="badge badge-subtle">Formative & Summative</span>
+                <span class="badge badge-subtle">Curriculum Formats</span>
               </div>
               <div id="analyticsTypeContainer" style="display: flex; flex-direction: column; gap: 12px;">
                 <!-- Filled via JS -->
@@ -1566,7 +2187,7 @@
               
               <div class="form-group mb-3">
                 <label for="setTeacherName">Faculty Name & Title</label>
-                <input type="text" id="setTeacherName" class="form-control" value="Dr. Sarah Jenkins">
+                <input type="text" id="setTeacherName" class="form-control" value="Faculty Member">
               </div>
 
               <div class="form-group mb-3">
@@ -1677,21 +2298,21 @@
 
       <div class="modal-body">
         <div class="evidence-meta-pill mb-3">
-          <span class="badge badge-emerald" id="evidenceDocName">CS402_Data_Security_Syllabus.pdf</span>
-          <span class="badge badge-subtle" id="evidenceUnit">Unit 2: Symmetric & Asymmetric Encryption</span>
-          <span class="badge badge-outline" id="evidenceSection">Section 2.3 • Page 14</span>
+          <span class="badge badge-emerald" id="evidenceDocName">Syllabus Document</span>
+          <span class="badge badge-subtle" id="evidenceUnit">Curriculum Unit</span>
+          <span class="badge badge-outline" id="evidenceSection">Page / Section Reference</span>
         </div>
 
         <div class="evidence-box">
           <h6><i data-lucide="quote"></i> Exact Source Excerpt in Syllabus:</h6>
           <blockquote id="evidenceExcerptText">
-            "Symmetric cryptosystems rely on a shared private key for confidentiality. Modes of operation including CBC (Cipher Block Chaining) require an initialization vector (IV) to prevent replay and pattern leaks. Asymmetric cryptography (RSA, ECC) addresses key distribution challenges by utilizing mathematically linked public and private key pairs."
+            "Syllabus source citation will appear here upon question review."
           </blockquote>
         </div>
 
         <div class="evidence-reasoning mt-3">
           <h6><i data-lucide="check-circle"></i> Cognitive Alignment & Verification:</h6>
-          <p id="evidenceReasoning">The generated question directly verifies student comprehension of initialization vectors and cipher block modes as outlined in syllabus learning objective LO2.1.</p>
+          <p id="evidenceReasoning">Cognitive alignment with curriculum objective.</p>
         </div>
       </div>
 
@@ -1787,7 +2408,7 @@
 
         <div class="form-group mb-3">
           <label for="modalQKeyConcepts">Key Concepts & Keywords (Comma-separated)</label>
-          <input type="text" id="modalQKeyConcepts" class="form-control" placeholder="e.g. Nonce, Initialization Vector, Avalanche Effect">
+          <input type="text" id="modalQKeyConcepts" class="form-control" placeholder="e.g. Core Principle, Architectural Foundation, Latency Optimization">
         </div>
 
         <div class="form-group mb-3">
@@ -1853,82 +2474,6 @@
     </div>
   </div>
 
-  <!-- Modal 6: Faculty Authentication & Account Access -->
-  <div class="modal-overlay hidden" id="modalAuth">
-    <div class="modal-card modal-md">
-      <div class="modal-header">
-        <div class="d-flex align-center gap-2">
-          <i data-lucide="shield-check" class="text-primary"></i>
-          <h4 class="modal-title" id="authModalTitle">Faculty Authentication</h4>
-        </div>
-        <button class="modal-close-btn" data-close-modal="modalAuth"><i data-lucide="x"></i></button>
-      </div>
-
-      <div class="modal-body">
-        <div class="auth-tabs mb-3 d-flex gap-2">
-          <button type="button" class="btn btn-sm btn-primary flex-1" id="tabAuthLogin">Sign In</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary flex-1" id="tabAuthRegister">Register New Account</button>
-        </div>
-
-        <!-- Quick 1-Click Faculty Demo Login -->
-        <div class="quick-login-banner mb-3 p-3 bg-subtle rounded-md border border-light">
-          <div class="d-flex justify-between align-center">
-            <div>
-              <strong class="text-sm">Demo / Jury Presentation Mode:</strong>
-              <p class="text-xs text-muted mb-0">One-click instant login as primary faculty account.</p>
-            </div>
-            <button type="button" class="btn btn-xs btn-primary" id="btnQuickDemoLogin">
-              <i data-lucide="zap"></i> Quick Sign In
-            </button>
-          </div>
-        </div>
-
-        <!-- Login Form -->
-        <form id="formAuthLogin">
-          <div class="form-group mb-3">
-            <label for="authLoginEmail">Institutional Email <span class="req">*</span></label>
-            <input type="email" id="authLoginEmail" class="form-control" placeholder="teacher@examcraft.ai" required>
-          </div>
-          <div class="form-group mb-3">
-            <label for="authLoginPassword">Password <span class="req">*</span></label>
-            <input type="password" id="authLoginPassword" class="form-control" placeholder="••••••••" required>
-          </div>
-          <button type="submit" class="btn btn-primary w-100" id="btnSubmitLogin">
-            <i data-lucide="log-in"></i> Sign In to Academic Suite
-          </button>
-        </form>
-
-        <!-- Register Form (Initially Hidden) -->
-        <form id="formAuthRegister" class="hidden">
-          <div class="form-group mb-2">
-            <label for="authRegName">Full Name & Title <span class="req">*</span></label>
-            <input type="text" id="authRegName" class="form-control" placeholder="Dr. Sarah Jenkins" required>
-          </div>
-          <div class="form-group mb-2">
-            <label for="authRegEmail">Institutional Email <span class="req">*</span></label>
-            <input type="email" id="authRegEmail" class="form-control" placeholder="faculty@university.edu" required>
-          </div>
-          <div class="form-group mb-2">
-            <label for="authRegDept">Department</label>
-            <input type="text" id="authRegDept" class="form-control" placeholder="Dept. of Computer Science">
-          </div>
-          <div class="form-group mb-3">
-            <label for="authRegPassword">Password (Min 6 chars) <span class="req">*</span></label>
-            <input type="password" id="authRegPassword" class="form-control" placeholder="••••••••" required minlength="6">
-          </div>
-          <button type="submit" class="btn btn-primary w-100" id="btnSubmitRegister">
-            <i data-lucide="user-plus"></i> Create Faculty Account
-          </button>
-        </form>
-      </div>
-
-      <div class="modal-footer justify-between">
-        <span class="text-xs text-muted" id="authFooterStatus">Protected by BCrypt & JWT session tokens</span>
-        <button class="btn btn-sm btn-outline-secondary" data-close-modal="modalAuth">Close</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toastContainer"></div>
 
@@ -1938,8 +2483,8 @@
     <span class="device-toast-text" id="glassDeviceToastText">Saved to this device</span>
   </div>
 
-  <!-- App REST API Client & Main Script -->
-  <script src="api.js"></script>
-  <script src="script.js"></script>
+  <!-- App REST API Client & Main Script (Versioned for Instant Cache Busting) -->
+  <script src="api.js?v=2.4"></script>
+  <script src="script.js?v=2.4"></script>
 </body>
 </html>

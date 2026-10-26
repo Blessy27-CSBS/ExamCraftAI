@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const { query, queryOne, transaction } = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
-const { processDocumentFile, chunkDocumentText } = require('../services/documentProcessor');
+const { processDocumentFile, chunkDocumentText, extractSyllabusStructure } = require('../services/documentProcessor');
 
 // Configure Multer storage
 const uploadDir = path.resolve(process.env.UPLOAD_DIR || './server/storage/uploads');
@@ -115,6 +115,8 @@ router.post('/upload', requireAuth, upload.single('document'), async (req, res) 
       `Uploaded and processed curriculum document: ${originalname} (${pageCount} pages).`
     ]);
 
+    const structure = extractSyllabusStructure(fullText, pages, originalname);
+
     res.status(201).json({
       success: true,
       message: isScanned 
@@ -127,6 +129,8 @@ router.post('/upload', requireAuth, upload.single('document'), async (req, res) 
         pageCount,
         status,
         isScanned,
+        structure,
+        fullText: fullText,
         extractedTextPreview: fullText.slice(0, 500)
       }
     });
@@ -226,6 +230,25 @@ router.delete('/:id', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Delete document error:', err);
     res.status(500).json({ success: false, error: 'Failed to delete document.' });
+  }
+});
+
+/**
+ * GET /api/documents/:id/structure
+ * Returns the extracted or custom syllabus structure (units, topics, objectives)
+ */
+router.get('/:id/structure', requireAuth, async (req, res) => {
+  try {
+    const doc = await queryOne('SELECT id, original_name, extracted_text FROM source_documents WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
+    if (!doc) {
+      return res.status(404).json({ success: false, error: 'Document not found.' });
+    }
+
+    const structure = extractSyllabusStructure(doc.extracted_text, [], doc.original_name);
+    res.json({ success: true, structure });
+  } catch (err) {
+    console.error('Get structure error:', err);
+    res.status(500).json({ success: false, error: 'Failed to extract syllabus structure.' });
   }
 });
 

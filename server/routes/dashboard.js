@@ -32,7 +32,11 @@ router.get('/metrics', requireAuth, async (req, res) => {
 
     // 6. Recent question papers
     const recentPapers = await query(`
-      SELECT id, title, subject, course_code, exam_type, total_marks, duration_minutes, status, created_at, updated_at
+      SELECT id, title, subject, course_code, course_code as courseCode,
+             exam_type, exam_type as examType,
+             total_marks, total_marks as totalMarks,
+             duration_minutes, duration_minutes as duration,
+             status, created_at, created_at as createdDate, updated_at
       FROM question_papers
       WHERE user_id = ?
       ORDER BY updated_at DESC

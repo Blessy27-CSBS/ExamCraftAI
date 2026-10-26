@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node tests/run-tests.js"
+    "test": "node tests/run-tests.js && node tests/test-known-document.js && node tests/test-ui-flow.js",
+    "test:known": "node tests/test-known-document.js",
+    "test:ui": "node tests/test-ui-flow.js",
+    "test:live": "node tests/run-live-test.js"
   },
   "keywords": [
     "education",

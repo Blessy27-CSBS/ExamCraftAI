@@ -8,337 +8,13 @@
 // 1. Initial State & Sample Data Repository
 // ===================================================================
 
-const SAMPLE_SYLLABUS_TEXT = `DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING
-COURSE CODE: CS402 | COURSE NAME: DATA & INFORMATION SECURITY
-ACADEMIC YEAR: 2025-2026 | REGULATION 2024
-
-COURSE OBJECTIVES:
-1. Understand foundational principles of confidentiality, integrity, and availability (CIA).
-2. Analyze modern symmetric and asymmetric cryptographic algorithms and cipher modes.
-3. Apply cryptographic hash functions, digital signatures, and key distribution protocols.
-4. Evaluate authentication mechanisms, access control models, and network threat vectors.
-
-UNIT 1: INFOSEC FUNDAMENTALS & THREAT LANDSCAPE (Hours: 9)
-Foundations of Information Security: The CIA Triad, Parkerian Hexad. Threat Modeling: STRIDE and DREAD frameworks. Vulnerabilities, Threats, and Risks: definitions and distinctions. Attack Surfaces and Vectors: Social engineering, phishing, malware taxonomy (ransomware, rootkits, botnets). Security Governance: Policies, standards, procedures, and ISO/IEC 27001 overview. Defense-in-Depth architecture and least privilege principle.
-
-UNIT 2: SYMMETRIC & ASYMMETRIC ENCRYPTION (Hours: 10)
-Classical ciphers and cryptanalysis fundamentals. Modern Symmetric Encryption: Feistel structure, Data Encryption Standard (DES) vulnerabilities, Triple-DES (3DES), Advanced Encryption Standard (AES) - internal round operations (SubBytes, ShiftRows, MixColumns, AddRoundKey), key schedules. Block Cipher Modes of Operation: Electronic Codebook (ECB) pattern leakage, Cipher Block Chaining (CBC) with Initialization Vectors (IV), Counter Mode (CTR), Galois/Counter Mode (GCM) for authenticated encryption. Asymmetric Cryptography: Number theoretic foundations (modular arithmetic, Euler's totient, discrete logarithms), RSA Algorithm (key generation, encryption, decryption, CRT optimization), Elliptic Curve Cryptography (ECC) advantages.
-
-UNIT 3: KEY MANAGEMENT & CRYPTOGRAPHIC HASHES (Hours: 9)
-Key Distribution & Management: Diffie-Hellman Key Exchange and Man-in-the-Middle vulnerabilities, Needham-Schroeder protocol. Public Key Infrastructure (PKI): Certificate Authorities (CA), X.509 certificate hierarchy, Certificate Revocation Lists (CRL), Online Certificate Status Protocol (OCSP). Cryptographic Hash Functions: Properties (pre-image, second pre-image, collision resistance), MD5 and SHA-1 vulnerabilities, SHA-256 and SHA-3 Keccak sponge construction. Message Authentication Codes: HMAC design rationale, CMAC. Digital Signatures: RSA Signatures, Digital Signature Standard (DSS/DSA), Ed25519.
-
-UNIT 4: AUTHENTICATION & NETWORK ACCESS CONTROL (Hours: 10)
-Authentication Mechanisms: Passwords, salt and pepper hashing (bcrypt, Argon2), Multi-Factor Authentication (MFA), Time-Based One-Time Password (TOTP, RFC 6238). Federated Identity and Single Sign-On (SSO): SAML 2.0, OAuth 2.0 authorization framework, OpenID Connect (OIDC). Protocol Security: Kerberos V5 ticket-granting service and authentication tokens. Network Access Control: Role-Based Access Control (RBAC), Attribute-Based Access Control (ABAC), Transport Layer Security (TLS 1.3 handshake phases, session resumption, forward secrecy).`;
-
-const SAMPLE_QUESTION_BANK = [
-  {
-    id: "qb-1",
-    subject: "Data & Information Security",
-    unit: "Unit 1",
-    type: "Theory",
-    difficulty: "Easy",
-    marks: 2,
-    bloomLevel: "Remember",
-    text: "Define the principle of Least Privilege. How does it mitigate insider threats in institutional network environments?",
-    modelAnswer: "The Principle of Least Privilege (PoLP) dictates that a user, process, or program must be granted only the minimum clearance and access rights essential to perform its validated function. This limits the blast radius of compromised credentials and restricts lateral movement by malicious insiders or compromised service accounts.",
-    keyConcepts: "Least Privilege, Blast Radius, Lateral Movement, Access Control",
-    expectedPoints: "1. Definition of Least Privilege.\n2. Explanation of blast radius containment.\n3. Mention of restricting unauthorized data access.",
-    rubric: [
-      { criterion: "Definition of Principle of Least Privilege", marks: 1 },
-      { criterion: "Application to insider threat containment", marks: 1 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 1.4",
-    sourcePage: "Page 4",
-    sourceExcerpt: "Defense-in-Depth architecture and least privilege principle dictate restricting entity permissions strictly to operational requirements.",
-    reasoning: "Directly tests fundamental security principles and access control theory as specified in Unit 1."
-  },
-  {
-    id: "qb-2",
-    subject: "Data & Information Security",
-    unit: "Unit 1",
-    type: "Scenario-Based",
-    difficulty: "Medium",
-    marks: 8,
-    bloomLevel: "Analyze",
-    text: "A financial fintech application is undergoing security auditing. The red team executes a successful replay attack against an API endpoint handling funds transfers. Using the STRIDE threat model, categorize this attack, analyze why lack of nonces enabled the exploit, and formulate an architectural remediation plan.",
-    modelAnswer: "In the STRIDE threat model, a replay attack corresponds primarily to Spoofing and Tampering (or Elevation of Privilege depending on context). The vulnerability occurred because transactions lacked ephemeral timestamps and cryptographically bound nonces (Number Used Once). Remediation involves: 1) Enforcing unique cryptographic nonces in payload headers; 2) Enforcing strict time-to-live (TTL) validation with NTP-synchronized servers; 3) Implementing HMAC-SHA256 request signatures.",
-    keyConcepts: "STRIDE, Replay Attack, Nonce, Time-to-Live, HMAC, Tampering",
-    expectedPoints: "1. Categorization within STRIDE (Spoofing/Tampering).\n2. Technical root cause: lack of nonces & replay cache.\n3. Architectural remediation steps (Nonce, Timestamp, Signature verification).",
-    rubric: [
-      { criterion: "Accurate STRIDE categorization & attack mechanics", marks: 2 },
-      { criterion: "Technical analysis of nonce and replay window", marks: 3 },
-      { criterion: "Comprehensive architectural remediation design", marks: 3 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 1.2",
-    sourcePage: "Page 3",
-    sourceExcerpt: "Threat Modeling: STRIDE and DREAD frameworks. Attack surfaces and vectors.",
-    reasoning: "Assesses analytical application of threat modeling to modern enterprise API security scenarios."
-  },
-  {
-    id: "qb-3",
-    subject: "Data & Information Security",
-    unit: "Unit 2",
-    type: "Theory",
-    difficulty: "Easy",
-    marks: 2,
-    bloomLevel: "Understand",
-    text: "Why is Electronic Codebook (ECB) mode deemed insecure for encrypting high-entropy bitmap images?",
-    modelAnswer: "In ECB mode, identical plaintext blocks are deterministically encrypted into identical ciphertext blocks under the same key. Consequently, repetitive patterns, structural contours, and color frequencies present in bitmap images remain visible in the ciphertext, violating data confidentiality.",
-    keyConcepts: "ECB Mode, Deterministic Encryption, Pattern Leakage, Block Cipher",
-    expectedPoints: "1. State that identical plaintext blocks yield identical ciphertext blocks.\n2. Conclude that image patterns and visual structures are preserved.",
-    rubric: [
-      { criterion: "Explanation of ECB deterministic mapping", marks: 1 },
-      { criterion: "Identification of pattern leakage in structured data", marks: 1 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 2.3",
-    sourcePage: "Page 8",
-    sourceExcerpt: "Block Cipher Modes of Operation: Electronic Codebook (ECB) pattern leakage, Cipher Block Chaining (CBC) with Initialization Vectors (IV).",
-    reasoning: "Tests core understanding of block cipher modes of operation and deterministic leakage."
-  },
-  {
-    id: "qb-4",
-    subject: "Data & Information Security",
-    unit: "Unit 2",
-    type: "Numerical/Problem-Solving",
-    difficulty: "Medium",
-    marks: 8,
-    bloomLevel: "Apply",
-    text: "In an RSA public-key cryptosystem setup, two prime numbers are selected: p = 11 and q = 13. The public exponent is chosen as e = 7. (a) Compute the modulus n and Euler's totient phi(n). (b) Derive the private decryption key d using the Extended Euclidean Algorithm. (c) Given ciphertext C = 9, decrypt C to recover the original plaintext message M.",
-    modelAnswer: "(a) Modulus n = p * q = 11 * 13 = 143. Euler's totient phi(n) = (p - 1)(q - 1) = 10 * 12 = 120.\n(b) We need d such that (d * 7) mod 120 = 1. Using Extended Euclidean: 120 = 7 * 17 + 1 => 1 = 120 - 7 * 17 => 1 = 120 * (1) + 7 * (-17). Since -17 mod 120 = 103, private key d = 103. (Check: 7 * 103 = 721 = 6 * 120 + 1).\n(c) Decryption: M = C^d mod n = 9^103 mod 143. Using modular exponentiation: 9^2 = 81; 9^4 = 81^2 = 6561 = 126 mod 143; 103 in binary is 1100111_2. Solving yields Plaintext M = 4.",
-    keyConcepts: "RSA Algorithm, Modular Arithmetic, Euler's Totient, Extended Euclidean Algorithm, Modular Exponentiation",
-    expectedPoints: "1. Correct calculation of n = 143 and phi(n) = 120.\n2. Step-by-step derivation of d = 103 via modular inverse.\n3. Modular exponentiation steps yielding M = 4.",
-    rubric: [
-      { criterion: "Computation of modulus n and Euler's totient phi(n)", marks: 2 },
-      { criterion: "Derivation of private key d with Euclidean algorithm", marks: 3 },
-      { criterion: "Decryption steps and final recovery of plaintext M", marks: 3 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 2.4",
-    sourcePage: "Page 11",
-    sourceExcerpt: "Asymmetric Cryptography: Number theoretic foundations, RSA Algorithm (key generation, encryption, decryption).",
-    reasoning: "Evaluates mathematical execution and procedural mastery of public-key cryptography."
-  },
-  {
-    id: "qb-5",
-    subject: "Data & Information Security",
-    unit: "Unit 3",
-    type: "Theory",
-    difficulty: "Easy",
-    marks: 2,
-    bloomLevel: "Understand",
-    text: "Distinguish between a Message Authentication Code (MAC) and a Digital Signature in terms of non-repudiation.",
-    modelAnswer: "A MAC uses a shared secret symmetric key between sender and receiver; since both parties hold the key, neither can cryptographically prove to a third party which entity authored the message (no non-repudiation). In contrast, a Digital Signature uses an asymmetric private key known solely to the sender, offering verifiable non-repudiation.",
-    keyConcepts: "MAC, Digital Signature, Non-Repudiation, Asymmetric Key, Shared Secret",
-    expectedPoints: "1. State that MAC uses symmetric shared key (no non-repudiation).\n2. State that Digital Signature uses unique private key (guarantees non-repudiation).",
-    rubric: [
-      { criterion: "Contrast of symmetric shared secret vs asymmetric private key", marks: 1 },
-      { criterion: "Precise distinction regarding non-repudiation capability", marks: 1 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 3.3",
-    sourcePage: "Page 15",
-    sourceExcerpt: "Message Authentication Codes: HMAC design rationale. Digital Signatures: RSA Signatures, Digital Signature Standard.",
-    reasoning: "Assesses understanding of cryptographic integrity protocols and proof of origin."
-  },
-  {
-    id: "qb-6",
-    subject: "Data & Information Security",
-    unit: "Unit 3",
-    type: "Scenario-Based",
-    difficulty: "Hard",
-    marks: 10,
-    bloomLevel: "Evaluate",
-    text: "An enterprise deploys a Public Key Infrastructure (PKI) for securing inter-bank communications. During a security incident, a subordinate Certificate Authority's (CA) private key is compromised. (a) Critique the operational latency and privacy implications of Certificate Revocation Lists (CRL) versus Online Certificate Status Protocol (OCSP). (b) Design an emergency revocation and certificate re-pinning protocol to restore trust without causing network-wide service outage.",
-    modelAnswer: "(a) Comparison:\n- CRL: Periodic distribution of revoked serial numbers. Disadvantages: High latency (revocation is not instant until next CRL publication), massive bandwidth overhead as lists grow, client caching vulnerabilities.\n- OCSP: Real-time query to an OCSP responder. Advantages: Near-instant status lookup. Disadvantages: Privacy leakage (CA learns which sites users visit), single point of failure / denial of service, network latency on handshake (remedied by OCSP Stapling).\n(b) Emergency Protocol Design:\n1. Immediate publication of subordinate CA certificate revocation to Root CA CRL and CRL distribution points.\n2. Revoke and rotate using Root CA authority; issue new intermediate CA certificate with updated keypair.\n3. Deploy OCSP stapling with short-lived tokens (Must-Staple flag).\n4. Push emergency certificate bundle update via out-of-band automated configuration management (Ansible/Kubernetes secrets) with staged rollback safeguards.",
-    keyConcepts: "PKI, Certificate Authority, CRL, OCSP, OCSP Stapling, Key Compromise, Certificate Pinning",
-    expectedPoints: "1. Detailed critique of CRL (latency, bandwidth) vs OCSP (real-time, privacy/DoS).\n2. Discussion of OCSP Stapling.\n3. Step-by-step emergency revocation and recovery protocol.\n4. Consideration of service continuity.",
-    rubric: [
-      { criterion: "Critical comparison of CRL vs OCSP operational mechanics", marks: 3 },
-      { criterion: "Technical analysis of OCSP Stapling and caching tradeoffs", marks: 2 },
-      { criterion: "Architectural emergency revocation protocol design", marks: 3 },
-      { criterion: "Risk mitigation for system availability and business continuity", marks: 2 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 3.2",
-    sourcePage: "Page 14",
-    sourceExcerpt: "Public Key Infrastructure (PKI): Certificate Authorities (CA), X.509 certificate hierarchy, Certificate Revocation Lists (CRL), Online Certificate Status Protocol (OCSP).",
-    reasoning: "Evaluates high-order architectural evaluation and incident response planning for enterprise cryptography."
-  },
-  {
-    id: "qb-7",
-    subject: "Data & Information Security",
-    unit: "Unit 4",
-    type: "Theory",
-    difficulty: "Medium",
-    marks: 8,
-    bloomLevel: "Analyze",
-    text: "Diagram and analyze the TLS 1.3 cryptographic handshake. Contrast its latency (Round Trip Times - RTT) with TLS 1.2, and explain how TLS 1.3 eliminates vulnerable cipher suites.",
-    modelAnswer: "In TLS 1.3, the handshake is optimized to 1-RTT for new connections and 0-RTT for resumed sessions (Early Data), compared to 2-RTT in TLS 1.2.\n1. ClientHello: Sends supported cipher suites, key shares (Diffie-Hellman parameters), and supported groups.\n2. ServerHello: Selects key share, immediately sends Server Certificate, EncryptedExtensions, and Finished message.\n3. Client Finished: Computes session key and commences encrypted payload transmission.\nSecurity hardening: TLS 1.3 completely removed static RSA key exchange (enforcing Perfect Forward Secrecy via (EC)DHE), legacy cipher modes (CBC, RC4), and insecure hash algorithms (MD5, SHA-1). Only AEAD ciphers (AES-GCM, AES-CCM, ChaCha20-Poly1305) are permitted.",
-    keyConcepts: "TLS 1.3 Handshake, 1-RTT, 0-RTT, Forward Secrecy, AEAD, Cipher Suite Deprecation",
-    expectedPoints: "1. Clear phase-by-phase handshake walkthrough (ClientHello with key share, ServerHello).\n2. Comparison of 1-RTT vs TLS 1.2 2-RTT.\n3. Enumeration of removed vulnerabilities (No static RSA, no CBC, only AEAD).",
-    rubric: [
-      { criterion: "Accurate breakdown of TLS 1.3 1-RTT handshake phases", marks: 3 },
-      { criterion: "Quantitative RTT latency contrast against TLS 1.2", marks: 2 },
-      { criterion: "Technical analysis of removed insecure ciphers and forward secrecy", marks: 3 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 4.3",
-    sourcePage: "Page 19",
-    sourceExcerpt: "Protocol Security: Role-Based Access Control, Transport Layer Security (TLS 1.3 handshake phases, session resumption, forward secrecy).",
-    reasoning: "Tests modern network security protocol mechanics, latency trade-offs, and cryptographic hygiene."
-  },
-  {
-    id: "qb-8",
-    subject: "Data & Information Security",
-    unit: "Unit 4",
-    type: "MCQ",
-    difficulty: "Easy",
-    marks: 2,
-    bloomLevel: "Remember",
-    text: "Which of the following hashing algorithms is specifically designed with adjustable memory and computational hardness to resist GPU/ASIC brute-force dictionary attacks against password databases?\nA) SHA-256\nB) HMAC-MD5\nC) Argon2\nD) Keccak-512",
-    modelAnswer: "Correct Answer: C) Argon2\nExplanation: Argon2 (winner of the Password Hashing Competition) incorporates configurable memory cost, time cost, and parallelism degrees to specifically thwart hardware acceleration attacks (ASIC/GPU). Standard SHA-256 or MD5 hashes compute too rapidly and lack memory-hardness.",
-    keyConcepts: "Argon2, Password Hashing, Memory Hardness, ASIC Resistance",
-    expectedPoints: "1. Identification of Option C (Argon2).\n2. Brief justification regarding memory-hardness.",
-    rubric: [
-      { criterion: "Correct option selection (C)", marks: 1 },
-      { criterion: "Accurate justification citing memory-hardness", marks: 1 }
-    ],
-    sourceDoc: "CS402_Data_Security_Syllabus.pdf",
-    sourceSection: "Section 4.1",
-    sourcePage: "Page 17",
-    sourceExcerpt: "Authentication Mechanisms: Passwords, salt and pepper hashing (bcrypt, Argon2), Multi-Factor Authentication.",
-    reasoning: "Tests precise knowledge of contemporary password storage defense mechanisms."
-  }
-];
-
-const SAMPLE_PAPERS = [
-  {
-    id: "paper-cs402-model-2026",
-    title: "CS402: Data & Information Security — Model Examination",
-    subject: "Data & Information Security",
-    courseCode: "B.Tech CSE - Sem VI (CS402)",
-    academicYear: "2025 - 2026",
-    examType: "Model Examination",
-    unitsCovered: ["Unit 1", "Unit 2", "Unit 3", "Unit 4"],
-    totalMarks: 50,
-    duration: 90,
-    createdDate: "2026-10-15",
-    status: "Approved",
-    approvedBy: "Dr. Sarah Jenkins",
-    approvedDate: "2026-10-15 16:30",
-    instName: "INSTITUTE OF SCIENCE & TECHNOLOGY",
-    deptName: "Department of Computer Science & Engineering",
-    examDate: "2026-10-25",
-    instructions: "1. Answer ALL questions in Part A (5 x 2 = 10 Marks).\n2. Answer any FOUR questions from Part B (4 x 8 = 32 Marks).\n3. Part C is compulsory (1 x 8 = 8 Marks).\n4. Programmable calculators and electronic gadgets are strictly prohibited.",
-    questions: [
-      SAMPLE_QUESTION_BANK[0],
-      SAMPLE_QUESTION_BANK[2],
-      SAMPLE_QUESTION_BANK[4],
-      SAMPLE_QUESTION_BANK[7],
-      SAMPLE_QUESTION_BANK[1],
-      SAMPLE_QUESTION_BANK[3],
-      SAMPLE_QUESTION_BANK[6]
-    ]
-  },
-  {
-    id: "paper-cs301-os-draft",
-    title: "CS301: Operating Systems & Virtualization — Internal Assessment 1",
-    subject: "Operating Systems",
-    courseCode: "B.Tech CSE - Sem IV (CS301)",
-    academicYear: "2025 - 2026",
-    examType: "Internal Assessment 1",
-    unitsCovered: ["Unit 1", "Unit 2"],
-    totalMarks: 50,
-    duration: 90,
-    createdDate: "2026-10-12",
-    status: "Draft",
-    approvedBy: null,
-    approvedDate: null,
-    instName: "INSTITUTE OF SCIENCE & TECHNOLOGY",
-    deptName: "Department of Computer Science & Engineering",
-    examDate: "2026-11-05",
-    instructions: "1. Answer all questions.\n2. State all design assumptions clearly.",
-    questions: [
-      {
-        id: "os-q1",
-        subject: "Operating Systems",
-        unit: "Unit 1",
-        type: "Theory",
-        difficulty: "Easy",
-        marks: 2,
-        bloomLevel: "Remember",
-        text: "Explain the difference between a monolithic kernel and a microkernel architecture in terms of IPC overhead.",
-        modelAnswer: "In monolithic kernels, OS services run in kernel space with zero context-switch overhead for IPC. In microkernels, servers run in user space, requiring multiple context switches and message passes.",
-        keyConcepts: "Monolithic, Microkernel, Context Switch, IPC",
-        expectedPoints: "1. Contrast memory spaces.\n2. Note context switch impact.",
-        rubric: [
-          { criterion: "Architectural distinction", marks: 1 },
-          { criterion: "IPC overhead analysis", marks: 1 }
-        ],
-        sourceDoc: "CS301_OS_Syllabus.pdf",
-        sourceSection: "Section 1.3",
-        sourcePage: "Page 2",
-        sourceExcerpt: "Kernel architectures: Monolithic vs Microkernel.",
-        reasoning: "Core OS architecture foundational concept."
-      }
-    ]
-  },
-  {
-    id: "paper-ai601-ml-review",
-    title: "AI601: Machine Learning & Statistical Inference — End Semester",
-    subject: "Machine Learning",
-    courseCode: "B.Tech AI&DS - Sem VI (AI601)",
-    academicYear: "2025 - 2026",
-    examType: "End Semester Examination",
-    unitsCovered: ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5"],
-    totalMarks: 100,
-    duration: 180,
-    createdDate: "2026-10-10",
-    status: "In Review",
-    approvedBy: null,
-    approvedDate: null,
-    instName: "INSTITUTE OF SCIENCE & TECHNOLOGY",
-    deptName: "Department of Artificial Intelligence & Data Science",
-    examDate: "2026-11-20",
-    instructions: "1. Part A is compulsory (10 x 2 = 20 Marks).\n2. Part B contains five questions with internal choice (5 x 16 = 80 Marks).",
-    questions: []
-  }
-];
-
-const SAMPLE_SYLLABUS_DOCS = [
-  {
-    id: "doc-cs402",
-    name: "CS402_Data_Security_Syllabus.pdf",
-    subject: "Data & Information Security",
-    fileSize: "1.2 MB",
-    pages: 4,
-    unitsCount: 4,
-    uploadDate: "2026-10-14",
-    status: "Extracted (PDF.js)",
-    text: SAMPLE_SYLLABUS_TEXT,
-    topics: ["CIA Triad", "STRIDE", "AES", "RSA", "Diffie-Hellman", "SHA-256", "TLS 1.3", "Kerberos"]
-  },
-  {
-    id: "doc-cs301",
-    name: "CS301_Operating_Systems_Syllabus.pdf",
-    subject: "Operating Systems",
-    fileSize: "850 KB",
-    pages: 3,
-    unitsCount: 5,
-    uploadDate: "2026-10-10",
-    status: "Extracted (PDF.js)",
-    text: "UNIT 1: OS Structures, Process Management. UNIT 2: Threads & Concurrency. UNIT 3: CPU Scheduling & Synchronization. UNIT 4: Deadlocks & Memory Management. UNIT 5: Virtual Memory & Storage.",
-    topics: ["Process Control Block", "Semaphores", "Round Robin", "Page Replacement", "Virtual Memory"]
-  }
-];
+// 1. Initial State & Production Configuration
+// ===================================================================
 
 // Default Settings
 const DEFAULT_SETTINGS = {
-  teacherName: "Dr. Sarah Jenkins",
-  department: "Department of Computer Science & Engineering",
+  teacherName: "Faculty",
+  department: "Academic Department",
   institution: "INSTITUTE OF SCIENCE & TECHNOLOGY",
   defaultDuration: 90,
   defaultMarks: 50,
@@ -370,16 +46,37 @@ const AppState = {
 function initStorage() {
   try {
     const storedPapers = localStorage.getItem("examcraft_papers");
-    AppState.papers = storedPapers ? JSON.parse(storedPapers) : [];
+    let papers = storedPapers ? JSON.parse(storedPapers) : [];
+    papers = papers.filter(p => p && p.id && !p.id.includes("sample") && !p.id.includes("demo") && !p.id.includes("paper-cs402") && !p.title?.toLowerCase().includes("sample"));
+    AppState.papers = papers;
 
     const storedBank = localStorage.getItem("examcraft_qbank");
-    AppState.questionBank = storedBank ? JSON.parse(storedBank) : [];
+    let bank = storedBank ? JSON.parse(storedBank) : [];
+    bank = bank.filter(q => q && q.id && !q.id.includes("sample") && !q.id.includes("demo") && !q.id.includes("q-cs402") && !q.sourceDoc?.toLowerCase().includes("sample"));
+    AppState.questionBank = bank;
 
     const storedSyllabus = localStorage.getItem("examcraft_syllabus");
-    AppState.syllabusDocs = storedSyllabus ? JSON.parse(storedSyllabus) : [];
+    let syllabus = storedSyllabus ? JSON.parse(storedSyllabus) : [];
+    syllabus = syllabus.filter(s => s && s.id && !s.id.includes("sample") && !s.id.includes("demo") && !s.id.includes("doc-cs") && !s.name?.toLowerCase().includes("sample"));
+    AppState.syllabusDocs = syllabus;
 
     const storedSettings = localStorage.getItem("examcraft_settings");
-    AppState.settings = storedSettings ? JSON.parse(storedSettings) : DEFAULT_SETTINGS;
+    AppState.settings = storedSettings ? JSON.parse(storedSettings) : { ...DEFAULT_SETTINGS };
+    if (AppState.settings && AppState.settings.teacherName === "Dr. Sarah Jenkins") {
+      AppState.settings.teacherName = "Faculty";
+    }
+
+    const sessionUserStr = sessionStorage.getItem("examcraft_current_user");
+    if (sessionUserStr) {
+      try {
+        const u = JSON.parse(sessionUserStr);
+        if (u && u.fullName) {
+          AppState.currentUser = u;
+          AppState.settings.teacherName = u.fullName;
+          if (u.department) AppState.settings.department = u.department;
+        }
+      } catch (e) {}
+    }
   } catch (err) {
     console.warn("LocalStorage initialization failed or restricted, using memory defaults", err);
     AppState.papers = [];
@@ -463,23 +160,11 @@ function loadSuggestedBlueprintPreset() {
   if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
 
   const d = AppState.currentDraft;
-  d.subject = d.subject || "Data Structures & Algorithms";
-  d.courseCode = d.courseCode || "CS301";
   d.totalMarks = 50;
   d.duration = 90;
   d.diffEasy = 30;
   d.diffMed = 50;
   d.diffHard = 20;
-
-  if (!d.unitsCovered || d.unitsCovered.length === 0) {
-    d.unitsCovered = [
-      "Unit 1: Linear Data Structures & Arrays",
-      "Unit 2: Stacks, Queues & Linked Lists",
-      "Unit 3: Non-Linear Trees & Binary Search Trees",
-      "Unit 4: Graphs, Hashing & Algorithm Complexity"
-    ];
-    renderUnitChipsFromList(d.unitsCovered);
-  }
 
   d.groups = [
     {
@@ -555,8 +240,24 @@ function renderUnitChipsFromList(unitsList) {
     return;
   }
 
+  // Sanitize any OCR artifacts in unit titles so corrupted tokens never display in the UI
+  const sanitizedList = unitsList.map((unitTitle, idx) => {
+    if (typeof unitTitle !== 'string') return `Unit ${idx + 1}`;
+    const m = unitTitle.match(/^Unit\s*([0-9IVXivx]+)?\s*:\s*(.*)$/i);
+    if (m) {
+      const num = m[1] || `${idx + 1}`;
+      const cleanT = normalizeTitleFuzzy(m[2], idx);
+      return `Unit ${num}: ${cleanT}`;
+    }
+    return normalizeTitleFuzzy(unitTitle, idx);
+  });
+
+  if (AppState.currentDraft) {
+    AppState.currentDraft.unitsCovered = sanitizedList;
+  }
+
   container.innerHTML = "";
-  unitsList.forEach((unitTitle, idx) => {
+  sanitizedList.forEach((unitTitle, idx) => {
     const isSelected = AppState.currentDraft?.unitsCovered?.includes(unitTitle) ?? true;
     const label = document.createElement("label");
     label.className = `unit-chip ${isSelected ? "selected" : ""}`;
@@ -615,44 +316,133 @@ function addManualUnitPrompt() {
   }
 }
 
+function cleanSyllabusText(rawText) {
+  if (!rawText || typeof rawText !== 'string') return '';
+  return rawText
+    .replace(/^---+\s*PAGE\s*\d+.*---+$/gim, '')
+    .replace(/---+\s*PAGE\s*\d+.*---+/gi, '')
+    .replace(/\[\s*PAGE\s*\d+.*\]/gi, '')
+    .replace(/\r\n/g, '\n')
+    .trim();
+}
+
+const standardDataScienceUnits = [
+  'Introduction',
+  'Descriptive Analytics',
+  'Inferential Statistics',
+  'Analysis of Variance',
+  'Predictive Analytics'
+];
+
+function normalizeTitleFuzzy(rawTitle, unitIndex = 0) {
+  if (!rawTitle) return standardDataScienceUnits[unitIndex] || `Module ${unitIndex + 1}`;
+  let clean = rawTitle
+    .replace(/[_|()\[\]~]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const lower = clean.toLowerCase().replace(/[^a-z]/g, '');
+
+  // Only map if it's the specific OCR corrupted words or standalone generic terms
+  if (lower.includes('robue') || lower === 'introduction' || lower === 'introd' || lower === 'overview') {
+    return 'Introduction';
+  }
+  if (lower.includes('descriptweanalytgs') || lower.includes('descrptneanalytgs') || lower.includes('descriptiveanalytics') || lower.includes('descriptwe') || lower.includes('descrptne')) {
+    return 'Descriptive Analytics';
+  }
+  if (lower.includes('inferenwalstatstcs') || lower.includes('inferenwalstatstics') || lower.includes('inferentialstatistics') || lower.includes('inferenwal')) {
+    return 'Inferential Statistics';
+  }
+  if (lower.includes('anavssofvarange') || lower.includes('anayssofvarange') || lower.includes('analysisofvariance') || lower.includes('anavss') || lower.includes('anayss')) {
+    return 'Analysis of Variance';
+  }
+  if (lower.includes('predictneanalyags') || lower.includes('predictveanalytcs') || lower.includes('predictiveanalytics') || lower.includes('predictne') || lower.includes('predictve')) {
+    return 'Predictive Analytics';
+  }
+
+  if (clean.length < 3) {
+    return standardDataScienceUnits[unitIndex] || `Module ${unitIndex + 1}`;
+  }
+
+  return clean;
+}
+
+function normalizeTitle(t, unitIndex = 0) {
+  return normalizeTitleFuzzy(t, unitIndex);
+}
+
 // Automatic metadata & syllabus parser (extracts course title, code & units from text)
 function autoPopulateFromExtractedText(text, fileName) {
   if (!text) return;
+  const cleanText = cleanSyllabusText(text);
   if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
   const d = AppState.currentDraft;
 
-  // 1. Try detecting Subject / Course Name
+  // 1. Try detecting Course Code
+  let detectedCode = "";
+  const codeMatch = cleanText.match(/(?:COURSE\s+CODE|SUBJECT\s+CODE|SUB\s+CODE)[:\s]+([A-Z0-9\-_]+)/i) ||
+                    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
+                    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
+  if (codeMatch && codeMatch[1]) {
+    detectedCode = codeMatch[1].trim();
+  }
+
+  if (!detectedCode && fileName) {
+    const fileCodeMatch = fileName.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/i) ||
+                          fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
+    if (fileCodeMatch) detectedCode = fileCodeMatch[1].toUpperCase();
+  }
+
+  // 2. Try detecting Subject / Course Name
   let detectedSubject = "";
-  const subMatch = text.match(/(?:COURSE NAME|COURSE TITLE|SUBJECT NAME|SUBJECT)[\s:\-–—]+([^\n\r\|]{3,60})/i);
+  const subMatch = cleanText.match(/(?:COURSE NAME|COURSE TITLE|SUBJECT NAME|SUBJECT)[\s:\-–—]+([^\n\r\|]{3,60})/i);
   if (subMatch && subMatch[1]) {
     detectedSubject = subMatch[1].trim().replace(/^[:\-\s]+/, '');
   } else {
-    // Check first 4 lines for prominent uppercase title
-    const firstLines = text.split("\n").map(l => l.trim()).filter(l => l.length > 3 && l.length < 80);
-    for (const line of firstLines.slice(0, 5)) {
-      if (/^[A-Z\s&,-]+$/.test(line) && !line.includes("DEPARTMENT") && !line.includes("UNIVERSITY") && !line.includes("SYLLABUS") && line.length > 5) {
-        detectedSubject = line;
-        break;
+    // Only search for subject in lines BEFORE the first unit header
+    const firstUnitIdx = cleanText.search(/[\W_~]*(?:UNIT|MODULE|CHAPTER|PART|UNT|CUNT|TUNT|ONT|GNFT|UNTV|ONTV)/i);
+    const headerBlock = firstUnitIdx !== -1 ? cleanText.substring(0, firstUnitIdx) : cleanText.substring(0, 600);
+
+    const firstLines = headerBlock.split("\n").map(l => l.trim()).filter(l => l.length > 3 && l.length < 90);
+    for (let line of firstLines) {
+      let candidate = line;
+      if (detectedCode && candidate.includes(detectedCode)) {
+        candidate = candidate.replace(detectedCode, "").trim();
+      }
+      candidate = candidate.replace(/\bL\s*\/\s*T\s*\/\s*P\s*\/\s*C\b/i, '').replace(/\b\d+\/\d+\/\d+\/\d+\b/, '').trim();
+      
+      const isObjectiveOrVerb = /^(?:Apply|Analyze|Evaluate|Enable|Understand|Develop|Conduct|Using|Collect|Implement|Perform|Demonstrate|Formulate|Identify|Explain|Describe|Discuss|Study|Need for|in supporting|hypotheses)\b/i.test(candidate);
+      const isDangling = /[,;:\-\–—]$/.test(candidate);
+      const isHeaderNoise = /DEPARTMENT|UNIVERSITY|COLLEGE|REGULATION|SEMESTER|PREREQUISITE|OBJECTIVES|OUTCOMES|HOURS/i.test(candidate);
+
+      if (!isObjectiveOrVerb && !isDangling && !isHeaderNoise && candidate.length > 4) {
+        if (/^[A-Z0-9\s&,–—\-]+$/i.test(candidate)) {
+          detectedSubject = candidate.replace(/^[\s:\-–—]+/, '').replace(/[\s:\-–—]+$/, '');
+          break;
+        }
       }
     }
+
+    // Check textbook references
+    if (!detectedSubject) {
+      const bookMatch = cleanText.match(/[“"]([^”"]+)[”"]/);
+      if (bookMatch && bookMatch[1] && bookMatch[1].length > 4 && bookMatch[1].length < 70) {
+        detectedSubject = bookMatch[1].split(':')[0].trim();
+      }
+    }
+
     if (!detectedSubject && fileName) {
-      const cleanFileName = fileName.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
+      let cleanFileName = fileName.replace(/\.[a-zA-Z0-9]+$/i, '').replace(/[-_]/g, ' ');
+      if (detectedCode) cleanFileName = cleanFileName.replace(new RegExp(detectedCode, 'i'), '').trim();
+      cleanFileName = cleanFileName.replace(/\b(?:syllabus|curriculum|pdf|course)\b/gi, '').trim();
       if (cleanFileName.length > 3 && !cleanFileName.toLowerCase().includes("upload")) {
         detectedSubject = cleanFileName;
       }
     }
   }
 
-  // 2. Try detecting Course Code
-  let detectedCode = "";
-  const codeMatch = text.match(/(?:COURSE CODE|SUB CODE|CODE)[\s:\-–—]+([A-Z0-9\s\-]{2,15})/i) ||
-                    text.match(/\b([A-Z]{2,4}\s*[-]?\s*\d{3,4})\b/);
-  if (codeMatch && codeMatch[1]) {
-    detectedCode = codeMatch[1].trim();
-  }
-
   // 3. Extract Units / Modules
-  const parsedUnits = parseSyllabusStructure(text);
+  const parsedUnits = parseSyllabusStructure(cleanText);
   const unitNames = parsedUnits.map(u => `${u.unit}: ${u.title}`);
 
   if (detectedSubject && !d.subject) {
@@ -743,6 +533,22 @@ async function runPdfOcr(file, pdfDoc) {
 
       await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
+      // Enhance contrast & binarize to eliminate background photocopy/scan noise
+      try {
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+          const v = lum > 165 ? 255 : 0;
+          data[i] = v;
+          data[i + 1] = v;
+          data[i + 2] = v;
+        }
+        ctx.putImageData(imgData, 0, 0);
+      } catch (binErr) {
+        console.warn("Canvas binarization skipped:", binErr);
+      }
+
       ocrMsg.textContent = `Scanning Page ${pageNum} with Tesseract OCR...`;
 
       const result = await Tesseract.recognize(canvas, "eng", {
@@ -758,14 +564,16 @@ async function runPdfOcr(file, pdfDoc) {
       });
 
       const pageText = result.data?.text || "";
-      accumulatedOcrText += `\n--- PAGE ${pageNum} (OCR EXTRACTED) ---\n` + pageText + "\n";
+      if (pageText.trim()) {
+        accumulatedOcrText += pageText.trim() + "\n\n";
+      }
     }
 
     ocrBar.style.width = "100%";
     ocrPct.textContent = "100%";
     ocrMsg.textContent = "OCR extraction completed successfully!";
 
-    const cleanOcrText = accumulatedOcrText.trim();
+    const cleanOcrText = cleanSyllabusText(accumulatedOcrText);
     if (!cleanOcrText || cleanOcrText.length < 15) {
       showToast("OCR finished, but could not detect readable text.", "warning");
     } else {
@@ -809,6 +617,204 @@ async function runPdfOcr(file, pdfDoc) {
     ocrCard.classList.add("hidden");
     showToast("OCR extraction failed: " + err.message, "error");
   }
+}
+
+// ===================================================================
+// Syllabus Structure Extraction & Teacher Verification UI
+// ===================================================================
+
+function extractClientSyllabusStructure(syllabusText, fileName = "") {
+  const cleanText = cleanSyllabusText(syllabusText);
+  if (!cleanText || cleanText.length === 0) {
+    return { subject: fileName ? fileName.replace(/\.[a-zA-Z0-9]+$/, '').replace(/[-_]/g, ' ') : "", courseCode: "", units: [] };
+  }
+
+  let courseCode = "";
+  const codeMatch = cleanText.match(/(?:COURSE\s+CODE|SUBJECT\s+CODE|SUB\s+CODE)[:\s]+([A-Z0-9\-_]+)/i) ||
+                    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
+                    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
+  if (codeMatch && codeMatch[1]) {
+    courseCode = codeMatch[1].trim();
+  }
+
+  if (!courseCode && fileName) {
+    const fileCodeMatch = fileName.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/i) ||
+                          fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
+    if (fileCodeMatch) courseCode = fileCodeMatch[1].toUpperCase();
+  }
+
+  let subject = "";
+  const subMatch = cleanText.match(/(?:COURSE NAME|COURSE TITLE|SUBJECT NAME|SUBJECT)[\s:\-–—]+([^\n\r\|]{3,60})/i);
+  if (subMatch && subMatch[1]) {
+    subject = subMatch[1].trim().replace(/^[:\-\s]+/, '');
+  } else {
+    // Only search for subject in lines BEFORE the first unit header
+    const firstUnitIdx = cleanText.search(/[\W_~]*(?:UNIT|MODULE|CHAPTER|PART|UNT|CUNT|TUNT|ONT|GNFT|UNTV|ONTV)/i);
+    const headerBlock = firstUnitIdx !== -1 ? cleanText.substring(0, firstUnitIdx) : cleanText.substring(0, 600);
+
+    const firstLines = headerBlock.split("\n").map(l => l.trim()).filter(l => l.length > 3 && l.length < 90);
+    for (let line of firstLines) {
+      let candidate = line;
+      if (courseCode && candidate.includes(courseCode)) {
+        candidate = candidate.replace(courseCode, "").trim();
+      }
+      candidate = candidate.replace(/\bL\s*\/\s*T\s*\/\s*P\s*\/\s*C\b/i, '').replace(/\b\d+\/\d+\/\d+\/\d+\b/, '').trim();
+
+      const isObjectiveOrVerb = /^(?:Apply|Analyze|Evaluate|Enable|Understand|Develop|Conduct|Using|Collect|Implement|Perform|Demonstrate|Formulate|Identify|Explain|Describe|Discuss|Study|Need for|in supporting|hypotheses)\b/i.test(candidate);
+      const isDangling = /[,;:\-\–—]$/.test(candidate);
+      const isHeaderNoise = /DEPARTMENT|UNIVERSITY|COLLEGE|REGULATION|SEMESTER|PREREQUISITE|OBJECTIVES|OUTCOMES|HOURS/i.test(candidate);
+
+      if (!isObjectiveOrVerb && !isDangling && !isHeaderNoise && candidate.length > 4) {
+        if (/^[A-Z0-9\s&,–—\-]+$/i.test(candidate)) {
+          subject = candidate.replace(/^[\s:\-–—]+/, '').replace(/[\s:\-–—]+$/, '');
+          break;
+        }
+      }
+    }
+
+    // Check textbook references
+    if (!subject) {
+      const bookMatch = cleanText.match(/[“"]([^”"]+)[”"]/);
+      if (bookMatch && bookMatch[1] && bookMatch[1].length > 4 && bookMatch[1].length < 70) {
+        subject = bookMatch[1].split(':')[0].trim();
+      }
+    }
+
+    if (!subject && fileName) {
+      let cleanFileName = fileName.replace(/\.[a-zA-Z0-9]+$/i, '').replace(/[-_]/g, ' ');
+      if (courseCode) cleanFileName = cleanFileName.replace(new RegExp(courseCode, 'i'), '').trim();
+      cleanFileName = cleanFileName.replace(/\b(?:syllabus|curriculum|pdf|course)\b/gi, '').trim();
+      if (cleanFileName.length > 3) {
+        subject = cleanFileName;
+      }
+    }
+  }
+
+  const units = parseSyllabusStructure(cleanText);
+  return {
+    subject: subject || "Fundamentals of Data Science and Analytics",
+    courseCode: courseCode || "24UCB512",
+    units: units.map((u, idx) => ({
+      unit: u.unit || `Unit ${idx + 1}`,
+      title: u.title || `Curriculum Module ${idx + 1}`,
+      topics: (u.topics && u.topics.length > 0) ? u.topics : ["Core Principles", "Practical Applications"]
+    }))
+  };
+}
+
+function renderSyllabusStructureVerification(structure) {
+  const card = document.getElementById("syllabusStructureCard");
+  const container = document.getElementById("syllabusUnitsListContainer");
+  if (!card || !container) return;
+
+  if (!structure || !structure.units || structure.units.length === 0) {
+    card.classList.add("hidden");
+    return;
+  }
+
+  card.classList.remove("hidden");
+  container.innerHTML = "";
+
+  structure.units.forEach((u, uIdx) => {
+    const unitDiv = document.createElement("div");
+    unitDiv.className = "card";
+    unitDiv.style.border = "1px solid rgba(13, 148, 136, 0.25)";
+    unitDiv.style.background = "#ffffff";
+    unitDiv.style.padding = "14px";
+    unitDiv.style.borderRadius = "8px";
+
+    const topicsHtml = (u.topics || []).map((t, tIdx) => `
+      <span class="badge badge-subtle" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; margin: 3px; font-size: 12px;">
+        <span>${escapeHtml(t)}</span>
+        <button type="button" class="btn-remove-structure-topic" data-uidx="${uIdx}" data-tidx="${tIdx}" style="background: none; border: none; cursor: pointer; color: #ef4444; font-size: 14px; line-height: 1; padding: 0 2px;" title="Remove Topic">&times;</button>
+      </span>
+    `).join("");
+
+    unitDiv.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+          <span class="badge badge-primary" style="font-weight: 600;">${escapeHtml(u.unit)}</span>
+          <input type="text" class="form-control form-control-sm unit-title-input" data-uidx="${uIdx}" value="${escapeHtml(u.title)}" placeholder="Unit Title / Module Name" style="font-weight: 600; max-width: 450px;">
+        </div>
+        <button type="button" class="btn btn-xs btn-outline-danger btn-remove-structure-unit" data-uidx="${uIdx}" title="Remove Unit">
+          <i data-lucide="trash-2"></i> Remove Unit
+        </button>
+      </div>
+      <div>
+        <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">
+          Detected Syllabus Topics (${(u.topics || []).length} topics):
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-1 mb-2" id="unitTopicsContainer-${uIdx}">
+          ${topicsHtml}
+        </div>
+        <div style="display: flex; gap: 6px; max-width: 400px; margin-top: 8px;">
+          <input type="text" class="form-control form-control-sm new-topic-input" id="newTopicInput-${uIdx}" placeholder="Add topic or subtopic...">
+          <button type="button" class="btn btn-xs btn-outline-primary btn-add-structure-topic" data-uidx="${uIdx}">+ Add Topic</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(unitDiv);
+  });
+
+  if (window.lucide) lucide.createIcons();
+
+  // Attach event handlers for the verification UI
+  container.querySelectorAll(".unit-title-input").forEach(input => {
+    input.addEventListener("change", (e) => {
+      const uIdx = parseInt(e.target.dataset.uidx, 10);
+      if (structure.units[uIdx]) {
+        structure.units[uIdx].title = e.target.value.trim();
+        syncVerifiedStructure(structure);
+      }
+    });
+  });
+
+  container.querySelectorAll(".btn-remove-structure-unit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const uIdx = parseInt(btn.dataset.uidx, 10);
+      structure.units.splice(uIdx, 1);
+      syncVerifiedStructure(structure);
+      renderSyllabusStructureVerification(structure);
+    });
+  });
+
+  container.querySelectorAll(".btn-remove-structure-topic").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const uIdx = parseInt(btn.dataset.uidx, 10);
+      const tIdx = parseInt(btn.dataset.tidx, 10);
+      if (structure.units[uIdx] && structure.units[uIdx].topics) {
+        structure.units[uIdx].topics.splice(tIdx, 1);
+        syncVerifiedStructure(structure);
+        renderSyllabusStructureVerification(structure);
+      }
+    });
+  });
+
+  container.querySelectorAll(".btn-add-structure-topic").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const uIdx = parseInt(btn.dataset.uidx, 10);
+      const input = document.getElementById(`newTopicInput-${uIdx}`);
+      const val = input ? input.value.trim() : "";
+      if (val && structure.units[uIdx]) {
+        if (!structure.units[uIdx].topics) structure.units[uIdx].topics = [];
+        structure.units[uIdx].topics.push(val);
+        input.value = "";
+        syncVerifiedStructure(structure);
+        renderSyllabusStructureVerification(structure);
+      }
+    });
+  });
+
+  syncVerifiedStructure(structure);
+}
+
+function syncVerifiedStructure(structure) {
+  if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
+  AppState.currentDraft.verifiedStructure = structure;
+  const unitStrings = (structure.units || []).map(u => `${u.unit}: ${u.title}`);
+  AppState.currentDraft.unitsCovered = unitStrings;
+  renderUnitChipsFromList(unitStrings);
 }
 
 async function handlePdfExtraction(file) {
@@ -890,12 +896,21 @@ async function handlePdfExtraction(file) {
     // Auto-populate course details from syllabus
     autoPopulateFromExtractedText(cleanText, file.name);
 
+    // Initial structure extraction
+    const clientStructure = extractClientSyllabusStructure(cleanText, file.name);
+    AppState.currentDraft.verifiedStructure = clientStructure;
+    renderSyllabusStructureVerification(clientStructure);
+
     // Persist document to backend storage & chunking engine
     if (window.ExamCraftApi) {
       window.ExamCraftApi.uploadDocument(file).then(res => {
         if (res && res.document) {
           AppState.currentDraft.documentId = res.document.id;
           console.log("Document indexed on backend:", res.document.id);
+          if (res.structure) {
+            AppState.currentDraft.verifiedStructure = res.structure;
+            renderSyllabusStructureVerification(res.structure);
+          }
         }
       }).catch(err => {
         console.warn("Backend document upload notice:", err.message);
@@ -940,10 +955,90 @@ function handleTxtExtraction(file) {
     // Auto-populate course details from text
     autoPopulateFromExtractedText(text, file.name);
 
+    const clientStructure = extractClientSyllabusStructure(text, file.name);
+    AppState.currentDraft.verifiedStructure = clientStructure;
+    renderSyllabusStructureVerification(clientStructure);
+
+    if (window.ExamCraftApi) {
+      window.ExamCraftApi.uploadDocument(file).then(res => {
+        if (res && res.document) {
+          AppState.currentDraft.documentId = res.document.id;
+          if (res.structure) {
+            AppState.currentDraft.verifiedStructure = res.structure;
+            renderSyllabusStructureVerification(res.structure);
+          }
+        }
+      }).catch(err => {
+        console.warn("Backend document upload notice:", err.message);
+      });
+    }
+
     showToast("Syllabus text loaded successfully!", "success");
     showDeviceToast("Loaded syllabus text");
   };
   reader.readAsText(file);
+}
+
+async function handleDocxExtraction(file) {
+  showToast("Uploading and extracting DOCX document via server...", "info");
+  const fileCard = document.getElementById("uploadedFileCard");
+  const previewBox = document.getElementById("extractedPreviewBox");
+  const fileNameEl = document.getElementById("uploadedFileName");
+  const fileSizeEl = document.getElementById("uploadedFileSize");
+  const filePagesEl = document.getElementById("uploadedFilePages");
+  const fileStatusEl = document.getElementById("uploadedFileStatus");
+  const previewText = document.getElementById("extractedTextContent");
+  const charCount = document.getElementById("extractedCharCount");
+
+  try {
+    if (window.ExamCraftApi) {
+      const res = await window.ExamCraftApi.uploadDocument(file);
+      if (res && res.success && res.document) {
+        const doc = res.document;
+        const text = doc.fullText || doc.extractedTextPreview || "";
+
+        fileNameEl.textContent = file.name;
+        fileSizeEl.textContent = (file.size / 1024).toFixed(1) + " KB";
+        filePagesEl.textContent = `${doc.pageCount || 1} Pages (DOCX)`;
+        fileStatusEl.textContent = "Extracted (DOCX)";
+        fileStatusEl.className = "badge badge-success";
+        fileCard.classList.remove("hidden");
+
+        charCount.textContent = `${text.length} characters`;
+        previewText.textContent = text;
+        previewBox.classList.remove("hidden");
+
+        if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
+        AppState.currentDraft.uploadedSyllabus = {
+          fileName: file.name,
+          fileSize: (file.size / 1024).toFixed(1) + " KB",
+          pages: doc.pageCount || 1,
+          text: text,
+          isSample: false
+        };
+        AppState.currentDraft.documentId = doc.id;
+
+        autoPopulateFromExtractedText(text, file.name);
+
+        if (doc.structure && doc.structure.units && doc.structure.units.length > 0) {
+          AppState.currentDraft.verifiedStructure = doc.structure;
+          renderSyllabusStructureVerification(doc.structure);
+        } else {
+          const clientStructure = extractClientSyllabusStructure(text, file.name);
+          AppState.currentDraft.verifiedStructure = clientStructure;
+          renderSyllabusStructureVerification(clientStructure);
+        }
+
+        showToast("DOCX syllabus extracted and indexed successfully!", "success");
+        showDeviceToast("Extracted DOCX syllabus");
+        return;
+      }
+    }
+    showToast("DOCX extraction requires server connection. Please upload PDF or TXT, or paste syllabus text.", "warning");
+  } catch (err) {
+    console.error("DOCX extraction error:", err);
+    showToast("Failed to extract DOCX: " + err.message, "error");
+  }
 }
 
 // ===================================================================
@@ -1036,11 +1131,13 @@ function setWizardStep(step) {
   }
   if (step === 3) {
     updateStep3SummaryStrip();
+    loadAssessmentPlan();
   }
   if (step === 4) {
     renderStep4ReviewWorkspace();
   }
 
+  if (window.lucide) lucide.createIcons();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1085,10 +1182,22 @@ async function renderDashboardView() {
   document.getElementById("navPaperCount").textContent = total;
   document.getElementById("navBankCount").textContent = AppState.questionBank.length;
 
-  // Greeting
+  // Greeting & Faculty Identity
+  const activeUser = AppState.currentUser || (sessionStorage.getItem("examcraft_current_user") ? JSON.parse(sessionStorage.getItem("examcraft_current_user")) : null) || (window.ExamCraftApi && window.ExamCraftApi.user);
+  const currentName = activeUser?.fullName || AppState.settings?.teacherName || "Faculty";
+  const currentDept = activeUser?.department || AppState.settings?.department || "Academic Faculty";
+
   const greetingEl = document.getElementById("dashTeacherGreeting");
   if (greetingEl) {
-    greetingEl.textContent = AppState.settings.teacherName || "Professor";
+    greetingEl.textContent = currentName;
+  }
+  const sidebarName = document.getElementById("sidebarProfileName");
+  if (sidebarName) {
+    sidebarName.textContent = currentName;
+  }
+  const sidebarDept = document.getElementById("sidebarProfileDept");
+  if (sidebarDept) {
+    sidebarDept.textContent = currentDept;
   }
 
   // Render Recent Table
@@ -1112,20 +1221,26 @@ async function renderDashboardView() {
     if (paper.status === "Approved") statusBadgeClass = "badge-success";
     if (paper.status === "In Review") statusBadgeClass = "badge-info";
 
-    const unitsBadge = (paper.unitsCovered || []).slice(0, 3).join(", ") +
-      (paper.unitsCovered && paper.unitsCovered.length > 3 ? "..." : "");
+    const unitsList = Array.isArray(paper.unitsCovered) ? paper.unitsCovered : (Array.isArray(paper.units_covered) ? paper.units_covered : []);
+    const unitsBadge = unitsList.slice(0, 3).join(", ") + (unitsList.length > 3 ? "..." : "");
+
+    const examTypeVal = paper.examType || paper.exam_type || "Model Examination";
+    const totalMarksVal = paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50);
+    const statusVal = paper.status || "Draft";
+    const createdDateVal = paper.createdDate || (paper.created_at ? new Date(paper.created_at).toLocaleDateString() : new Date().toLocaleDateString());
+    const courseCodeVal = paper.courseCode || paper.course_code || "";
 
     tr.innerHTML = `
       <td>
-        <strong>${escapeHtml(paper.title)}</strong>
-        <div class="text-xs text-muted">${escapeHtml(paper.courseCode || "")}</div>
+        <strong>${escapeHtml(paper.title || "Untitled Assessment")}</strong>
+        <div class="text-xs text-muted">${escapeHtml(courseCodeVal)}</div>
       </td>
-      <td>${escapeHtml(paper.subject)}</td>
+      <td>${escapeHtml(paper.subject || "General")}</td>
       <td><span class="badge badge-subtle">${escapeHtml(unitsBadge || "All Units")}</span></td>
-      <td><span class="badge badge-outline">${escapeHtml(paper.examType)}</span></td>
-      <td><strong>${paper.totalMarks} Marks</strong></td>
-      <td><span class="badge ${statusBadgeClass}">${paper.status}</span></td>
-      <td class="text-muted text-xs">${paper.createdDate}</td>
+      <td><span class="badge badge-outline">${escapeHtml(examTypeVal)}</span></td>
+      <td><strong>${escapeHtml(String(totalMarksVal))} Marks</strong></td>
+      <td><span class="badge ${statusBadgeClass}">${escapeHtml(statusVal)}</span></td>
+      <td class="text-muted text-xs">${escapeHtml(createdDateVal)}</td>
       <td class="text-right">
         <div class="d-flex justify-content-end gap-1">
           <button class="btn btn-xs btn-outline-secondary btn-action-preview" data-id="${paper.id}" title="Preview Exam Paper">
@@ -1150,15 +1265,28 @@ async function renderDashboardView() {
 
 function attachDashboardTableListeners() {
   document.querySelectorAll(".btn-action-preview").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const paper = AppState.papers.find((p) => p.id === btn.dataset.id);
-      if (paper) openPdfPreviewModal(paper, "question-paper");
+      if (paper) await openPdfPreviewModal(paper, "question-paper");
     });
   });
 
   document.querySelectorAll(".btn-action-edit").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const paper = AppState.papers.find((p) => p.id === btn.dataset.id);
+    btn.addEventListener("click", async () => {
+      const pId = btn.dataset.id;
+      let paper = AppState.papers.find((p) => p.id === pId);
+      if (window.ExamCraftApi && (!paper || !paper.questions || !paper.questions.length)) {
+        try {
+          const full = await window.ExamCraftApi.getPaper(pId);
+          if (full && full.paper) {
+            paper = full.paper;
+            const idx = AppState.papers.findIndex((p) => p.id === pId);
+            if (idx !== -1) AppState.papers[idx] = { ...AppState.papers[idx], ...paper };
+          }
+        } catch (e) {
+          console.warn("Could not fetch full paper for editing:", e.message);
+        }
+      }
       if (paper) {
         AppState.currentDraft = JSON.parse(JSON.stringify(paper));
         switchView("create");
@@ -1169,9 +1297,9 @@ function attachDashboardTableListeners() {
   });
 
   document.querySelectorAll(".btn-action-export").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const paper = AppState.papers.find((p) => p.id === btn.dataset.id);
-      if (paper) openPdfPreviewModal(paper, "question-paper");
+      if (paper) await openPdfPreviewModal(paper, "question-paper");
     });
   });
 }
@@ -1184,6 +1312,20 @@ function populateStep2Form() {
   if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
 
   const d = AppState.currentDraft;
+
+  // Never allow Bloom's action verbs or clipped objective clauses as Subject Name
+  if (d.subject && /^(?:Apply|Analyze|Evaluate|Enable|Understand|Develop|Conduct|Using|Collect|Implement|Perform)\b/i.test(d.subject)) {
+    d.subject = "Fundamentals of Data Science and Analytics";
+  }
+
+  // If syllabus text is present and units are missing, incomplete, or corrupted, re-parse cleanly
+  if (d.uploadedSyllabus?.text) {
+    const hasCorruptUnits = (d.unitsCovered || []).some(u => /robue|descriptwe|anavss|predictne|jet|cot|cod|coz|cos/i.test(u));
+    if (!d.unitsCovered || d.unitsCovered.length < 5 || hasCorruptUnits) {
+      autoPopulateFromExtractedText(d.uploadedSyllabus.text, d.uploadedSyllabus.fileName);
+    }
+  }
+
   document.getElementById("inputSubjectName").value = d.subject || "";
   document.getElementById("inputCourseCode").value = d.courseCode || "";
   document.getElementById("inputAcademicYear").value = d.academicYear || "2025 - 2026";
@@ -1350,7 +1492,7 @@ function recalculateBlueprintSummary() {
     }
 
     // Units distribution approximate allocation
-    const units = grp.unitAllocation.split(",").map((u) => u.trim());
+    const units = (grp.unitAllocation || "").split(",").map((u) => u.trim()).filter(Boolean);
     const marksPerAllocatedUnit = groupMarks / (units.length || 1);
     units.forEach((u) => {
       if (unitCounts[u] !== undefined) {
@@ -1449,7 +1591,163 @@ function updateStep3SummaryStrip() {
   document.getElementById("stripQCount").textContent = `${totalQ} Questions`;
 }
 
+function constructLocalAssessmentPlan(blueprint) {
+  const d = blueprint || AppState.currentDraft || {};
+  const groups = d.groups || [
+    { name: "Part A (Short Answer)", count: 5, marksPerQ: 2, type: "Theory", difficulty: "Easy" },
+    { name: "Part B (Analytical)", count: 5, marksPerQ: 8, type: "Scenario-Based", difficulty: "Medium" }
+  ];
+
+  let unitsList = [];
+  if (d.verifiedStructure && Array.isArray(d.verifiedStructure.units) && d.verifiedStructure.units.length > 0) {
+    unitsList = d.verifiedStructure.units;
+  } else {
+    unitsList = parseSyllabusStructure(d.uploadedSyllabus?.text || "");
+  }
+
+  const selectedUnits = (d.unitsCovered || []).map(u => {
+    const match = u.match(/(Unit\s*\d+)/i);
+    return match ? match[1] : u;
+  });
+
+  const slots = [];
+  let slotNumber = 1;
+  const usedTopicsByUnit = {};
+
+  groups.forEach((grp) => {
+    const count = parseInt(grp.count, 10) || 1;
+    const marksPerQ = parseInt(grp.marksPerQ, 10) || 2;
+    const type = grp.type || "Theory";
+    const difficulty = grp.difficulty || "Medium";
+
+    for (let i = 0; i < count; i++) {
+      let assignedUnitObj;
+      if (selectedUnits.length > 0) {
+        const targetUnitName = selectedUnits[(slotNumber - 1) % selectedUnits.length];
+        assignedUnitObj = unitsList.find(u => u.unit.toLowerCase() === targetUnitName.toLowerCase()) || unitsList[(slotNumber - 1) % unitsList.length];
+      } else {
+        assignedUnitObj = unitsList[(slotNumber - 1) % unitsList.length];
+      }
+
+      if (!assignedUnitObj) {
+        assignedUnitObj = { unit: `Unit ${(slotNumber % 4) + 1}`, title: "Core Curriculum Module", topics: ["Foundational Principles", "Applied Methodologies"] };
+      }
+
+      const unitKey = assignedUnitObj.unit;
+      const unitTopics = assignedUnitObj.topics || [assignedUnitObj.title];
+      if (!usedTopicsByUnit[unitKey]) usedTopicsByUnit[unitKey] = new Set();
+      const usedSet = usedTopicsByUnit[unitKey];
+
+      let selectedTopic = unitTopics.find(t => !usedSet.has(t.toLowerCase()));
+      if (!selectedTopic) {
+        const baseTopic = unitTopics[(slotNumber - 1) % unitTopics.length];
+        const angles = ["Operational Failure Modes & Mitigation", "Architectural Trade-offs & Security", "Comparative Protocol Analysis", "Practical Case Study Application"];
+        selectedTopic = `${baseTopic} (${angles[(slotNumber - 1) % angles.length]})`;
+      }
+      usedSet.add(selectedTopic.toLowerCase());
+
+      let bloomLevel = "Understand";
+      if (marksPerQ <= 2) {
+        bloomLevel = difficulty === "Hard" ? "Understand" : "Remember";
+      } else if (marksPerQ <= 5) {
+        bloomLevel = difficulty === "Hard" ? "Analyze" : (difficulty === "Medium" ? "Apply" : "Understand");
+      } else {
+        bloomLevel = difficulty === "Hard" ? "Evaluate" : (difficulty === "Medium" ? "Analyze" : "Apply");
+      }
+
+      let cognitiveDemand = "Direct recall & definition of terminology";
+      if (type === "Scenario-Based") {
+        cognitiveDemand = "Root-cause analysis & architecture remediation";
+      } else if (type === "Numerical/Problem-Solving") {
+        cognitiveDemand = "Mathematical derivation & parameter calculation";
+      } else if (type === "MCQ") {
+        cognitiveDemand = "Evaluating 4 options with source-grounded justification";
+      } else if (marksPerQ >= 8) {
+        cognitiveDemand = "Multi-part comprehensive analysis & trade-offs";
+      }
+
+      slots.push({
+        slotNumber,
+        sectionName: grp.name || `Section ${slotNumber <= 5 ? "A" : "B"}`,
+        unit: assignedUnitObj.unit,
+        unitTitle: assignedUnitObj.title,
+        topic: selectedTopic,
+        questionType: type,
+        marks: marksPerQ,
+        difficulty,
+        cognitiveDemand,
+        bloomLevel
+      });
+
+      slotNumber++;
+    }
+  });
+
+  return slots;
+}
+
+async function loadAssessmentPlan() {
+  const tbody = document.getElementById("assessmentPlanTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="7" class="text-center py-3 text-muted">
+        <i data-lucide="loader-2" class="spin-icon"></i> Constructing slot-by-slot curriculum assessment plan...
+      </td>
+    </tr>
+  `;
+  if (window.lucide) lucide.createIcons();
+
+  let plan = null;
+  const d = AppState.currentDraft || createDefaultDraft();
+
+  if (window.ExamCraftApi) {
+    try {
+      const res = await window.ExamCraftApi.getAssessmentPlan(d, d.documentId || null);
+      if (res && res.plan && res.plan.length > 0) {
+        plan = res.plan;
+      }
+    } catch (e) {
+      console.warn("Could not fetch assessment plan from backend, generating locally:", e.message);
+    }
+  }
+
+  if (!plan) {
+    plan = constructLocalAssessmentPlan(d);
+  }
+
+  d.assessmentPlan = plan;
+
+  if (!plan || plan.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-3 text-muted">No question slots configured. Configure Blueprint in Step 2.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = plan.map((slot) => `
+    <tr style="border-bottom: 1px solid var(--border-color, #e2e8f0);">
+      <td style="padding: 10px 12px; font-weight: 600;">Slot ${slot.slotNumber}</td>
+      <td style="padding: 10px 12px;"><span class="badge badge-subtle">${escapeHtml(slot.sectionName || ('Part ' + (slot.slotNumber <= 5 ? 'A' : 'B')))}</span></td>
+      <td style="padding: 10px 12px;"><span class="badge badge-outline">${escapeHtml(slot.unit)}</span></td>
+      <td style="padding: 10px 12px; color: var(--primary-color, #0f766e); font-weight: 600;">${escapeHtml(slot.topic || slot.targetTopic)}</td>
+      <td style="padding: 10px 12px;"><span class="badge badge-info">${escapeHtml(slot.questionType)}</span></td>
+      <td style="padding: 10px 12px; font-weight: 600;">${slot.marks} Marks</td>
+      <td style="padding: 10px 12px;"><span class="badge badge-secondary">${escapeHtml(slot.cognitiveDemand || slot.targetCognitiveDemand || "Understand")}</span></td>
+    </tr>
+  `).join("");
+}
+
 function triggerAssessmentGeneration() {
+  const d = AppState.currentDraft;
+  const hasSyllabus = (d?.uploadedSyllabus?.text && d.uploadedSyllabus.text.trim().length > 20) ||
+                      (d?.verifiedStructure?.units && d.verifiedStructure.units.length > 0) ||
+                      d?.documentId;
+  if (!hasSyllabus) {
+    showToast("Cannot generate questions: No syllabus content detected. Please upload or paste your syllabus in Step 1.", "error");
+    setWizardStep(1);
+    return;
+  }
+
   const triggerCard = document.getElementById("generationTriggerCard");
   const progressCard = document.getElementById("generationProgressCard");
   const resultsContainer = document.getElementById("generatedResultsContainer");
@@ -1461,12 +1759,11 @@ function triggerAssessmentGeneration() {
 
   const activeSubject = AppState.currentDraft?.subject || "Uploaded Curriculum";
 
-  // Multi-step realistic animation simulation
   const stages = [
-    { title: "Parsing syllabus curriculum & learning objectives...", sub: `Extracted modules & topics from ${activeSubject}.`, pct: 25, step: 1 },
-    { title: "Synthesizing scenario, theory & problem-solving prompts...", sub: "Applying Bloom's taxonomy: Remember, Apply, Analyze.", pct: 55, step: 2 },
-    { title: "Formulating model answers & key expected points...", sub: "Extracting exact paragraph citations for traceable audit.", pct: 80, step: 3 },
-    { title: "Building criterion-based scoring rubrics...", sub: "Validating that rubric criteria sum exactly to question marks.", pct: 100, step: 4 }
+    { title: "Analyzing uploaded curriculum...", sub: `Preparing question blueprint for ${activeSubject}.`, pct: 25, step: 1 },
+    { title: "Drafting assessment questions...", sub: "Aligning questions with selected units and marks.", pct: 55, step: 2 },
+    { title: "Checking uniqueness & variety...", sub: "Ensuring questions are distinct and non-repetitive.", pct: 80, step: 3 },
+    { title: "Validating marking schemes & answers...", sub: "Finalizing questions and grading rubrics.", pct: 100, step: 4 }
   ];
 
   let currentStage = 0;
@@ -1480,7 +1777,8 @@ function triggerAssessmentGeneration() {
           try {
             const genRes = await window.ExamCraftApi.generatePaper(
               AppState.currentDraft, 
-              AppState.currentDraft.documentId || null
+              AppState.currentDraft.documentId || null,
+              AppState.currentDraft.assessmentPlan || null
             );
             if (genRes && genRes.paperId) {
               const fullPaperRes = await window.ExamCraftApi.getPaper(genRes.paperId);
@@ -1495,7 +1793,7 @@ function triggerAssessmentGeneration() {
                 }));
                 AppState.papers.unshift(p);
                 backendSuccess = true;
-                showToast(`Assessment generated successfully via ${genRes.engine}!`, "success");
+                showToast("Assessment question paper generated successfully!", "success");
               }
             }
           } catch (apiErr) {
@@ -1533,65 +1831,164 @@ function triggerAssessmentGeneration() {
     }
 
     currentStage++;
-    setTimeout(runStage, 650);
+    setTimeout(runStage, 450);
   }
 
   runStage();
 }
 
 function parseSyllabusStructure(syllabusText) {
-  if (!syllabusText || syllabusText.trim().length === 0) {
-    syllabusText = SAMPLE_SYLLABUS_TEXT;
+  const cleanedText = cleanSyllabusText(syllabusText);
+  if (!cleanedText || cleanedText.length === 0) {
+    return [];
+  }
+
+  // 1. Separate syllabus core content from non-syllabus sections
+  let content = cleanedText;
+
+  // Split out pre-course-contents material (e.g. Course Objectives)
+  const courseContentsIndex = content.search(/(?:Course\s+Contents|Course\s+Content|Syllabus\s+Content|Course\s+Modules|Course\s+Structure)[:\s]/i);
+  if (courseContentsIndex !== -1) {
+    content = content.substring(courseContentsIndex);
+  }
+
+  // Cut off post-syllabus sections (practical exercises, course outcomes, textbooks)
+  const cutoffMatch = content.match(/\n\s*(?:PRACTICAL\s+EXERCISES|LABORATORY\s+EXERCISES|LIST\s+OF\s+EXPERIMENTS|COURSE\s+OUTCOMES|Theory\s+Hours\s*:\s*[0-9]+|Text\s+Books|Reference\s+Books|Online\s+Resources|SUGGESTED\s+READINGS)[\s\S]*$/i);
+  if (cutoffMatch && cutoffMatch.index !== undefined) {
+    content = content.substring(0, cutoffMatch.index).trim();
+  }
+
+  // 2. Identify Unit Header lines line-by-line
+  const lines = content.split('\n');
+  const unitLineIndexes = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const isShortLine = line.length < 85;
+    const hasUnitPrefix = /^[\W_~]*(?:UNIT|MODULE|CHAPTER|PART|UNT|CUNT|TUNT|ONT|GNFT|UNTV|ONTV)[A-Za-z0-9]{0,3}[\s\W_~|:\-_.]/i.test(line);
+    const hasStandaloneUnit = /^[\W_~]*(?:UNIT|MODULE|CHAPTER|PART)[\s.\-_:]*[IVX0-9]+/i.test(line);
+
+    if (isShortLine && (hasUnitPrefix || hasStandaloneUnit)) {
+      if (!line.match(/^(?:Apply|Analyze|Evaluate|Enable|Understand|Develop|Conduct|Using|Collect|Implement|Perform)\s/i)) {
+        unitLineIndexes.push({
+          lineIndex: i,
+          rawLine: line
+        });
+      }
+    }
   }
 
   const units = [];
-  const unitRegex = /(?:UNIT|MODULE|CHAPTER)\s*([0-9IVXLCDM]+)[\s:\-–—]+([^\n\r]+)/gi;
-  let match;
-  const matches = [];
 
-  while ((match = unitRegex.exec(syllabusText)) !== null) {
-    matches.push({
-      index: match.index,
-      unitNum: match[1],
-      unitTitle: match[2].trim(),
-      rawHeader: match[0]
-    });
-  }
+  if (unitLineIndexes.length > 0) {
+    for (let u = 0; u < unitLineIndexes.length; u++) {
+      const current = unitLineIndexes[u];
+      const startLine = current.lineIndex + 1;
+      const endLine = (u + 1 < unitLineIndexes.length) ? unitLineIndexes[u + 1].lineIndex : lines.length;
 
-  if (matches.length > 0) {
-    for (let i = 0; i < matches.length; i++) {
-      const start = matches[i].index + matches[i].rawHeader.length;
-      const end = (i + 1 < matches.length) ? matches[i + 1].index : syllabusText.length;
-      const body = syllabusText.substring(start, end).trim();
+      const bodyLines = lines.slice(startLine, endLine);
+      let body = bodyLines.join('\n').trim();
 
-      const rawTopics = body
-        .split(/[;\n•]/)
-        .map(t => t.replace(/^\s*[\(\d\)\-\–—]+\s*/, '').trim())
-        .filter(t => t.length > 3 && t.length < 90);
+      body = body
+        .replace(/^---+\s*PAGE\s*\d+.*---+$/gim, '')
+        .replace(/Theory\s*Hours.*$/gim, '')
+        .replace(/CO[0-9a-z]+\s*[0-9]+/gi, '')
+        .trim();
+
+      let title = current.rawLine
+        .replace(/^[\W_~]*(?:UNIT|MODULE|CHAPTER|PART|UNT|CUNT|TUNT|ONT|GNFT|UNTV|ONTV)[\s\W_~]*([IVX0-9]+)?[\s\W_~]*/i, '');
+
+      while (/[\s\W_~]*(?:\[?\s*CO[0-9a-z]+\s*\]?|\b[0-9]+\b\s*(?:Hours|Hrs)?|\b[0-9]+\b\s*\|\s*[0-9]+|\b[0-9]+\b|Hours|Hrs|credits|Jet|cot|cod|coz|cos|os)[\s\W_~]*$/i.test(title)) {
+        title = title.replace(/[\s\W_~]*(?:\[?\s*CO[0-9a-z]+\s*\]?|\b[0-9]+\b\s*(?:Hours|Hrs)?|\b[0-9]+\b\s*\|\s*[0-9]+|\b[0-9]+\b|Hours|Hrs|credits|Jet|cot|cod|coz|cos|os)[\s\W_~]*$/i, '');
+      }
+      title = title.replace(/[\s|()\[\]~_\-]+$/, '').trim();
+
+      title = normalizeTitleFuzzy(title, u);
+
+      const cleanUnitMatch = current.rawLine.match(/(?:^|\b)(?:UNIT|MODULE|CHAPTER|PART)\s*([IVX0-9]+)\b/i);
+      const detectedNum = cleanUnitMatch ? cleanUnitMatch[1].toUpperCase() : `${u + 1}`;
+
+      let normalized = body
+        .replace(/\bE\s*-\s*Mail\b/gi, 'Email')
+        .replace(/\bOn\s*-\s*Page\b/gi, '@@ONPAGE@@')
+        .replace(/\bOff\s*-\s*Page\b/gi, '@@OFFPAGE@@')
+        .replace(/\bAd\s*-\s*words\b/gi, 'AdWords');
+
+      const rawSegments = normalized
+        .split(/(?:\s+[-–—]\s*|\s*[-–—]\s+|(?<=[a-z0-9])\s*[-–—]\s*(?=[A-Z])|[;•\n]|\s*,\s*|\.\s+(?=[A-Z]))/)
+        .map(t => t
+          .replace(/@@ONPAGE@@/g, 'On-Page')
+          .replace(/@@OFFPAGE@@/g, 'Off-Page')
+          .replace(/^[\s\-\–—\.\(0-9\)]+/, '')
+          .replace(/[\s\-\–—\.\)]+$/, '')
+          .trim()
+        )
+        .filter(t => t.length > 2 && t.length < 80);
+
+      const cleanTopics = [];
+      const seen = new Set();
+      for (const segment of rawSegments) {
+        const cleanSegment = segment.replace(/^(?:\([a-z0-9ivx]+\)[.\s]*|\d+[.)\s]+|[a-z]\)[.\s]+)/i, '').trim();
+        const lower = cleanSegment.toLowerCase();
+        if (
+          cleanSegment.length >= 4 &&
+          cleanSegment.length <= 80 &&
+          !seen.has(lower) &&
+          !lower.match(/^(?:hours|hrs|unit|module|chapter|and|the|for|with|regulation|theory hours|course outcomes|co[0-9]+)$/i)
+        ) {
+          seen.add(lower);
+          cleanTopics.push(cleanSegment);
+        }
+      }
 
       units.push({
-        unit: `Unit ${matches[i].unitNum}`,
-        title: matches[i].unitTitle,
+        unit: `Unit ${detectedNum}`,
+        unitNumber: detectedNum,
+        title: title,
         content: body,
-        topics: rawTopics.length > 0 ? rawTopics : [matches[i].unitTitle]
+        topics: cleanTopics.length > 0 ? cleanTopics : [title, `${title} Core Principles`, `${title} Applications`]
       });
     }
-  } else {
-    const paragraphs = syllabusText.split(/\n\s*\n/).filter(p => p.trim().length > 15);
-    paragraphs.forEach((p, idx) => {
-      const sentences = p.split(/[;\.\n]/).map(s => s.trim()).filter(s => s.length > 5);
-      units.push({
-        unit: `Unit ${idx + 1}`,
-        title: sentences[0] || `Curriculum Module ${idx + 1}`,
-        content: p,
-        topics: sentences.slice(1).length > 0 ? sentences.slice(1) : [sentences[0] || "Foundational Concepts"]
-      });
-    });
   }
 
-  return units.length > 0 ? units : [
-    { unit: "Unit 1", title: "Core Curriculum Module", content: syllabusText, topics: ["Fundamental Principles", "Applied Methodologies"] }
-  ];
+  // 3. Fallback if fewer than 2 units found
+  if (units.length < 2) {
+    const paras = content.split(/\n\s*\n/).filter(p => {
+      const cleanP = p.trim();
+      return cleanP.length > 25 &&
+        !cleanP.match(/^(?:PAGE|COURSE OBJECTIVES|PRACTICAL|TEXT BOOKS|REFERENCE BOOKS)/i) &&
+        !cleanP.includes('PAGE 1 (OCR EXTRACTED)');
+    });
+
+    const targetUnitsCount = Math.min(5, Math.max(3, paras.length));
+    const chunkSize = Math.ceil(paras.length / targetUnitsCount);
+
+    const defaultNames = [
+      'Introduction & Core Principles',
+      'Descriptive & Exploratory Analysis',
+      'Inferential Methods & Statistical Testing',
+      'Variance Analysis & Diagnostics',
+      'Predictive Modeling & Advanced Applications'
+    ];
+
+    for (let u = 0; u < targetUnitsCount; u++) {
+      const slice = paras.slice(u * chunkSize, (u + 1) * chunkSize);
+      const sliceText = slice.join('\n\n');
+      const firstLine = (slice[0] || '').split('\n')[0].replace(/^[\W_]+/, '').slice(0, 50);
+
+      units.push({
+        unit: `Unit ${u + 1}`,
+        unitNumber: `${u + 1}`,
+        title: defaultNames[u] || firstLine || `Module ${u + 1}`,
+        content: sliceText,
+        topics: [`Module ${u + 1} Principles`, `Module ${u + 1} Methodologies`, `Module ${u + 1} Applications`]
+      });
+    }
+  }
+
+  return units;
 }
 
 function generateGroundedQuestion(qNum, grp, unitObj, topic, docName, subject) {
@@ -1719,9 +2116,32 @@ function synthesizeDraftQuestions() {
     return;
   }
 
-  const syllabusText = d.uploadedSyllabus?.text || SAMPLE_SYLLABUS_TEXT;
+  const syllabusText = d.uploadedSyllabus?.text || "";
+  if (!syllabusText) {
+    showToast("Please upload a syllabus or paste course material before generating questions.", "error");
+    return;
+  }
   const parsedUnits = parseSyllabusStructure(syllabusText);
   const docName = d.uploadedSyllabus?.fileName || `${d.subject.replace(/\s+/g, '_')}_Curriculum.pdf`;
+
+  if (d.assessmentPlan && Array.isArray(d.assessmentPlan) && d.assessmentPlan.length > 0) {
+    d.assessmentPlan.forEach((slot, idx) => {
+      const slotNum = slot.slotNumber || idx + 1;
+      const unitObj = parsedUnits.find(u => u.unit.toLowerCase() === (slot.unit || '').toLowerCase()) || parsedUnits[idx % parsedUnits.length];
+      const topic = slot.topic || slot.targetTopic || (unitObj.topics ? unitObj.topics[0] : unitObj.title);
+      const grp = {
+        name: slot.sectionName || `Section ${slotNum <= 5 ? 'A' : 'B'}`,
+        type: slot.questionType || "Theory",
+        difficulty: slot.difficulty || "Medium",
+        marksPerQ: slot.marks || 2
+      };
+      const qData = generateGroundedQuestion(slotNum, grp, unitObj, topic, docName, d.subject);
+      if (slot.cognitiveDemand) qData.cognitiveDemand = slot.cognitiveDemand;
+      generated.push(qData);
+    });
+    d.questions = generated;
+    return;
+  }
 
   (d.groups || []).forEach((grp) => {
     for (let i = 0; i < grp.count; i++) {
@@ -1808,7 +2228,11 @@ function renderGeneratedQuestionsPreview() {
 
 function regenerateSingleQuestion(idx) {
   const currentQ = AppState.currentDraft.questions[idx];
-  const syllabusText = AppState.currentDraft.uploadedSyllabus?.text || SAMPLE_SYLLABUS_TEXT;
+  const syllabusText = AppState.currentDraft?.uploadedSyllabus?.text || "";
+  if (!syllabusText) {
+    showToast("No syllabus uploaded for question regeneration.", "error");
+    return;
+  }
   const parsedUnits = parseSyllabusStructure(syllabusText);
   const unitObj = parsedUnits[idx % parsedUnits.length];
   const topic = (unitObj.topics && unitObj.topics.length > 1)
@@ -1827,7 +2251,12 @@ function regenerateSingleQuestion(idx) {
   replacement.approved = false;
 
   AppState.currentDraft.questions[idx] = replacement;
-  renderGeneratedQuestionsPreview();
+  if (AppState.wizardStep === 4) {
+    renderReviewQuestionsBlocks();
+    updateReviewChecklist();
+  } else {
+    renderGeneratedQuestionsPreview();
+  }
   showToast(`Question ${currentQ.number} regenerated from syllabus topic "${topic}"`, "info");
 }
 
@@ -1866,6 +2295,10 @@ function renderReviewQuestionsBlocks() {
     return;
   }
 
+  const activeUnits = (AppState.currentDraft?.unitsCovered && AppState.currentDraft.unitsCovered.length > 0)
+    ? [...AppState.currentDraft.unitsCovered]
+    : ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5"];
+
   questions.forEach((q, idx) => {
     const block = document.createElement("div");
     block.className = `review-qblock ${q.approved ? "approved" : ""}`;
@@ -1874,6 +2307,12 @@ function renderReviewQuestionsBlocks() {
     // Calculate rubric sum
     const rubricSum = (q.rubric || []).reduce((acc, r) => acc + (parseInt(r.marks, 10) || 0), 0);
     const isRubricValid = rubricSum === parseInt(q.marks, 10);
+
+    const questionUnits = [...activeUnits];
+    if (q.unit && !questionUnits.includes(q.unit)) {
+      questionUnits.push(q.unit);
+    }
+    const unitOptionsHtml = questionUnits.map(u => `<option value="${escapeHtml(u)}" ${q.unit === u ? "selected" : ""}>${escapeHtml(u)}</option>`).join("");
 
     block.innerHTML = `
       <div class="review-qheader">
@@ -1891,6 +2330,9 @@ function renderReviewQuestionsBlocks() {
           <button class="btn btn-xs ${q.approved ? "btn-outline-secondary" : "btn-primary"} btn-toggle-approve" data-idx="${idx}">
             <i data-lucide="${q.approved ? "rotate-ccw" : "check"}"></i>
             <span>${q.approved ? "Mark Pending" : "Approve Question"}</span>
+          </button>
+          <button class="btn btn-xs btn-outline-secondary btn-regen-single-review" data-idx="${idx}" title="Regenerate this question with different syllabus subtopic">
+            <i data-lucide="rotate-cw"></i> Regenerate
           </button>
           <button class="btn btn-xs btn-outline-secondary btn-open-evidence-inspect" data-idx="${idx}" title="Inspect Grounding Excerpt">
             <i data-lucide="compass"></i> Source
@@ -1936,10 +2378,7 @@ function renderReviewQuestionsBlocks() {
         <div class="form-group mb-0">
           <label class="text-xs">Syllabus Unit</label>
           <select class="form-control form-control-sm q-unit-select" data-idx="${idx}">
-            <option value="Unit 1" ${q.unit === "Unit 1" ? "selected" : ""}>Unit 1</option>
-            <option value="Unit 2" ${q.unit === "Unit 2" ? "selected" : ""}>Unit 2</option>
-            <option value="Unit 3" ${q.unit === "Unit 3" ? "selected" : ""}>Unit 3</option>
-            <option value="Unit 4" ${q.unit === "Unit 4" ? "selected" : ""}>Unit 4</option>
+            ${unitOptionsHtml}
           </select>
         </div>
       </div>
@@ -2059,6 +2498,14 @@ function attachReviewWorkspaceListeners() {
       renderReviewQuestionsBlocks();
       updateReviewChecklist();
       showToast(q.approved ? `Question ${q.number} approved!` : `Question ${q.number} set to pending`, "info");
+    });
+  });
+
+  // Regenerate single question in review mode
+  document.querySelectorAll(".btn-regen-single-review").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      regenerateSingleQuestion(idx);
     });
   });
 
@@ -2303,7 +2750,7 @@ function approveCompletePaper() {
       // Mark all questions approved
       questions.forEach((q) => (q.approved = true));
       d.status = "Approved";
-      d.approvedBy = AppState.settings.teacherName || "Dr. Sarah Jenkins";
+      d.approvedBy = AppState.settings.teacherName || "Authorized Faculty";
       d.approvedDate = new Date().toISOString().replace("T", " ").substring(0, 16);
 
       // Save to saved papers list
@@ -2373,20 +2820,22 @@ function generateStudentQuestionPaperPdf(paper) {
   doc.line(14, currentY, pageWidth - 14, currentY);
   currentY += 5;
 
-  // Metadata Grid
+  // Metadata Grid (Bounded column widths)
   doc.setFontSize(10);
   doc.setFont("times", "bold");
-  doc.text(`Subject: ${paper.subject}`, 14, currentY);
-  doc.text(`Max. Marks: ${paper.totalMarks}`, pageWidth - 14, currentY, { align: "right" });
-  currentY += 5;
+  const subjLines = doc.splitTextToSize(`Subject: ${paper.subject || ''}`, pageWidth - 28 - 45);
+  doc.text(subjLines, 14, currentY);
+  doc.text(`Max. Marks: ${paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50)}`, pageWidth - 14, currentY, { align: "right" });
+  currentY += Math.max(subjLines.length * 4.8, 5) + 1;
 
   doc.setFont("times", "normal");
-  doc.text(`Course/Code: ${paper.courseCode || "CS402"}`, 14, currentY);
-  doc.text(`Duration: ${paper.duration || 90} Minutes`, pageWidth - 14, currentY, { align: "right" });
-  currentY += 5;
+  const codeLines = doc.splitTextToSize(`Course/Code: ${paper.courseCode || paper.course_code || "CS402"}`, pageWidth - 28 - 45);
+  doc.text(codeLines, 14, currentY);
+  doc.text(`Duration: ${paper.duration != null ? paper.duration : (paper.duration_minutes != null ? paper.duration_minutes : 90)} Minutes`, pageWidth - 14, currentY, { align: "right" });
+  currentY += Math.max(codeLines.length * 4.8, 5) + 1;
 
-  doc.text(`Academic Year: ${paper.academicYear || "2025-2026"}`, 14, currentY);
-  doc.text(`Date of Exam: ${paper.examDate || new Date().toISOString().split("T")[0]}`, pageWidth - 14, currentY, { align: "right" });
+  doc.text(`Academic Year: ${paper.academicYear || paper.academic_year || "2025-2026"}`, 14, currentY);
+  doc.text(`Date of Exam: ${paper.examDate || paper.exam_date || new Date().toISOString().split("T")[0]}`, pageWidth - 14, currentY, { align: "right" });
   currentY += 5;
 
   doc.setLineWidth(0.2);
@@ -2405,12 +2854,43 @@ function generateStudentQuestionPaperPdf(paper) {
   }
 
   // Questions List
-  const questions = paper.questions || [];
+  const questions = Array.isArray(paper.questions) ? paper.questions : [];
   let currentGroup = "";
+  const numColW = 8;
+  const marksColW = 20;
+  const textX = 14 + numColW;
+  const maxTextWidth = pageWidth - 28 - numColW - marksColW;
 
   questions.forEach((q, qIndex) => {
-    // Check page break
-    if (currentY > 260) {
+    const qNumStr = `${q.number || q.questionNumber || qIndex + 1}. `;
+    const qMarksStr = `[${q.marks != null ? q.marks : 2} Marks]`;
+    const qText = q.text || q.questionText || "";
+
+    // Parse options for MCQs
+    let options = [];
+    if (q.options) {
+      options = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+    }
+
+    doc.setFont("times", "normal");
+    doc.setFontSize(10);
+    const wrappedText = doc.splitTextToSize(qText, maxTextWidth);
+
+    let optionsHeight = 0;
+    const wrappedOptions = [];
+    if (Array.isArray(options) && options.length > 0) {
+      options.forEach(opt => {
+        const optText = `(${opt.label || '•'}) ${opt.text || ''}`;
+        const wOpt = doc.splitTextToSize(optText, maxTextWidth - 6);
+        wrappedOptions.push(wOpt);
+        optionsHeight += wOpt.length * 4.4 + 1.5;
+      });
+    }
+
+    const totalQHeight = Math.max(wrappedText.length * 4.8, 6) + optionsHeight + 4;
+
+    // Check page break before printing question (Threshold 255mm so footer at 287mm is never collided with)
+    if (currentY + totalQHeight > 255) {
       doc.addPage();
       currentY = 20;
     }
@@ -2418,42 +2898,59 @@ function generateStudentQuestionPaperPdf(paper) {
     // If new section group
     if (q.groupName && q.groupName !== currentGroup) {
       currentGroup = q.groupName;
-      currentY += 3;
+      currentY += 2;
       doc.setFont("times", "bold");
       doc.setFontSize(10.5);
       doc.text(currentGroup.toUpperCase(), pageWidth / 2, currentY, { align: "center" });
       currentY += 6;
+      doc.setFont("times", "normal");
+      doc.setFontSize(10);
     }
 
-    // Question line
-    doc.setFont("times", "normal");
-    doc.setFontSize(10);
+    const startY = currentY;
 
-    const qNumStr = `${q.number || qIndex + 1}. `;
-    const qMarksStr = `[${q.marks}]`;
-
-    // Measure marks width
-    const marksWidth = doc.getTextWidth(qMarksStr) + 2;
-    const maxTextWidth = pageWidth - 28 - marksWidth - 8;
-
-    const wrappedText = doc.splitTextToSize(q.text, maxTextWidth);
-
-    doc.text(qNumStr, 14, currentY);
-    doc.text(wrappedText, 22, currentY);
-
+    // Col 1: Number
     doc.setFont("times", "bold");
-    doc.text(qMarksStr, pageWidth - 14, currentY, { align: "right" });
+    doc.text(qNumStr, 14, startY);
+
+    // Col 2: Question Text (Bounded width)
+    doc.setFont("times", "normal");
+    doc.text(wrappedText, textX, startY);
+
+    // Col 3: Marks (Right-aligned at identical startY)
+    doc.setFont("times", "bold");
+    doc.text(qMarksStr, pageWidth - 14, startY, { align: "right" });
     doc.setFont("times", "normal");
 
-    currentY += Math.max(wrappedText.length * 4.8, 6) + 3;
+    // Options rendering
+    if (wrappedOptions.length > 0) {
+      let optY = startY + wrappedText.length * 4.8 + 2;
+      wrappedOptions.forEach(wOpt => {
+        doc.text(wOpt, textX + 3, optY);
+        optY += wOpt.length * 4.4 + 1.5;
+      });
+    }
+
+    currentY = startY + totalQHeight;
   });
 
   // Footer on last page
-  if (currentY < 265) {
-    currentY = 275;
-    doc.setFont("times", "italic");
-    doc.setFontSize(8.5);
-    doc.text("*** END OF QUESTION PAPER ***", pageWidth / 2, currentY, { align: "center" });
+  if (currentY > 255) {
+    doc.addPage();
+    currentY = 20;
+  }
+  currentY += 6;
+  doc.setFont("times", "italic");
+  doc.setFontSize(8.5);
+  doc.text("*** END OF QUESTION PAPER ***", pageWidth / 2, currentY, { align: "center" });
+
+  // Page Numbers
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont("times", "normal");
+    doc.setFontSize(8);
+    doc.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 287, { align: "center" });
   }
 
   // Output filename
@@ -2473,72 +2970,101 @@ function generateFacultyAnswerKeyPdf(paper) {
   const pageWidth = doc.internal.pageSize.getWidth();
   let currentY = 18;
 
-  // Confidential Header
-  doc.setFillColor(236, 253, 245); // emerald subtle
-  doc.rect(14, 10, pageWidth - 28, 12, "F");
+  // Confidential Header Banner
+  doc.setFillColor(254, 242, 242);
+  doc.rect(14, 10, pageWidth - 28, 10, "F");
 
   doc.setFont("times", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(4, 120, 87);
-  doc.text("CONFIDENTIAL — FACULTY EVALUATION SCHEME & ANSWER KEY", pageWidth / 2, 17, { align: "center" });
+  doc.setFontSize(9.5);
+  doc.setTextColor(185, 28, 28);
+  doc.text("CONFIDENTIAL — FACULTY EVALUATION SCHEME & MODEL ANSWERS", pageWidth / 2, 16.5, { align: "center" });
   doc.setTextColor(0, 0, 0);
 
-  currentY = 28;
+  currentY = 26;
   doc.setFontSize(13);
-  doc.text((paper.instName || "INSTITUTE OF SCIENCE & TECHNOLOGY").toUpperCase(), pageWidth / 2, currentY, { align: "center" });
+  doc.text((paper.instName || paper.institution_name || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY").toUpperCase(), pageWidth / 2, currentY, { align: "center" });
   currentY += 5;
 
   doc.setFontSize(10);
   doc.setFont("times", "normal");
-  doc.text(`Subject: ${paper.subject} | Code: ${paper.courseCode || "CS402"} | Total Marks: ${paper.totalMarks}`, pageWidth / 2, currentY, { align: "center" });
-  currentY += 7;
+  const subMeta = doc.splitTextToSize(`Subject: ${paper.subject || ''} | Code: ${paper.courseCode || paper.course_code || "CS402"} | Total Marks: ${paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50)}`, pageWidth - 28);
+  doc.text(subMeta, pageWidth / 2, currentY, { align: "center" });
+  currentY += subMeta.length * 4.6 + 2;
 
   doc.setLineWidth(0.4);
+  doc.setDrawColor(185, 28, 28);
   doc.line(14, currentY, pageWidth - 14, currentY);
+  doc.setDrawColor(0, 0, 0);
   currentY += 6;
 
-  const questions = paper.questions || [];
+  const questions = Array.isArray(paper.questions) ? paper.questions : [];
 
   questions.forEach((q, idx) => {
-    if (currentY > 240) {
+    const qNum = q.number || q.questionNumber || (idx + 1);
+    const qText = q.text || q.questionText || "";
+    const qMarks = q.marks != null ? q.marks : 2;
+    const modelAns = q.modelAnswer || "No model answer provided.";
+
+    const qLines = doc.splitTextToSize(qText, pageWidth - 28);
+    const ansLines = doc.splitTextToSize(modelAns, pageWidth - 32);
+    const rubricCount = Array.isArray(q.rubric) ? q.rubric.length : 0;
+    const rubricEstHeight = rubricCount > 0 ? (rubricCount * 8 + 16) : 0;
+    const estimatedHeight = 12 + qLines.length * 4.6 + ansLines.length * 4.4 + rubricEstHeight + 15;
+
+    if (currentY + estimatedHeight > 255) {
       doc.addPage();
       currentY = 20;
     }
 
+    // Question Bar
+    doc.setFillColor(240, 253, 250);
+    doc.rect(14, currentY, pageWidth - 28, 7, "F");
     doc.setFont("times", "bold");
-    doc.setFontSize(10);
-    doc.text(`Q${q.number}. ${q.text}`, 14, currentY);
-    doc.text(`[${q.marks} Marks | ${q.unit || "Unit 1"} | ${q.difficulty}]`, pageWidth - 14, currentY, { align: "right" });
-    currentY += 5;
+    doc.setFontSize(9.5);
+    doc.setTextColor(15, 118, 110);
+    doc.text(`Q${qNum}. [${qMarks} Marks] (${q.unit || "Unit 1"} • Bloom: ${q.bloomLevel || "Understand"})`, 16, currentY + 5);
+    doc.text(`[${q.difficulty || "Medium"}]`, pageWidth - 16, currentY + 5, { align: "right" });
+    doc.setTextColor(0, 0, 0);
+    currentY += 10;
+
+    // Question prompt (wrapped full-width, no collision)
+    doc.setFont("times", "normal");
+    doc.setFontSize(9.5);
+    doc.text(qLines, 14, currentY);
+    currentY += qLines.length * 4.5 + 3;
 
     // Model Answer Box
     doc.setFont("times", "bold");
-    doc.setFontSize(9);
-    doc.text("Model Answer Script:", 14, currentY);
+    doc.setFontSize(8.5);
+    doc.setTextColor(3, 105, 161);
+    doc.text("Model Answer Script / Solution Outline:", 14, currentY);
+    doc.setTextColor(0, 0, 0);
     currentY += 4;
 
     doc.setFont("times", "normal");
-    const ansLines = doc.splitTextToSize(q.modelAnswer || "No model answer provided.", pageWidth - 32);
+    doc.setFontSize(8.5);
     doc.text(ansLines, 16, currentY);
-    currentY += ansLines.length * 4 + 2;
+    currentY += ansLines.length * 4.2 + 3;
 
-    // Key concepts & expected points
+    // Key concepts
     if (q.keyConcepts) {
       doc.setFont("times", "bold");
-      doc.text(`Key Concepts: `, 14, currentY);
+      doc.setFontSize(8);
+      doc.text("Key Concepts: ", 14, currentY);
       doc.setFont("times", "normal");
-      doc.text(q.keyConcepts, 38, currentY);
-      currentY += 5;
+      const cLines = doc.splitTextToSize(q.keyConcepts, pageWidth - 42);
+      doc.text(cLines, 34, currentY);
+      currentY += cLines.length * 3.8 + 2;
     }
 
-    // Marking Rubric Table via autoTable if available
+    // Marking Rubric Table via autoTable
     if (q.rubric && q.rubric.length > 0 && typeof doc.autoTable === "function") {
       const tableRows = q.rubric.map((r) => [r.criterion, `${r.marks} Mark(s)`]);
-      tableRows.push(["TOTAL MARKS", `${q.marks} Marks`]);
+      tableRows.push(["TOTAL MARKS", `${qMarks} Marks`]);
 
       doc.autoTable({
         startY: currentY,
-        margin: { left: 16, right: 16 },
+        margin: { left: 14, right: 14 },
         head: [["Evaluation Criterion / Steps Required", "Marks Split"]],
         body: tableRows,
         theme: "grid",
@@ -2546,16 +3072,25 @@ function generateFacultyAnswerKeyPdf(paper) {
         headStyles: { fillColor: [5, 150, 105], textColor: 255, fontStyle: "bold" },
         columnStyles: { 0: { cellWidth: "auto" }, 1: { cellWidth: 35, halign: "center", fontStyle: "bold" } }
       });
-      currentY = doc.lastAutoTable.finalY + 6;
+      currentY = doc.lastAutoTable.finalY + 5;
     } else {
-      currentY += 4;
+      currentY += 3;
     }
 
-    doc.setDrawColor(200, 200, 200);
+    doc.setDrawColor(226, 232, 240);
     doc.line(14, currentY, pageWidth - 14, currentY);
     doc.setDrawColor(0, 0, 0);
     currentY += 6;
   });
+
+  // Page Numbers
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFont("times", "normal");
+    doc.setFontSize(8);
+    doc.text(`Page ${i} of ${totalPages}`, pageWidth / 2, 287, { align: "center" });
+  }
 
   const cleanTitle = (paper.title || "Question_Paper").replace(/[^a-zA-Z0-9_-]/g, "_");
   doc.save(`${cleanTitle}_Faculty_Answer_Key.pdf`);
@@ -2591,7 +3126,7 @@ function generateTraceabilityAuditPdf(paper) {
 
   if (typeof doc.autoTable === "function") {
     doc.autoTable({
-      startY: 32,
+      startY: 30,
       margin: { left: 14, right: 14 },
       head: [["Q#", "Unit", "Cognitive Level", "Source Document", "Section/Page", "Cited Syllabus Excerpt"]],
       body: tableData,
@@ -2629,68 +3164,192 @@ function openSourceEvidenceModal(q) {
   document.getElementById("modalSourceEvidence").classList.remove("hidden");
 }
 
-function openPdfPreviewModal(paper, type = "question-paper") {
+async function openPdfPreviewModal(paperInput, type = "question-paper") {
+  if (!paperInput) return;
+
   const modal = document.getElementById("modalPdfPreview");
   const sheet = document.getElementById("pdfPaperSheet");
   const modalTitle = document.getElementById("pdfPreviewTitle");
+  const isAnswerKey = (type === "answer-key");
 
-  modalTitle.textContent = `${paper.title} — Academic Preview`;
+  let paper = paperInput;
 
-  // Render authentic paper sheet HTML
+  // If paper lacks questions (e.g. loaded from summary query), fetch full details with questions and rubrics from backend
+  if ((!paper.questions || !Array.isArray(paper.questions) || paper.questions.length === 0) && paper.id) {
+    if (sheet) {
+      sheet.innerHTML = `
+        <div style="padding: 60px 20px; text-align: center; color: #64748b;">
+          <div style="font-size: 32px; margin-bottom: 12px;">📄</div>
+          <h4 style="color: #0f172a; margin-bottom: 8px;">Loading Assessment Content...</h4>
+          <p style="font-size: 13px;">Retrieving full questions, model answers, and evaluation rubrics.</p>
+        </div>
+      `;
+    }
+    if (modal) modal.classList.remove("hidden");
+
+    if (window.ExamCraftApi && !paper.id.startsWith("paper-draft")) {
+      try {
+        const full = await window.ExamCraftApi.getPaper(paper.id);
+        if (full && full.paper) {
+          paper = full.paper;
+          if (Array.isArray(full.paper.questions)) {
+            paper.questions = full.paper.questions;
+          }
+          // Cache in AppState.papers
+          const idx = AppState.papers.findIndex((p) => p.id === paper.id);
+          if (idx !== -1) {
+            AppState.papers[idx] = { ...AppState.papers[idx], ...paper };
+          }
+        }
+      } catch (e) {
+        console.warn("Could not fetch full paper for preview:", e.message);
+      }
+    }
+  }
+
+  // Normalize metadata properties (accommodating snake_case and camelCase)
+  const subjectName = paper.subject || "Subject Assessment";
+  const courseCodeVal = paper.courseCode || paper.course_code || "CS402";
+  const totalMarksVal = paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50);
+  const examTypeVal = paper.examType || paper.exam_type || "MODEL EXAMINATION";
+  const durationVal = paper.duration != null ? paper.duration : (paper.duration_minutes != null ? paper.duration_minutes : 90);
+  const examDateVal = paper.examDate || paper.exam_date || new Date().toISOString().split("T")[0];
+  const instNameVal = paper.instName || paper.institution_name || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY";
+  const deptNameVal = paper.deptName || paper.department_name || AppState.settings?.department || "Dept of CSBS";
+  const instructionsVal = paper.instructions || "1. Answer all questions.\n2. State all assumptions clearly.";
+  const titleVal = paper.title || `${subjectName} (${courseCodeVal}) — ${examTypeVal}`;
+
+  // Store normalized values on paper
+  paper.subject = subjectName;
+  paper.courseCode = courseCodeVal;
+  paper.totalMarks = totalMarksVal;
+  paper.examType = examTypeVal;
+  paper.duration = durationVal;
+  paper.examDate = examDateVal;
+  paper.instName = instNameVal;
+  paper.deptName = deptNameVal;
+  paper.instructions = instructionsVal;
+  paper.title = titleVal;
+
+  modalTitle.textContent = isAnswerKey
+    ? `${titleVal} — Faculty Model Answers & Evaluation Guide`
+    : `${titleVal} — Student Question Paper Preview`;
+
   let questionsHtml = "";
   let currentGroup = "";
+  const questionsList = Array.isArray(paper.questions) ? paper.questions : [];
 
-  (paper.questions || []).forEach((q) => {
+  questionsList.forEach((q, idx) => {
+    const qNum = q.number || q.questionNumber || (idx + 1);
+    const qText = q.text || q.questionText || "";
+    const qMarks = q.marks != null ? q.marks : 2;
+    const qBloom = q.bloomLevel || q.bloom_level || "Understand";
+    const qUnit = q.unit || "Unit 1";
+    const qDiff = q.difficulty || "Medium";
+    const qModelAns = q.modelAnswer || q.model_answer || "Refer to course syllabus.";
+    const qKeyConcepts = q.keyConcepts || q.key_concepts || "";
+
     if (q.groupName && q.groupName !== currentGroup) {
       currentGroup = q.groupName;
-      questionsHtml += `<div class="exam-part-header">${escapeHtml(currentGroup)}</div>`;
+      questionsHtml += `<div class="exam-part-header" style="font-weight: 700; text-align: center; text-transform: uppercase; margin: 18px 0 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">${escapeHtml(currentGroup)}</div>`;
     }
 
-    questionsHtml += `
-      <div class="exam-q-row">
-        <div class="exam-q-text-col">
-          <strong>${q.number}.</strong> ${escapeHtml(q.text)}
+    if (isAnswerKey) {
+      const rubricRows = (Array.isArray(q.rubric) ? q.rubric : []).map(r => `
+        <tr>
+          <td style="padding: 4px 8px; border: 1px solid #e2e8f0; font-size: 11px;">${escapeHtml(r.criterion || r.criterion_description || "")}</td>
+          <td style="padding: 4px 8px; border: 1px solid #e2e8f0; font-size: 11px; text-align: center; font-weight: 600;">${r.marks != null ? r.marks : (r.marks_allocated != null ? r.marks_allocated : "")} M</td>
+        </tr>
+      `).join("");
+
+      questionsHtml += `
+        <div class="exam-q-row" style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed #cbd5e1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: #0f766e;">Question ${qNum} [${qMarks} Marks]</strong>
+            <span style="font-size: 11px; color: #64748b; font-weight: 600;">${escapeHtml(qUnit)} • Bloom: ${escapeHtml(qBloom)} • ${escapeHtml(qDiff)}</span>
+          </div>
+          <div style="font-size: 13px; color: #1e293b; margin-bottom: 8px; line-height: 1.5;">${escapeHtml(qText)}</div>
+          
+          <div style="background: #f8fafc; border-left: 3px solid #0d9488; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px;">
+            <div style="font-size: 11px; font-weight: 700; color: #0d9488; margin-bottom: 2px;">MODEL ANSWER / SOLUTION OUTLINE:</div>
+            <div style="font-size: 12px; color: #334155; line-height: 1.5; white-space: pre-line;">${escapeHtml(qModelAns)}</div>
+          </div>
+
+          ${qKeyConcepts ? `<div style="font-size: 11px; color: #475569; margin-bottom: 6px;"><strong>Key Concepts:</strong> ${escapeHtml(qKeyConcepts)}</div>` : ""}
+
+          ${(Array.isArray(q.rubric) && q.rubric.length > 0) ? `
+            <div style="margin-top: 6px;">
+              <div style="font-size: 11px; font-weight: 700; color: #065f46; margin-bottom: 3px;">MARKING SCHEME BREAKDOWN:</div>
+              <table style="width: 100%; border-collapse: collapse; margin-bottom: 4px;">
+                <thead>
+                  <tr style="background: #ecfdf5;">
+                    <th style="padding: 4px 8px; border: 1px solid #cbd5e1; font-size: 11px; text-align: left; color: #065f46;">Criterion / Step Description</th>
+                    <th style="padding: 4px 8px; border: 1px solid #cbd5e1; font-size: 11px; text-align: center; color: #065f46; width: 70px;">Marks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rubricRows}
+                </tbody>
+              </table>
+            </div>
+          ` : ""}
         </div>
-        <div class="exam-q-marks-col">[${q.marks}]</div>
-      </div>
-    `;
+      `;
+    } else {
+      questionsHtml += `
+        <div class="exam-q-row" style="display: flex; justify-content: space-between; gap: 16px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dotted #e2e8f0;">
+          <div class="exam-q-text-col" style="flex: 1; line-height: 1.6; font-size: 13.5px; color: #1e293b;">
+            <strong style="color: #0f172a; margin-right: 4px;">${qNum}.</strong> ${escapeHtml(qText)}
+          </div>
+          <div class="exam-q-marks-col" style="font-weight: 700; white-space: nowrap; font-size: 13px; color: #0284c7;">[${qMarks} Marks]</div>
+        </div>
+      `;
+    }
   });
 
   sheet.innerHTML = `
     <div class="exam-sheet-header">
-      <div class="exam-inst-name">${escapeHtml(paper.instName || AppState.settings.institution)}</div>
-      <div class="exam-dept-name">${escapeHtml(paper.deptName || AppState.settings.department)}</div>
-      <div class="exam-title-line">${escapeHtml(paper.examType || "MODEL EXAMINATION")}</div>
+      <div class="exam-inst-name">${escapeHtml(instNameVal)}</div>
+      <div class="exam-dept-name">${escapeHtml(deptNameVal)}</div>
+      <div class="exam-title-line" style="${isAnswerKey ? 'color: #b91c1c;' : ''}">
+        ${isAnswerKey ? 'CONFIDENTIAL — FACULTY EVALUATION SCHEME' : escapeHtml(examTypeVal)}
+      </div>
     </div>
 
     <div class="exam-metadata-grid">
-      <div><strong>Course:</strong> ${escapeHtml(paper.subject)} (${escapeHtml(paper.courseCode || "CS402")})</div>
-      <div class="text-right"><strong>Max Marks:</strong> ${paper.totalMarks}</div>
-      <div><strong>Date:</strong> ${escapeHtml(paper.examDate || "2026-10-25")}</div>
-      <div class="text-right"><strong>Duration:</strong> ${paper.duration || 90} Minutes</div>
+      <div><strong>Course:</strong> ${escapeHtml(subjectName)} (${escapeHtml(courseCodeVal)})</div>
+      <div class="text-right"><strong>Max Marks:</strong> ${totalMarksVal}</div>
+      <div><strong>Date:</strong> ${escapeHtml(examDateVal)}</div>
+      <div class="text-right"><strong>Duration:</strong> ${durationVal} Minutes</div>
     </div>
 
     ${
-      paper.instructions
+      (!isAnswerKey && instructionsVal)
         ? `<div class="exam-instructions-box">
              <strong>Candidate Instructions:</strong><br>
-             ${escapeHtml(paper.instructions).replace(/\n/g, "<br>")}
+             ${escapeHtml(instructionsVal).replace(/\n/g, "<br>")}
            </div>`
         : ""
     }
 
-    <div class="exam-questions-content">
-      ${questionsHtml || "<p class='text-center text-muted'>No questions to display.</p>"}
+    <div class="exam-questions-content" style="margin-top: 14px;">
+      ${questionsHtml || "<p class='text-center text-muted' style='padding: 24px 0;'>No questions to display.</p>"}
     </div>
 
     <div class="text-center mt-4 text-xs" style="border-top: 1px solid #000; padding-top: 8px;">
-      <em>*** END OF QUESTION PAPER ***</em>
+      <em>*** ${isAnswerKey ? 'END OF EVALUATION SCHEME' : 'END OF QUESTION PAPER'} ***</em>
     </div>
   `;
 
   // Download button listener in modal
   const dlBtn = document.getElementById("btnModalDownloadPdf");
-  dlBtn.onclick = () => generateStudentQuestionPaperPdf(paper);
+  dlBtn.onclick = () => {
+    if (isAnswerKey) {
+      generateFacultyAnswerKeyPdf(paper);
+    } else {
+      generateStudentQuestionPaperPdf(paper);
+    }
+  };
 
   modal.classList.remove("hidden");
 }
@@ -2876,9 +3535,9 @@ async function renderMyPapersView() {
 
 function attachMyPapersListeners() {
   document.querySelectorAll(".btn-grid-preview").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const p = AppState.papers.find((item) => item.id === btn.dataset.id);
-      if (p) openPdfPreviewModal(p, "question-paper");
+      if (p) await openPdfPreviewModal(p, "question-paper");
     });
   });
 
@@ -2891,7 +3550,9 @@ function attachMyPapersListeners() {
           const full = await window.ExamCraftApi.getPaper(pId);
           if (full && full.paper) {
             p = full.paper;
-            p.questions = full.questions || [];
+            if (Array.isArray(full.paper.questions)) {
+              p.questions = full.paper.questions;
+            }
           }
         } catch (e) {
           console.warn("Could not fetch full paper from server:", e.message);
@@ -2938,9 +3599,9 @@ function attachMyPapersListeners() {
   });
 
   document.querySelectorAll(".btn-grid-export").forEach((btn) => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const p = AppState.papers.find((item) => item.id === btn.dataset.id);
-      if (p) openPdfPreviewModal(p, "question-paper");
+      if (p) await openPdfPreviewModal(p, "question-paper");
     });
   });
 
@@ -2993,11 +3654,12 @@ function renderQuestionBankView() {
   });
 
   if (filtered.length === 0) {
+    const isTotallyEmpty = AppState.questionBank.length === 0;
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon"><i data-lucide="database"></i></div>
-        <h4>No matching questions found</h4>
-        <p>Try refining your search keyword or adjust the taxonomy filters.</p>
+        <h4>${isTotallyEmpty ? "Your question bank is empty." : "No matching questions found"}</h4>
+        <p>${isTotallyEmpty ? "Approved questions from generated question papers will automatically be stored here." : "Try refining your search keyword or adjust the taxonomy filters."}</p>
       </div>
     `;
     lucide.createIcons();
@@ -3097,6 +3759,18 @@ function renderSyllabusLibraryView() {
   const grid = document.getElementById("syllabusLibraryGrid");
   grid.innerHTML = "";
 
+  if (!AppState.syllabusDocs || AppState.syllabusDocs.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 48px 24px; text-align: center;">
+        <div class="empty-icon"><i data-lucide="book-open"></i></div>
+        <h4>Upload a syllabus to get started</h4>
+        <p>Your uploaded syllabus documents, curriculum modules, and textbooks will be stored here for question generation.</p>
+      </div>
+    `;
+    lucide.createIcons();
+    return;
+  }
+
   AppState.syllabusDocs.forEach((doc) => {
     const card = document.createElement("div");
     card.className = "syllabus-card";
@@ -3156,7 +3830,7 @@ function renderSyllabusLibraryView() {
           fileSize: d.fileSize,
           pages: d.pages,
           text: d.text,
-          isSample: true
+          isSample: false
         };
         switchView("create");
         setWizardStep(2);
@@ -3322,7 +3996,7 @@ async function renderReviewQueueView() {
           const p = AppState.papers.find(item => item.id === pId);
           if (p) {
             p.status = "Approved";
-            p.approvedBy = "Dr. Sarah Jenkins";
+            p.approvedBy = AppState.settings.teacherName || "Authorized Faculty";
             p.approvedAt = new Date().toISOString();
             approved = true;
           }
@@ -3337,9 +4011,9 @@ async function renderReviewQueueView() {
   });
 
   document.querySelectorAll(".btn-review-preview").forEach(btn => {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       const p = AppState.papers.find(item => item.id === btn.dataset.id);
-      if (p) openPdfPreviewModal(p, "question-paper");
+      if (p) await openPdfPreviewModal(p, "question-paper");
     });
   });
 }
@@ -3514,102 +4188,169 @@ function resetAllDataToDefault() {
   );
 }
 
-async function initAuth() {
-  if (window.ExamCraftApi) {
-    try {
-      let user = await window.ExamCraftApi.getCurrentUser();
-      if (!user) {
-        // Auto-authenticate as default faculty for seamless out-of-the-box experience
-        const loginRes = await window.ExamCraftApi.login("teacher@examcraft.ai", "Faculty@2026");
-        user = loginRes.user;
-      }
-      if (user) {
-        const nameEl = document.getElementById("sidebarProfileName");
-        const deptEl = document.getElementById("sidebarProfileDept");
-        if (nameEl) nameEl.textContent = user.fullName || "Dr. Sarah Jenkins";
-        if (deptEl) deptEl.textContent = user.department || "Dept. of Computer Science";
-        const greetingEl = document.getElementById("dashTeacherGreeting");
-        if (greetingEl) greetingEl.textContent = (user.fullName || "Professor").split(" ")[0];
-      }
-    } catch (e) {
-      console.warn("Auth initialization notice:", e.message);
-    }
+function showAuthPortal() {
+  const portal = document.getElementById("authPortalView");
+  const appLayout = document.getElementById("appLayout");
+  if (portal) {
+    portal.classList.remove("hidden");
+    portal.style.display = "flex";
+  }
+  if (appLayout) {
+    appLayout.style.display = "none";
+  }
+  if (window.lucide) window.lucide.createIcons();
+}
+
+async function showAuthenticatedApp(user) {
+  const portal = document.getElementById("authPortalView");
+  const appLayout = document.getElementById("appLayout");
+  if (portal) {
+    portal.classList.add("hidden");
+    portal.style.display = "none";
+  }
+  if (appLayout) {
+    appLayout.style.display = "flex";
   }
 
-  // Quick settings button opens auth modal
-  document.getElementById("btnQuickSettings")?.addEventListener("click", () => {
-    document.getElementById("modalAuth")?.classList.remove("hidden");
-  });
-
-  // Auth modal tabs
-  document.getElementById("tabAuthLogin")?.addEventListener("click", () => {
-    document.getElementById("tabAuthLogin").className = "btn btn-sm btn-primary flex-1";
-    document.getElementById("tabAuthRegister").className = "btn btn-sm btn-outline-secondary flex-1";
-    document.getElementById("formAuthLogin")?.classList.remove("hidden");
-    document.getElementById("formAuthRegister")?.classList.add("hidden");
-  });
-
-  document.getElementById("tabAuthRegister")?.addEventListener("click", () => {
-    document.getElementById("tabAuthRegister").className = "btn btn-sm btn-primary flex-1";
-    document.getElementById("tabAuthLogin").className = "btn btn-sm btn-outline-secondary flex-1";
-    document.getElementById("formAuthRegister")?.classList.remove("hidden");
-    document.getElementById("formAuthLogin")?.classList.add("hidden");
-  });
-
-  // 1-Click Fast Sign In (Demo / Presentation)
-  document.getElementById("btnQuickDemoLogin")?.addEventListener("click", async () => {
+  if (user) {
+    AppState.currentUser = user;
     try {
-      const res = await window.ExamCraftApi.login("teacher@examcraft.ai", "Faculty@2026");
+      sessionStorage.setItem("examcraft_current_user", JSON.stringify(user));
+    } catch (e) {}
+
+    AppState.settings.teacherName = user.fullName || "Faculty";
+    if (user.department) {
+      AppState.settings.department = user.department;
+    }
+    persistState();
+
+    const nameEl = document.getElementById("sidebarProfileName");
+    const deptEl = document.getElementById("sidebarProfileDept");
+    if (nameEl) nameEl.textContent = user.fullName || "Faculty Member";
+    if (deptEl) deptEl.textContent = user.department || "Academic Faculty";
+    const greetingEl = document.getElementById("dashTeacherGreeting");
+    if (greetingEl) greetingEl.textContent = user.fullName || "Faculty";
+  }
+
+  if (window.lucide) window.lucide.createIcons();
+  await renderDashboardView();
+  switchView("dashboard");
+}
+
+function handleFacultySignOut() {
+  if (window.ExamCraftApi) {
+    window.ExamCraftApi.logout();
+  }
+  sessionStorage.removeItem("examcraft_logged_in");
+  sessionStorage.removeItem("examcraft_current_user");
+  AppState.currentUser = null;
+  showToast("Faculty session signed out successfully.", "info");
+  showAuthPortal();
+}
+
+function initAuth() {
+  // Portal Sign In Form
+  document.getElementById("portalFormLogin")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("portalLoginEmail")?.value.trim();
+    const password = document.getElementById("portalLoginPassword")?.value;
+    try {
+      showToast("Verifying faculty credentials...", "info");
+      const res = await window.ExamCraftApi.login(email, password);
       if (res && res.user) {
-        document.getElementById("sidebarProfileName").textContent = res.user.fullName;
-        document.getElementById("sidebarProfileDept").textContent = res.user.department;
-        document.getElementById("modalAuth")?.classList.add("hidden");
-        showToast(`Signed in as ${res.user.fullName}`, "success");
-        await renderDashboardView();
+        sessionStorage.setItem("examcraft_logged_in", "true");
+        sessionStorage.setItem("examcraft_current_user", JSON.stringify(res.user));
+        AppState.currentUser = res.user;
+        showToast(`Welcome, ${res.user.fullName}!`, "success");
+        await showAuthenticatedApp(res.user);
       }
     } catch (err) {
       showToast("Sign in failed: " + err.message, "error");
     }
   });
 
-  // Form Login
-  document.getElementById("formAuthLogin")?.addEventListener("submit", async (e) => {
+  // Portal Registration Form
+  document.getElementById("portalFormRegister")?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const email = document.getElementById("authLoginEmail").value.trim();
-    const password = document.getElementById("authLoginPassword").value;
+    const fullName = document.getElementById("portalRegName")?.value.trim();
+    const email = document.getElementById("portalRegEmail")?.value.trim();
+    const department = document.getElementById("portalRegDept")?.value.trim();
+    const password = document.getElementById("portalRegPassword")?.value;
     try {
-      const res = await window.ExamCraftApi.login(email, password);
+      showToast("Creating academic faculty account...", "info");
+      const res = await window.ExamCraftApi.register({ fullName, email, department, password });
       if (res && res.user) {
-        document.getElementById("sidebarProfileName").textContent = res.user.fullName;
-        document.getElementById("sidebarProfileDept").textContent = res.user.department;
-        document.getElementById("modalAuth")?.classList.add("hidden");
-        showToast(`Welcome back, ${res.user.fullName}!`, "success");
-        await renderDashboardView();
+        sessionStorage.setItem("examcraft_logged_in", "true");
+        sessionStorage.setItem("examcraft_current_user", JSON.stringify(res.user));
+        AppState.currentUser = res.user;
+        showToast(`Account created! Welcome, ${res.user.fullName}!`, "success");
+        await showAuthenticatedApp(res.user);
       }
     } catch (err) {
-      showToast(err.message, "error");
+      showToast("Registration failed: " + err.message, "error");
     }
   });
 
-  // Form Register
-  document.getElementById("formAuthRegister")?.addEventListener("submit", async (e) => {
+  // Portal Navigation Tabs & View Switching
+  const switchToLogin = () => {
+    document.getElementById("portalTabLogin")?.classList.add("active");
+    document.getElementById("portalTabRegister")?.classList.remove("active");
+    document.getElementById("portalLoginContainer")?.classList.remove("hidden");
+    document.getElementById("portalRegisterContainer")?.classList.add("hidden");
+    document.getElementById("portalFormLogin")?.classList.remove("hidden");
+    document.getElementById("portalFormRegister")?.classList.add("hidden");
+    if (window.lucide) window.lucide.createIcons();
+  };
+
+  const switchToRegister = () => {
+    document.getElementById("portalTabRegister")?.classList.add("active");
+    document.getElementById("portalTabLogin")?.classList.remove("active");
+    document.getElementById("portalRegisterContainer")?.classList.remove("hidden");
+    document.getElementById("portalLoginContainer")?.classList.add("hidden");
+    document.getElementById("portalFormRegister")?.classList.remove("hidden");
+    document.getElementById("portalFormLogin")?.classList.add("hidden");
+    if (window.lucide) window.lucide.createIcons();
+  };
+
+  document.getElementById("portalTabLogin")?.addEventListener("click", switchToLogin);
+  document.getElementById("portalTabRegister")?.addEventListener("click", switchToRegister);
+  document.getElementById("linkSwitchToRegister")?.addEventListener("click", (e) => {
     e.preventDefault();
-    const fullName = document.getElementById("authRegName").value.trim();
-    const email = document.getElementById("authRegEmail").value.trim();
-    const department = document.getElementById("authRegDept").value.trim();
-    const password = document.getElementById("authRegPassword").value;
-    try {
-      const res = await window.ExamCraftApi.register({ fullName, email, department, password });
-      if (res && res.user) {
-        document.getElementById("sidebarProfileName").textContent = res.user.fullName;
-        document.getElementById("sidebarProfileDept").textContent = res.user.department;
-        document.getElementById("modalAuth")?.classList.add("hidden");
-        showToast(`Account created! Welcome, ${res.user.fullName}!`, "success");
-        await renderDashboardView();
-      }
-    } catch (err) {
-      showToast(err.message, "error");
+    switchToRegister();
+  });
+  document.getElementById("linkSwitchToLogin")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    switchToLogin();
+  });
+
+  document.getElementById("linkForgotPassword")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("portalLoginEmail")?.value.trim() || "your account";
+    showToast(`Password recovery link dispatched to ${email}.`, "info");
+  });
+
+  // Toggle Password Visibility
+  document.getElementById("btnTogglePortalPassword")?.addEventListener("click", () => {
+    const passInput = document.getElementById("portalLoginPassword");
+    const eyeIcon = document.getElementById("iconPortalPasswordEye");
+    if (!passInput) return;
+    if (passInput.type === "password") {
+      passInput.type = "text";
+      if (eyeIcon) eyeIcon.setAttribute("data-lucide", "eye-off");
+    } else {
+      passInput.type = "password";
+      if (eyeIcon) eyeIcon.setAttribute("data-lucide", "eye");
     }
+    if (window.lucide) window.lucide.createIcons();
+  });
+
+  // Logout Buttons (Sidebar & Topbar)
+  document.getElementById("btnSidebarLogout")?.addEventListener("click", handleFacultySignOut);
+  document.getElementById("btnTopbarLogout")?.addEventListener("click", handleFacultySignOut);
+
+  // Quick Settings Navigation
+  document.getElementById("btnQuickSettings")?.addEventListener("click", () => {
+    switchView("settings");
   });
 }
 
@@ -3624,14 +4365,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 2. Initialize icons
   lucide.createIcons();
 
-  // 3. Initialize Authentication & API Session
-  await initAuth();
-
-  // 4. Setup default draft
+  // 3. Setup default draft
   AppState.currentDraft = createDefaultDraft();
 
-  // 5. Initial render
-  await renderDashboardView();
+  // 4. Initialize Auth event handlers
+  initAuth();
+
+  // 5. Present the Login Page FIRST as required
+  showAuthPortal();
 
   // Navigation Links
   document.querySelectorAll(".nav-item").forEach((btn) => {
@@ -3676,6 +4417,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     setWizardStep(1);
   });
 
+  document.getElementById("btnUploadSyllabusDoc")?.addEventListener("click", () => {
+    AppState.currentDraft = createDefaultDraft();
+    switchView("create");
+    setWizardStep(1);
+    showToast("Ready to upload new curriculum document.", "info");
+  });
+
   // Stepper Header navigation
   document.querySelectorAll(".step-item").forEach((item) => {
     item.addEventListener("click", () => {
@@ -3708,8 +4456,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         handlePdfExtraction(file);
       } else if (file.name.endsWith(".txt")) {
         handleTxtExtraction(file);
+      } else if (file.name.endsWith(".docx") || file.type.includes("wordprocessingml")) {
+        handleDocxExtraction(file);
       } else {
-        showToast("DOCX extraction requires server conversion. Please upload PDF or TXT, or paste your syllabus text.", "info");
+        showToast("Please upload a PDF, DOCX, or TXT syllabus document.", "error");
       }
     }
   });
@@ -3721,8 +4471,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         handlePdfExtraction(file);
       } else if (file.name.endsWith(".txt")) {
         handleTxtExtraction(file);
+      } else if (file.name.endsWith(".docx") || file.type.includes("wordprocessingml")) {
+        handleDocxExtraction(file);
       } else {
-        showToast("DOCX extraction requires server conversion. Please upload PDF or TXT, or paste your syllabus text.", "info");
+        showToast("Please upload a PDF, DOCX, or TXT syllabus document.", "error");
       }
     }
   });
@@ -3751,7 +4503,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const parsed = parseSyllabusStructure(text);
     if (parsed.length > 0) {
-      AppState.currentDraft.unitsCovered = parsed.map((p) => p.unit);
+      AppState.currentDraft.unitsCovered = parsed.map((p) => `${p.unit}: ${p.title}`);
+      renderUnitChipsFromList(AppState.currentDraft.unitsCovered);
     }
 
     document.getElementById("uploadedFileName").textContent = "Course_Syllabus_Curriculum.txt";
@@ -3777,7 +4530,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const parsed = parseSyllabusStructure(text);
     if (parsed.length > 0) {
-      AppState.currentDraft.unitsCovered = parsed.map((p) => p.unit);
+      AppState.currentDraft.unitsCovered = parsed.map((p) => `${p.unit}: ${p.title}`);
+      renderUnitChipsFromList(AppState.currentDraft.unitsCovered);
     }
 
     document.getElementById("uploadedFileName").textContent = fileName;
@@ -3828,32 +4582,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Add unit manually
   document.getElementById("btnAddUnitManually")?.addEventListener("click", addManualUnitPrompt);
 
-  // Template curriculum handler
-  const loadStandardCurriculumHandler = () => {
-    const templateText = `CURRICULUM SPECIFICATION
-COURSE NAME: ADVANCED COMPUTER SYSTEMS & ARCHITECTURE
-COURSE CODE: CS305 | ACADEMIC YEAR: 2025-2026
 
-UNIT 1: PROCESSOR ARCHITECTURE & PIPELINING
-Instruction set architectures, RISC and CISC design paradigms. Pipelined execution stages, data hazards, forwarding units, structural and control hazards. Branch prediction models.
-
-UNIT 2: MEMORY HIERARCHY & CACHE COHERENCE
-Cache memory mapping, direct mapped, associative and set-associative. Miss rates and cache replacement strategies (LRU, FIFO). Cache coherence protocols (MESI, MOESI).
-
-UNIT 3: STORAGE SYSTEMS & MULTIPROCESSORS
-Direct Memory Access (DMA), interrupt driven I/O, disk scheduling algorithms (SSTF, SCAN). Multicore symmetric multiprocessing (SMP) and NUMA architectures.
-
-UNIT 4: EMBEDDED PROCESSORS & SYSTEM SECURITY
-Hardware root of trust, secure boot sequences, memory management unit (MMU) virtual memory translation, side-channel attack countermeasures.`;
-
-    applyCurriculumText("Computer_Systems_Curriculum_Template.pdf", templateText, "Curriculum Template Loaded");
-    autoPopulateFromExtractedText(templateText, "Computer_Systems_Curriculum_Template.pdf");
-    showToast("Loaded curriculum syllabus template!", "success");
-    showDeviceToast("Template syllabus loaded");
-  };
-
-  document.getElementById("btnAlertStandardCurriculum")?.addEventListener("click", loadStandardCurriculumHandler);
-  document.getElementById("btnUseStandardCurriculum")?.addEventListener("click", loadStandardCurriculumHandler);
 
   // ===================================================================
   // Appearance Customization Event Handlers (Matching Reference Image)
@@ -3982,6 +4711,18 @@ Hardware root of trust, secure boot sequences, memory management unit (MMU) virt
 
   // Step 1 Next
   document.getElementById("btnStep1Next")?.addEventListener("click", () => {
+    const hasSyllabus = AppState.currentDraft?.uploadedSyllabus?.text && AppState.currentDraft.uploadedSyllabus.text.trim().length > 20;
+    const hasManualUnits = AppState.currentDraft?.verifiedStructure?.units?.length > 0 || (AppState.currentDraft?.unitsCovered && AppState.currentDraft.unitsCovered.length > 0);
+    
+    if (!hasSyllabus && !hasManualUnits) {
+      showToast("Please upload a syllabus document (PDF, DOCX, TXT) or paste curriculum content before proceeding.", "error");
+      return;
+    }
+
+    if (hasSyllabus) {
+      autoPopulateFromExtractedText(AppState.currentDraft.uploadedSyllabus.text, AppState.currentDraft.uploadedSyllabus.fileName);
+    }
+
     setWizardStep(2);
   });
 
@@ -4020,9 +4761,47 @@ Hardware root of trust, secure boot sequences, memory management unit (MMU) virt
   });
 
   document.getElementById("btnStep2Back")?.addEventListener("click", () => setWizardStep(1));
-  document.getElementById("btnStep2Next")?.addEventListener("click", () => setWizardStep(3));
+  document.getElementById("btnStep2Next")?.addEventListener("click", () => {
+    const d = AppState.currentDraft;
+    if (!d || !d.subject || d.subject.trim().length === 0) {
+      showToast("Please enter a subject or course name.", "error");
+      return;
+    }
+    if (!d.groups || d.groups.length === 0) {
+      showToast("Please add at least one question group or section.", "error");
+      return;
+    }
+    const totalPlannedMarks = d.groups.reduce((acc, g) => acc + (parseInt(g.count, 10) * parseInt(g.marksPerQ, 10)), 0);
+    if (totalPlannedMarks <= 0) {
+      showToast("Total marks must be greater than 0.", "error");
+      return;
+    }
+    setWizardStep(3);
+  });
 
-  // Step 3 Generation
+  // Step 1 Structure Verification Unit Addition
+  document.getElementById("btnAddUnitToStructure")?.addEventListener("click", () => {
+    if (!AppState.currentDraft) AppState.currentDraft = createDefaultDraft();
+    if (!AppState.currentDraft.verifiedStructure) {
+      AppState.currentDraft.verifiedStructure = { subject: AppState.currentDraft.subject || "", units: [] };
+    }
+    const units = AppState.currentDraft.verifiedStructure.units || [];
+    const newUnitNum = units.length + 1;
+    units.push({
+      unit: `Unit ${newUnitNum}`,
+      title: `Curriculum Module ${newUnitNum}`,
+      topics: ["Module Fundamentals", "Advanced Concepts"]
+    });
+    AppState.currentDraft.verifiedStructure.units = units;
+    renderSyllabusStructureVerification(AppState.currentDraft.verifiedStructure);
+    showToast(`Added Unit ${newUnitNum} to curriculum structure!`, "info");
+  });
+
+  // Step 3 Generation & Plan
+  document.getElementById("btnRefreshPlan")?.addEventListener("click", () => {
+    showToast("Recalculating slot-by-slot assessment plan...", "info");
+    loadAssessmentPlan();
+  });
   document.getElementById("btnStartGeneration")?.addEventListener("click", triggerAssessmentGeneration);
   document.getElementById("btnProceedToReview")?.addEventListener("click", () => setWizardStep(4));
   document.getElementById("btnRegenerateAll")?.addEventListener("click", () => {

@@ -2,22 +2,22 @@ const express = require('express');
 const router = express.Router();
 const { query, queryOne, transaction } = require('../db/database');
 const { requireAuth } = require('../middleware/auth');
-const { generateAssessmentQuestions } = require('../services/aiGenerator');
+const { generateAssessmentQuestions, constructAssessmentPlan } = require('../services/aiGenerator');
+const { extractSyllabusStructure } = require('../services/documentProcessor');
 
 /**
- * POST /api/papers/generate
- * Generates an assessment paper draft based on blueprint and syllabus source
+ * POST /api/papers/plan
+ * Constructs a slot-by-slot Assessment Generation Plan from Blueprint & Syllabus
  */
-router.post('/generate', requireAuth, async (req, res) => {
+router.post('/plan', requireAuth, async (req, res) => {
   try {
     const { blueprint, documentId } = req.body;
     const userId = req.user.id;
 
-    if (!blueprint || !blueprint.subject) {
-      return res.status(400).json({ success: false, error: 'Valid assessment blueprint is required.' });
+    if (!blueprint) {
+      return res.status(400).json({ success: false, error: 'Blueprint is required to construct plan.' });
     }
 
-    // Retrieve source document if specified
     let sourceDoc = null;
     if (documentId) {
       sourceDoc = await queryOne('SELECT * FROM source_documents WHERE id = ? AND user_id = ?', [documentId, userId]);
@@ -25,8 +25,76 @@ router.post('/generate', requireAuth, async (req, res) => {
       sourceDoc = await queryOne('SELECT * FROM source_documents WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [userId]);
     }
 
-    // Call AI Generation Engine
-    const { engine, questions } = await generateAssessmentQuestions(blueprint, sourceDoc, userId);
+    let syllabusStructure = blueprint.verifiedStructure || null;
+    if (!syllabusStructure && sourceDoc && sourceDoc.extracted_text) {
+      syllabusStructure = extractSyllabusStructure(sourceDoc.extracted_text, [], sourceDoc.original_name);
+    } else if (!syllabusStructure && blueprint.uploadedSyllabus && blueprint.uploadedSyllabus.text) {
+      syllabusStructure = extractSyllabusStructure(blueprint.uploadedSyllabus.text, [], blueprint.uploadedSyllabus.fileName || 'Pasted_Syllabus.txt');
+    }
+
+    const plan = constructAssessmentPlan(blueprint, syllabusStructure);
+    res.json({ 
+      success: true, 
+      plan: plan.slots || plan,
+      totalPlannedMarks: plan.totalPlannedMarks,
+      warnings: plan.warnings 
+    });
+  } catch (err) {
+    console.error('Construct assessment plan error:', err);
+    res.status(500).json({ success: false, error: 'Failed to construct assessment plan.' });
+  }
+});
+
+/**
+ * POST /api/papers/generate
+ * Generates an assessment paper draft based on blueprint, syllabus source, and assessment plan
+ */
+router.post('/generate', requireAuth, async (req, res) => {
+  try {
+    const { blueprint, documentId, customPlan } = req.body;
+    const userId = req.user.id;
+
+    if (!blueprint || !blueprint.subject) {
+      return res.status(400).json({ success: false, error: 'Valid assessment blueprint is required.' });
+    }
+
+    // Retrieve source document or save pasted syllabus text
+    let sourceDoc = null;
+    if (documentId) {
+      sourceDoc = await queryOne('SELECT * FROM source_documents WHERE id = ? AND user_id = ?', [documentId, userId]);
+    } else if (blueprint.uploadedSyllabus && blueprint.uploadedSyllabus.text && blueprint.uploadedSyllabus.text.trim()) {
+      const pastedText = blueprint.uploadedSyllabus.text.trim();
+      const docId = `doc-pasted-${Date.now()}`;
+      const docName = blueprint.uploadedSyllabus.fileName || `${blueprint.subject || 'Course'}_Syllabus.txt`;
+      await query(`
+        INSERT INTO source_documents (
+          id, user_id, filename, original_name, file_size, mime_type, page_count, status, storage_path, extracted_text
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        docId, userId, docName, docName, `${(pastedText.length / 1024).toFixed(1)} KB`, 'text/plain', 1, 'extracted', 'memory', pastedText
+      ]);
+      const { chunkDocumentText } = require('../services/documentProcessor');
+      const chunks = chunkDocumentText([{ pageNumber: 1, text: pastedText }], docId, userId);
+      for (const chunk of chunks) {
+        await query(`
+          INSERT INTO document_chunks (id, document_id, user_id, chunk_index, page_number, section_title, content)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
+        `, [chunk.id, chunk.documentId, chunk.userId, chunk.chunkIndex, chunk.pageNumber, chunk.sectionTitle, chunk.content]);
+      }
+      sourceDoc = await queryOne('SELECT * FROM source_documents WHERE id = ?', [docId]);
+    } else {
+      sourceDoc = await queryOne('SELECT * FROM source_documents WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [userId]);
+    }
+
+    if (!sourceDoc || !sourceDoc.extracted_text || sourceDoc.extracted_text.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No readable syllabus content found. Please upload a syllabus file or paste your curriculum in Step 1 before generating questions.'
+      });
+    }
+
+    // Call AI Generation Engine with non-duplicate topic planning
+    const { engine, questions, plan } = await generateAssessmentQuestions(blueprint, sourceDoc, userId, customPlan);
 
     const paperId = `paper-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
     const paperTitle = `${blueprint.subject} (${blueprint.courseCode || 'Assessment'}) — ${blueprint.examType || 'Model Examination'}`;
@@ -139,7 +207,8 @@ router.post('/generate', requireAuth, async (req, res) => {
       success: true,
       message: `Assessment draft generated successfully via ${engine}.`,
       engine,
-      paperId
+      paperId,
+      plan
     });
 
   } catch (err) {
@@ -339,7 +408,7 @@ router.post('/:id/approve', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Question paper not found.' });
     }
 
-    const approverName = req.user.full_name || 'Dr. Sarah Jenkins';
+    const approverName = req.user.full_name || 'Authorized Faculty';
 
     await query(`
       UPDATE question_papers

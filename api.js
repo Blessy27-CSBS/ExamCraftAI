@@ -121,6 +121,10 @@ class ApiClient {
     return await this.request(`/documents/${id}`);
   }
 
+  async getDocumentStructure(id) {
+    return await this.request(`/documents/${id}/structure`);
+  }
+
   async deleteDocument(id) {
     return await this.request(`/documents/${id}`, { method: 'DELETE' });
   }
@@ -140,11 +144,18 @@ class ApiClient {
     });
   }
 
-  // --- Question Papers ---
-  async generatePaper(blueprint, documentId = null) {
-    return await this.request('/papers/generate', {
+  // --- Assessment Plan & Question Papers ---
+  async getAssessmentPlan(blueprint, documentId = null) {
+    return await this.request('/papers/plan', {
       method: 'POST',
       body: JSON.stringify({ blueprint, documentId })
+    });
+  }
+
+  async generatePaper(blueprint, documentId = null, customPlan = null) {
+    return await this.request('/papers/generate', {
+      method: 'POST',
+      body: JSON.stringify({ blueprint, documentId, customPlan })
     });
   }
 

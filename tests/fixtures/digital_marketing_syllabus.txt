@@ -1,0 +1,54 @@
+24UCBP10 DIGITAL MARKETING STRATEGIES L/T/P/C
+3/0/0/3
+Nature of Course: Theory PEC
+Prerequisite(s):Basic understanding of marketing concepts, Familiarity with internet and social media
+platforms ,Familiarity with digital tools and web technologies.
+Course Objectives: Enable the students to
+Analyze the concepts of SEO, email marketing, and social media marketing to support the
+promotion of brands, products, and services in the digital environment.
+Design data-driven marketing frameworks that incorporate personalized campaigns and
+emerging technologies to optimize customer reach and business growth in the digital
+space.
+
+Course Contents:
+UNIT I INTRODUCTION TO ONLINE MARKET CO1 9
+Online Market space- Digital Marketing Strategy- Components -Opportunities for building Brand, Website
+- Planning and Creation- Content Marketing
+
+UNIT II SEARCH ENGINE OPTIMISATION CO2 9
+Search Engine optimization - Keyword Strategy- SEO Strategy - SEO success factors -On-Page
+Techniques - Off-Page Techniques. Search Engine Marketing- How Search Engine works- SEM
+components- PPC advertising -Display Advertisement
+
+UNIT III E- MAIL MARKETING CO3 9
+E- Mail Marketing - Types of E- Mail Marketing - Email Automation - Lead Generation - Integrating Email
+with Social Media and Mobile- Measuring and maximizing email campaign effectiveness. Mobile
+Marketing- Mobile Inventory/channels- Location based; Context based; Coupons and offers, Mobile
+Apps, Mobile Commerce, SMS Campaigns-Profiling and targeting
+
+UNIT IV SOCIAL MEDIA MARKETING CO4 9
+Social Media Marketing - Social Media Channels- Leveraging Social media for brand conversations and
+buzz. Successful /benchmark Social media campaigns. Engagement Marketing- Building Customer
+relationships - Creating Loyalty drivers - Influencer Marketing
+
+UNIT V DIGITAL TRANSFORMATION CO5 9
+Digital Transformation & Channel Attribution- Analytics- Ad-words, Email, Mobile, Social Media, Web
+Analytics - Changing your strategy based on analysis- Recent trends in Digital marketing
+
+Theory Hours: 45
+
+COURSE OUTCOMES
+At the end of the course student will be able to
+CO 1 Differentiate various digital commerce models and marketing strategies used in online business environments.
+CO 2 Implement Search Engine Optimization (SEO) techniques to improve a website's visibility on search engines.
+CO 3 Analyze the effectiveness of email marketing by examining its role in customer engagement, lead generation, and brand promotion.
+CO 4 Evaluate the impact of content creation and distribution across social media platforms such as Facebook, Instagram, and LinkedIn.
+CO 5 Design innovative strategies by integrating emerging technologies to transform business operations and enhance customer engagement.
+
+Text Books:
+1 Dave Chaffey & Fiona Ellis-Chadwick, Digital Marketing: Strategy, Implementation & Practice, 8th Edition, Pearson, 2022
+2 Philip Kotler, Hermawan Kartajaya & Iwan Setiawan, Marketing 5.0: Technology for Humanity, 1st Edition, Wiley, 2021
+
+Reference Books:
+1 Philip Kotler, Hermawan Kartajaya & Iwan Setiawan, Marketing 5.0, Wiley, 2021
+2 Gary Vaynerchuk, Jab, Jab, Jab, Right Hook, Harper Business, 2023
