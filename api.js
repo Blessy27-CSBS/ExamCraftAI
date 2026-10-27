@@ -222,19 +222,22 @@ class ApiClient {
   }
 
   // --- PDF Exports (Returns Direct Server URLs) ---
-  getStudentPdfUrl(paperId) {
+  getStudentPdfUrl(paperId, extraParams = {}) {
     const token = this.getToken();
-    return `/api/exports/${paperId}/student-pdf?token=${token || ''}`;
+    const params = new URLSearchParams({ token: token || '', ...extraParams });
+    return `/api/exports/${paperId}/student-pdf?${params.toString()}`;
   }
 
-  getFacultyPdfUrl(paperId) {
+  getFacultyPdfUrl(paperId, extraParams = {}) {
     const token = this.getToken();
-    return `/api/exports/${paperId}/faculty-pdf?token=${token || ''}`;
+    const params = new URLSearchParams({ token: token || '', ...extraParams });
+    return `/api/exports/${paperId}/faculty-pdf?${params.toString()}`;
   }
 
-  getAuditPdfUrl(paperId) {
+  getAuditPdfUrl(paperId, extraParams = {}) {
     const token = this.getToken();
-    return `/api/exports/${paperId}/audit-pdf?token=${token || ''}`;
+    const params = new URLSearchParams({ token: token || '', ...extraParams });
+    return `/api/exports/${paperId}/audit-pdf?${params.toString()}`;
   }
 }
 

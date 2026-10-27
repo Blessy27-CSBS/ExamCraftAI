@@ -16,13 +16,17 @@ function generateStudentQuestionPaperPdf(paper, questions) {
   const contentRight = contentLeft + contentWidth;
 
   // 1. Institutional Header
+  const instName = (paper.institution_name || paper.instName || paper.institution || 'INSTITUTE OF TECHNOLOGY').trim();
+  const deptName = (paper.department_name || paper.deptName || paper.department || 'Department of Computer Science & Engineering').trim();
+  const courseCode = (paper.course_code || paper.courseCode || '').trim();
+
   doc.fontSize(13).font('Helvetica-Bold').fillColor('#0f172a')
-     .text(paper.institution_name || paper.instName || 'INSTITUTE OF SCIENCE & TECHNOLOGY', { align: 'center', width: contentWidth });
+    .text(instName.toUpperCase(), { align: 'center', width: contentWidth });
   doc.fontSize(10).font('Helvetica').fillColor('#475569')
-     .text(paper.department_name || paper.deptName || 'Department of Computer Science & Engineering', { align: 'center', width: contentWidth });
+    .text(deptName, { align: 'center', width: contentWidth });
   doc.moveDown(0.3);
   doc.fontSize(11).font('Helvetica-Bold').fillColor('#0f172a')
-     .text((paper.title || paper.examType || 'Continuous Assessment Examination').toUpperCase(), { align: 'center', width: contentWidth });
+    .text((paper.title || paper.examType || 'Continuous Assessment Examination').toUpperCase(), { align: 'center', width: contentWidth });
   doc.moveDown(0.5);
 
   // Decorative Header Rule
@@ -37,7 +41,7 @@ function generateStudentQuestionPaperPdf(paper, questions) {
   const rightColX = contentLeft + leftColWidth + 5;
 
   doc.fontSize(9).font('Helvetica-Bold').fillColor('#1e293b');
-  const subjStr = `Subject: ${paper.subject || ''} (${paper.course_code || paper.courseCode || ''})`;
+  const subjStr = `Subject: ${paper.subject || ''}${courseCode ? ` (${courseCode})` : ''}`;
   const marksStr = `Max Marks: ${paper.total_marks || paper.totalMarks || 50}`;
   const row1H = Math.max(doc.heightOfString(subjStr, { width: leftColWidth }), doc.heightOfString(marksStr, { width: rightColWidth }), 12);
   doc.text(subjStr, contentLeft, metaStartY, { width: leftColWidth });
@@ -67,7 +71,7 @@ function generateStudentQuestionPaperPdf(paper, questions) {
     const instrStartY = doc.y;
     doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#0f172a').text('General Instructions:', contentLeft, instrStartY);
     doc.fontSize(8).font('Helvetica').fillColor('#475569')
-       .text(paper.instructions, contentLeft, doc.y + 2, { width: contentWidth, lineGap: 1.5 });
+      .text(paper.instructions, contentLeft, doc.y + 2, { width: contentWidth, lineGap: 1.5 });
     doc.y += 6;
     doc.strokeColor('#e2e8f0').lineWidth(0.5).moveTo(contentLeft, doc.y).lineTo(contentRight, doc.y).stroke();
     doc.y += 8;
@@ -90,10 +94,10 @@ function generateStudentQuestionPaperPdf(paper, questions) {
     // Print section header if group changes
     if (groupName && groupName !== currentGroup) {
       currentGroup = groupName;
-      if (doc.y > 690) doc.addPage();
+      if (doc.y > 60 && doc.y > 700) doc.addPage();
       doc.y += 4;
       doc.fontSize(9.5).font('Helvetica-Bold').fillColor('#0f766e')
-         .text(currentGroup.toUpperCase(), contentLeft, doc.y, { align: 'center', width: contentWidth });
+        .text(currentGroup.toUpperCase(), contentLeft, doc.y, { align: 'center', width: contentWidth });
       doc.strokeColor('#0f766e').lineWidth(0.5).moveTo(contentLeft + 150, doc.y + 2).lineTo(contentRight - 150, doc.y + 2).stroke();
       doc.y += 8;
     }
@@ -119,8 +123,8 @@ function generateStudentQuestionPaperPdf(paper, questions) {
     }
     const totalQHeight = Math.max(textHeight, 14) + optionsHeight + 8;
 
-    // Page Break Threshold (710 pt leaves ample buffer above footer at 795)
-    if (doc.y + totalQHeight > 710) {
+    // Page Break Threshold (735 pt leaves ample buffer above footer at 795)
+    if (doc.y > 60 && doc.y + totalQHeight > 735) {
       doc.addPage();
     }
 
@@ -128,22 +132,22 @@ function generateStudentQuestionPaperPdf(paper, questions) {
 
     // Col 1: Q Number
     doc.fontSize(9).font('Helvetica-Bold').fillColor('#0f172a')
-       .text(`Q${qNumber}.`, contentLeft, startY, { width: numColW });
+      .text(`Q${qNumber}.`, contentLeft, startY, { width: numColW });
 
     // Col 2: Question Text (Bounded width, never touches marks)
     doc.fontSize(9).font('Helvetica').fillColor('#1e293b')
-       .text(qText, textX, startY, { width: textW, lineGap: 1.5 });
+      .text(qText, textX, startY, { width: textW, lineGap: 1.5 });
 
     // Col 3: Marks (Pinned to right margin at identical startY)
     doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#0f172a')
-       .text(`[${qMarks} Marks]`, marksX, startY, { width: marksColW, align: 'right' });
+      .text(`[${qMarks} Marks]`, marksX, startY, { width: marksColW, align: 'right' });
 
     // Options rendering below question text
     if (parsedOptions.length > 0) {
       let optY = startY + textHeight + 4;
       parsedOptions.forEach(opt => {
         doc.fontSize(8.5).font('Helvetica').fillColor('#334155')
-           .text(opt.text, textX + 10, optY, { width: textW - 10, lineGap: 1 });
+          .text(opt.text, textX + 10, optY, { width: textW - 10, lineGap: 1 });
         optY += opt.height + 4;
       });
     }
@@ -152,19 +156,22 @@ function generateStudentQuestionPaperPdf(paper, questions) {
   });
 
   // End signature
-  if (doc.y > 720) doc.addPage();
-  doc.y += 14;
+  if (doc.y > 750) doc.addPage();
+  doc.y += 10;
   doc.strokeColor('#cbd5e1').lineWidth(0.5).moveTo(contentLeft + 120, doc.y).lineTo(contentRight - 120, doc.y).stroke();
-  doc.y += 6;
+  doc.y += 5;
   doc.fontSize(8.5).font('Helvetica-Oblique').fillColor('#64748b')
-     .text('*** END OF QUESTION PAPER ***', contentLeft, doc.y, { align: 'center', width: contentWidth });
+    .text('*** END OF QUESTION PAPER ***', contentLeft, doc.y, { align: 'center', width: contentWidth });
 
   // Two-pass page numbering
   const pageRange = doc.bufferedPageRange();
   for (let i = 0; i < pageRange.count; i++) {
     doc.switchToPage(i);
+    const prevBottom = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
     doc.fontSize(8).font('Helvetica').fillColor('#94a3b8')
-       .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 795, { align: 'center', width: contentWidth });
+      .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 790, { align: 'center', width: contentWidth, lineBreak: false });
+    doc.page.margins.bottom = prevBottom;
   }
 
   return doc;
@@ -188,13 +195,16 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
   // 1. Confidential Top Banner
   doc.rect(contentLeft, 25, contentWidth, 18).fill('#fef2f2');
   doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#b91c1c')
-     .text('CONFIDENTIAL — FACULTY EVALUATION SCHEME & MODEL ANSWERS', contentLeft, 30, { align: 'center', width: contentWidth });
+    .text('CONFIDENTIAL — FACULTY EVALUATION SCHEME & MODEL ANSWERS', contentLeft, 30, { align: 'center', width: contentWidth });
 
   doc.y = 52;
+  const instName = (paper.institution_name || paper.instName || paper.institution || 'INSTITUTE OF SCIENCE & TECHNOLOGY').trim();
+  const courseCode = (paper.course_code || paper.courseCode || '').trim();
+
   doc.fontSize(13).font('Helvetica-Bold').fillColor('#0f172a')
-     .text(paper.institution_name || paper.instName || 'INSTITUTE OF SCIENCE & TECHNOLOGY', { align: 'center', width: contentWidth });
+    .text(instName.toUpperCase(), { align: 'center', width: contentWidth });
   doc.fontSize(10).font('Helvetica').fillColor('#475569')
-     .text(`${paper.title || paper.subject} — Faculty Evaluation Scheme`, { align: 'center', width: contentWidth });
+    .text(`${paper.subject || paper.title} — Faculty Evaluation Scheme`, { align: 'center', width: contentWidth });
   doc.moveDown(0.4);
 
   // Metadata Strip
@@ -202,7 +212,8 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
   doc.y += 6;
 
   doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#334155');
-  doc.text(`Subject: ${paper.subject || ''} | Code: ${paper.course_code || paper.courseCode || ''} | Max Marks: ${paper.total_marks || paper.totalMarks || 50}`, contentLeft, doc.y, { align: 'center', width: contentWidth });
+  const codePart = courseCode ? ` | Course/Code: ${courseCode}` : '';
+  doc.text(`Subject: ${paper.subject || ''}${codePart} | Max Marks: ${paper.total_marks || paper.totalMarks || 50}`, contentLeft, doc.y, { align: 'center', width: contentWidth });
   doc.y += 6;
   doc.strokeColor('#e2e8f0').lineWidth(0.5).moveTo(contentLeft, doc.y).lineTo(contentRight, doc.y).stroke();
   doc.y += 10;
@@ -228,7 +239,7 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
     const estimatedBlockH = qTextH + ansH + rubricH + 60;
 
     // If block won't fit on current page and we are already partway down, start on fresh page
-    if (doc.y > 580 && (doc.y + estimatedBlockH > 750)) {
+    if (doc.y > 450 && (doc.y + estimatedBlockH > 740)) {
       doc.addPage();
     }
 
@@ -236,36 +247,36 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
     const qBarY = doc.y;
     doc.rect(contentLeft, qBarY, contentWidth, 18).fill('#f0fdfa');
     doc.fontSize(9).font('Helvetica-Bold').fillColor('#0f766e')
-       .text(`Q${qNumber}. [${qMarks} Marks] (${q.unit || 'Unit 1'} • Bloom: ${q.bloom_level || q.bloomLevel || 'Understand'})`, contentLeft + 8, qBarY + 5, { width: contentWidth - 16 });
+      .text(`Q${qNumber}. [${qMarks} Marks] (${q.unit || 'Unit 1'} • Bloom: ${q.bloom_level || q.bloomLevel || 'Understand'})`, contentLeft + 8, qBarY + 5, { width: contentWidth - 16 });
 
     doc.y = qBarY + 22;
 
     // Question text
     doc.fontSize(9).font('Helvetica').fillColor('#0f172a')
-       .text(qText, contentLeft + 8, doc.y, { width: contentWidth - 16, lineGap: 1.5 });
+      .text(qText, contentLeft + 8, doc.y, { width: contentWidth - 16, lineGap: 1.5 });
     doc.y += 6;
 
     // Model Answer Box
     doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#0369a1').text('Model Answer / Solution Outline:', contentLeft + 8, doc.y);
     doc.fontSize(8.5).font('Helvetica').fillColor('#1e293b')
-       .text(modelAns, contentLeft + 14, doc.y + 2, { width: contentWidth - 24, lineGap: 1.5 });
+      .text(modelAns, contentLeft + 14, doc.y + 2, { width: contentWidth - 24, lineGap: 1.5 });
     doc.y += 6;
 
     // Key Concepts
     if (keyConcepts) {
       doc.fontSize(8).font('Helvetica-Bold').fillColor('#475569')
-         .text('Key Technical Concepts: ', contentLeft + 8, doc.y, { continued: true });
+        .text('Key Technical Concepts: ', contentLeft + 8, doc.y, { continued: true });
       doc.font('Helvetica').fillColor('#0f172a')
-         .text(keyConcepts, { continued: false });
+        .text(keyConcepts, { continued: false });
       doc.y += 4;
     }
 
     // Expected Points
     if (expectedPoints) {
       doc.fontSize(8).font('Helvetica-Bold').fillColor('#475569')
-         .text('Expected Student Points: ', contentLeft + 8, doc.y, { continued: true });
+        .text('Expected Student Points: ', contentLeft + 8, doc.y, { continued: true });
       doc.font('Helvetica').fillColor('#0f172a')
-         .text(expectedPoints, { continued: false });
+        .text(expectedPoints, { continued: false });
       doc.y += 4;
     }
 
@@ -273,14 +284,14 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
     if (Array.isArray(rubric) && rubric.length > 0) {
       doc.y += 4;
       doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#065f46')
-         .text('Marking Scheme & Rubric Split:', contentLeft + 8, doc.y);
+        .text('Marking Scheme & Rubric Split:', contentLeft + 8, doc.y);
       doc.y += 3;
 
       // Table Header
       const tblHeaderY = doc.y;
       doc.rect(contentLeft + 8, tblHeaderY, contentWidth - 16, 14).fill('#ecfdf5');
       doc.fontSize(8).font('Helvetica-Bold').fillColor('#065f46')
-         .text('Evaluation Criterion / Step Description', contentLeft + 14, tblHeaderY + 3, { width: 380 });
+        .text('Evaluation Criterion / Step Description', contentLeft + 14, tblHeaderY + 3, { width: 380 });
       doc.text('Marks', contentRight - 70, tblHeaderY + 3, { width: 55, align: 'right' });
       doc.y = tblHeaderY + 16;
 
@@ -294,7 +305,7 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
         const descH = doc.heightOfString(critDesc, { width: 380 });
         const rowH = Math.max(descH, 12) + 4;
 
-        if (doc.y + rowH > 750) doc.addPage();
+        if (doc.y > 60 && doc.y + rowH > 750) doc.addPage();
 
         const rowY = doc.y;
         doc.fillColor('#1e293b').text(critDesc, contentLeft + 14, rowY, { width: 380 });
@@ -308,21 +319,34 @@ function generateFacultyAnswerKeyPdf(paper, questions) {
       doc.strokeColor('#065f46').lineWidth(0.8).moveTo(contentLeft + 8, doc.y).lineTo(contentRight - 8, doc.y).stroke();
       doc.y += 3;
       doc.fontSize(8).font('Helvetica-Bold').fillColor('#065f46')
-         .text('TOTAL MARKS', contentLeft + 14, doc.y, { width: 380 });
+        .text('TOTAL MARKS', contentLeft + 14, doc.y, { width: 380 });
       doc.text(`${rubricSum} Marks`, contentRight - 70, doc.y, { width: 55, align: 'right' });
-      doc.y += 10;
+      doc.y += 8;
     }
 
     doc.strokeColor('#e2e8f0').lineWidth(0.5).moveTo(contentLeft, doc.y).lineTo(contentRight, doc.y).stroke();
-    doc.y += 10;
+    if (idx < questions.length - 1) {
+      doc.y += 8;
+    }
   });
+
+  // End signature
+  if (doc.y > 750) doc.addPage();
+  doc.y += 8;
+  doc.strokeColor('#cbd5e1').lineWidth(0.5).moveTo(contentLeft + 120, doc.y).lineTo(contentRight - 120, doc.y).stroke();
+  doc.y += 5;
+  doc.fontSize(8.5).font('Helvetica-Oblique').fillColor('#64748b')
+    .text('*** END OF FACULTY EVALUATION SCHEME ***', contentLeft, doc.y, { align: 'center', width: contentWidth });
 
   // Two-pass page numbering
   const pageRange = doc.bufferedPageRange();
   for (let i = 0; i < pageRange.count; i++) {
     doc.switchToPage(i);
+    const prevBottom = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
     doc.fontSize(8).font('Helvetica').fillColor('#94a3b8')
-       .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 795, { align: 'center', width: contentWidth });
+      .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 790, { align: 'center', width: contentWidth, lineBreak: false });
+    doc.page.margins.bottom = prevBottom;
   }
 
   return doc;
@@ -346,9 +370,9 @@ function generateTraceabilityAuditPdf(paper, questions) {
   // Header Function
   function renderAuditHeader() {
     doc.fontSize(12).font('Helvetica-Bold').fillColor('#0f172a')
-       .text('CURRICULUM TRACEABILITY & COMPLIANCE AUDIT DOSSIER', contentLeft, 30, { align: 'center', width: contentWidth });
+      .text('CURRICULUM TRACEABILITY & COMPLIANCE AUDIT DOSSIER', contentLeft, 30, { align: 'center', width: contentWidth });
     doc.fontSize(9).font('Helvetica').fillColor('#475569')
-       .text(`Assessment: ${paper.title || paper.subject} | Course Code: ${paper.course_code || paper.courseCode || 'CS101'} | Regulation: 2024`, contentLeft, 45, { align: 'center', width: contentWidth });
+      .text(`Assessment: ${paper.title || paper.subject} | Course Code: ${paper.course_code || paper.courseCode || 'CS101'} | Regulation: 2024`, contentLeft, 45, { align: 'center', width: contentWidth });
 
     doc.strokeColor('#0284c7').lineWidth(1.2).moveTo(contentLeft, 60).lineTo(contentRight, 60).stroke();
 
@@ -410,7 +434,7 @@ function generateTraceabilityAuditPdf(paper, questions) {
     const rowH = Math.max(hUnit, hDoc, hSec, hExcerpt, 14) + 8;
 
     // Check page break
-    if (doc.y + rowH > 540) {
+    if (doc.y > 60 && doc.y + rowH > 540) {
       doc.addPage({ layout: 'landscape' });
       renderAuditHeader();
     }
@@ -440,8 +464,11 @@ function generateTraceabilityAuditPdf(paper, questions) {
   const pageRange = doc.bufferedPageRange();
   for (let i = 0; i < pageRange.count; i++) {
     doc.switchToPage(i);
+    const prevBottom = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
     doc.fontSize(8).font('Helvetica').fillColor('#94a3b8')
-       .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 555, { align: 'center', width: contentWidth });
+      .text(`Page ${i + 1} of ${pageRange.count}`, contentLeft, 550, { align: 'center', width: contentWidth, lineBreak: false });
+    doc.page.margins.bottom = prevBottom;
   }
 
   return doc;

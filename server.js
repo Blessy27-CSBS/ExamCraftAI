@@ -39,7 +39,12 @@ app.use('/api/auth/', authLimiter);
 // Serve Static Frontend Assets
 app.use(express.static(path.join(__dirname), {
   index: 'index.html',
-  maxAge: '1h'
+  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js') || filePath.endsWith('.html') || filePath.endsWith('.css')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  }
 }));
 
 // Serve Uploaded Documents Securely

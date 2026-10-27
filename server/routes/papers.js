@@ -97,7 +97,11 @@ router.post('/generate', requireAuth, async (req, res) => {
     const { engine, questions, plan } = await generateAssessmentQuestions(blueprint, sourceDoc, userId, customPlan);
 
     const paperId = `paper-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-    const paperTitle = `${blueprint.subject} (${blueprint.courseCode || 'Assessment'}) — ${blueprint.examType || 'Model Examination'}`;
+    const courseCodeVal = (blueprint.courseCode || blueprint.course_code || '').trim();
+    const subjectVal = (blueprint.subject || 'Curriculum Assessment').trim();
+    const institutionVal = (blueprint.instName || blueprint.institution_name || blueprint.institution || blueprint.clgName || req.user.institution || 'INSTITUTE OF SCIENCE & TECHNOLOGY').trim();
+    const departmentVal = (blueprint.deptName || blueprint.department_name || blueprint.department || req.user.department || 'Department of Computer Science & Engineering').trim();
+    const paperTitle = blueprint.title || `${subjectVal}${courseCodeVal ? ` (${courseCodeVal})` : ''} — ${blueprint.examType || 'Model Examination'}`;
 
     // Insert paper record into database
     await query(`
@@ -110,15 +114,15 @@ router.post('/generate', requireAuth, async (req, res) => {
       paperId,
       userId,
       paperTitle,
-      blueprint.subject,
-      blueprint.courseCode || '',
+      subjectVal,
+      courseCodeVal,
       blueprint.academicYear || '2025 - 2026',
       blueprint.examType || 'Model Examination',
       parseInt(blueprint.totalMarks || 50, 10),
       parseInt(blueprint.duration || 90, 10),
       blueprint.instructions || '1. Answer all questions.\n2. State all assumptions clearly.',
-      req.user.institution || 'INSTITUTE OF SCIENCE & TECHNOLOGY',
-      req.user.department || 'Department of Computer Science & Engineering',
+      institutionVal,
+      departmentVal,
       blueprint.examDate || new Date().toISOString().split('T')[0],
       'Draft',
       sourceDoc ? sourceDoc.original_name : 'Uploaded Syllabus'
@@ -323,7 +327,17 @@ router.get('/:id', requireAuth, async (req, res) => {
  */
 router.put('/:id', requireAuth, async (req, res) => {
   try {
-    const { title, instructions, questions, status } = req.body;
+    const { 
+      title, instructions, questions, status,
+      instName, institution_name, institution,
+      deptName, department_name, department,
+      subject, courseCode, course_code,
+      examDate, exam_date,
+      academicYear, academic_year,
+      examType, exam_type,
+      totalMarks, total_marks,
+      duration, duration_minutes
+    } = req.body;
     const userId = req.user.id;
     const paperId = req.params.id;
 
@@ -332,14 +346,38 @@ router.put('/:id', requireAuth, async (req, res) => {
       return res.status(404).json({ success: false, error: 'Question paper not found.' });
     }
 
+    const newInst = (instName || institution_name || institution) ? (instName || institution_name || institution).trim() : null;
+    const newDept = (deptName || department_name || department) ? (deptName || department_name || department).trim() : null;
+    const newCourseCode = (courseCode != null || course_code != null) ? (courseCode || course_code || '').trim() : null;
+    const newSubj = subject ? subject.trim() : null;
+    const newExamDate = examDate || exam_date || null;
+    const newAcadYear = academicYear || academic_year || null;
+    const newExamType = examType || exam_type || null;
+    const newMarks = totalMarks != null ? parseInt(totalMarks, 10) : (total_marks != null ? parseInt(total_marks, 10) : null);
+    const newDur = duration != null ? parseInt(duration, 10) : (duration_minutes != null ? parseInt(duration_minutes, 10) : null);
+
     await query(`
       UPDATE question_papers
       SET title = COALESCE(?, title),
           instructions = COALESCE(?, instructions),
           status = COALESCE(?, status),
+          institution_name = COALESCE(?, institution_name),
+          department_name = COALESCE(?, department_name),
+          subject = COALESCE(?, subject),
+          course_code = COALESCE(?, course_code),
+          exam_date = COALESCE(?, exam_date),
+          academic_year = COALESCE(?, academic_year),
+          exam_type = COALESCE(?, exam_type),
+          total_marks = COALESCE(?, total_marks),
+          duration_minutes = COALESCE(?, duration_minutes),
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `, [title, instructions, status, paperId]);
+    `, [
+      title || null, instructions || null, status || null,
+      newInst, newDept, newSubj, newCourseCode,
+      newExamDate, newAcadYear, newExamType, newMarks, newDur,
+      paperId
+    ]);
 
     // Update questions if provided
     if (Array.isArray(questions)) {

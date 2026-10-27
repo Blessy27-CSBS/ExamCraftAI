@@ -75,7 +75,7 @@ function initStorage() {
           AppState.settings.teacherName = u.fullName;
           if (u.department) AppState.settings.department = u.department;
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   } catch (err) {
     console.warn("LocalStorage initialization failed or restricted, using memory defaults", err);
@@ -381,15 +381,15 @@ function autoPopulateFromExtractedText(text, fileName) {
   // 1. Try detecting Course Code
   let detectedCode = "";
   const codeMatch = cleanText.match(/(?:COURSE\s+CODE|SUBJECT\s+CODE|SUB\s+CODE)[:\s]+([A-Z0-9\-_]+)/i) ||
-                    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
-                    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
+    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
+    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
   if (codeMatch && codeMatch[1]) {
     detectedCode = codeMatch[1].trim();
   }
 
   if (!detectedCode && fileName) {
     const fileCodeMatch = fileName.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/i) ||
-                          fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
+      fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
     if (fileCodeMatch) detectedCode = fileCodeMatch[1].toUpperCase();
   }
 
@@ -410,7 +410,7 @@ function autoPopulateFromExtractedText(text, fileName) {
         candidate = candidate.replace(detectedCode, "").trim();
       }
       candidate = candidate.replace(/\bL\s*\/\s*T\s*\/\s*P\s*\/\s*C\b/i, '').replace(/\b\d+\/\d+\/\d+\/\d+\b/, '').trim();
-      
+
       const isObjectiveOrVerb = /^(?:Apply|Analyze|Evaluate|Enable|Understand|Develop|Conduct|Using|Collect|Implement|Perform|Demonstrate|Formulate|Identify|Explain|Describe|Discuss|Study|Need for|in supporting|hypotheses)\b/i.test(candidate);
       const isDangling = /[,;:\-\–—]$/.test(candidate);
       const isHeaderNoise = /DEPARTMENT|UNIVERSITY|COLLEGE|REGULATION|SEMESTER|PREREQUISITE|OBJECTIVES|OUTCOMES|HOURS/i.test(candidate);
@@ -631,15 +631,15 @@ function extractClientSyllabusStructure(syllabusText, fileName = "") {
 
   let courseCode = "";
   const codeMatch = cleanText.match(/(?:COURSE\s+CODE|SUBJECT\s+CODE|SUB\s+CODE)[:\s]+([A-Z0-9\-_]+)/i) ||
-                    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
-                    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
+    cleanText.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/) ||
+    cleanText.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/);
   if (codeMatch && codeMatch[1]) {
     courseCode = codeMatch[1].trim();
   }
 
   if (!courseCode && fileName) {
     const fileCodeMatch = fileName.match(/\b([0-9]{2}[A-Z]{2,5}[0-9]{2,4}[A-Z]?)\b/i) ||
-                          fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
+      fileName.match(/\b([A-Z]{2,5}[0-9]{2,6}[A-Z]?)\b/i);
     if (fileCodeMatch) courseCode = fileCodeMatch[1].toUpperCase();
   }
 
@@ -1326,6 +1326,11 @@ function populateStep2Form() {
     }
   }
 
+  const instInput = document.getElementById("inputInstName");
+  if (instInput) instInput.value = d.instName || d.institution_name || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY";
+  const deptInput = document.getElementById("inputDeptName");
+  if (deptInput) deptInput.value = d.deptName || d.department_name || AppState.settings?.department || "Department of Computer Science & Engineering";
+
   document.getElementById("inputSubjectName").value = d.subject || "";
   document.getElementById("inputCourseCode").value = d.courseCode || "";
   document.getElementById("inputAcademicYear").value = d.academicYear || "2025 - 2026";
@@ -1574,6 +1579,101 @@ function recalculateBlueprintSummary() {
 // 9. View 2: Step 3 Question Generation Engine
 // ===================================================================
 
+function syncBlueprintFormToDraft() {
+  const d = AppState.currentDraft;
+  if (!d) return;
+
+  const instInput = document.getElementById("inputInstName");
+  const deptInput = document.getElementById("inputDeptName");
+  const subjInput = document.getElementById("inputSubjectName");
+  const codeInput = document.getElementById("inputCourseCode");
+  const yrInput = document.getElementById("inputAcademicYear");
+  const typeInput = document.getElementById("selectExamType");
+  const marksInput = document.getElementById("inputTotalMarks");
+  const durInput = document.getElementById("inputDuration");
+
+  if (instInput && instInput.value.trim()) {
+    d.instName = instInput.value.trim();
+    d.institution_name = d.instName;
+    if (AppState.settings) AppState.settings.institution = d.instName;
+  }
+  if (deptInput && deptInput.value.trim()) {
+    d.deptName = deptInput.value.trim();
+    d.department_name = d.deptName;
+    if (AppState.settings) AppState.settings.department = d.deptName;
+  }
+  if (subjInput && subjInput.value.trim()) {
+    d.subject = subjInput.value.trim();
+  }
+  if (codeInput) {
+    d.courseCode = codeInput.value.trim();
+  }
+  if (yrInput && yrInput.value.trim()) {
+    d.academicYear = yrInput.value.trim();
+  }
+  if (typeInput && typeInput.value.trim()) {
+    d.examType = typeInput.value.trim();
+  }
+  if (marksInput && marksInput.value) {
+    d.totalMarks = parseInt(marksInput.value, 10);
+  }
+  if (durInput && durInput.value) {
+    d.duration = parseInt(durInput.value, 10);
+  }
+
+  const sName = d.subject || "Curriculum Assessment";
+  const cCode = d.courseCode ? ` (${d.courseCode})` : "";
+  const eType = d.examType || "Model Examination";
+  d.title = `${sName}${cCode} — ${eType}`;
+
+  updateStep3SummaryStrip();
+}
+
+function syncStep4DetailsToDraft() {
+  const d = AppState.currentDraft;
+  if (!d) return;
+
+  const instEl = document.getElementById("editInstName");
+  const deptEl = document.getElementById("editDeptName");
+  const dateEl = document.getElementById("editExamDate");
+  const instrsEl = document.getElementById("editInstructions");
+
+  if (instEl && instEl.value.trim()) {
+    d.instName = instEl.value.trim();
+    d.institution_name = d.instName;
+    if (AppState.settings) AppState.settings.institution = d.instName;
+  }
+  if (deptEl && deptEl.value.trim()) {
+    d.deptName = deptEl.value.trim();
+    d.department_name = d.deptName;
+    if (AppState.settings) AppState.settings.department = d.deptName;
+  }
+  if (dateEl && dateEl.value.trim()) {
+    d.examDate = dateEl.value.trim();
+  }
+  if (instrsEl && instrsEl.value != null) {
+    d.instructions = instrsEl.value;
+  }
+
+  // Sync to backend if persistent
+  if (window.ExamCraftApi && d.id && !d.id.startsWith("paper-draft")) {
+    window.ExamCraftApi.updatePaper(d.id, {
+      title: d.title,
+      instructions: d.instructions,
+      instName: d.instName,
+      deptName: d.deptName,
+      subject: d.subject,
+      courseCode: d.courseCode,
+      examDate: d.examDate,
+      academicYear: d.academicYear,
+      examType: d.examType,
+      totalMarks: d.totalMarks,
+      duration: d.duration,
+      status: d.status
+    }).catch(err => console.warn("Background paper sync notice:", err.message));
+  }
+}
+
 function updateStep3SummaryStrip() {
   const d = AppState.currentDraft;
   if (!d) return;
@@ -1738,10 +1838,11 @@ async function loadAssessmentPlan() {
 }
 
 function triggerAssessmentGeneration() {
+  syncBlueprintFormToDraft();
   const d = AppState.currentDraft;
   const hasSyllabus = (d?.uploadedSyllabus?.text && d.uploadedSyllabus.text.trim().length > 20) ||
-                      (d?.verifiedStructure?.units && d.verifiedStructure.units.length > 0) ||
-                      d?.documentId;
+    (d?.verifiedStructure?.units && d.verifiedStructure.units.length > 0) ||
+    d?.documentId;
   if (!hasSyllabus) {
     showToast("Cannot generate questions: No syllabus content detected. Please upload or paste your syllabus in Step 1.", "error");
     setWizardStep(1);
@@ -1776,7 +1877,7 @@ function triggerAssessmentGeneration() {
         if (window.ExamCraftApi) {
           try {
             const genRes = await window.ExamCraftApi.generatePaper(
-              AppState.currentDraft, 
+              AppState.currentDraft,
               AppState.currentDraft.documentId || null,
               AppState.currentDraft.assessmentPlan || null
             );
@@ -2269,8 +2370,8 @@ function renderStep4ReviewWorkspace() {
   if (!d) return;
 
   // Update Exam header inputs
-  document.getElementById("editInstName").value = d.instName || AppState.settings.institution;
-  document.getElementById("editDeptName").value = d.deptName || AppState.settings.department;
+  document.getElementById("editInstName").value = d.instName || d.institution_name || AppState.settings?.institution || "INSTITUTE OF TECHNOLOGY";
+  document.getElementById("editDeptName").value = d.deptName || d.department_name || AppState.settings?.department || "Department of Computer Science & Engineering";
   document.getElementById("editExamDate").value = d.examDate || new Date().toISOString().split("T")[0];
   document.getElementById("editInstructions").value = d.instructions || "";
 
@@ -2766,10 +2867,7 @@ function saveDraftToMyPapers(notify = true) {
   if (!d) return;
 
   // Sync exam header values
-  d.instName = document.getElementById("editInstName").value || AppState.settings.institution;
-  d.deptName = document.getElementById("editDeptName").value || AppState.settings.department;
-  d.examDate = document.getElementById("editExamDate").value || "";
-  d.instructions = document.getElementById("editInstructions").value || "";
+  syncStep4DetailsToDraft();
 
   // Check if exists in papers
   const existingIdx = AppState.papers.findIndex((p) => p.id === d.id);
@@ -2799,15 +2897,19 @@ function generateStudentQuestionPaperPdf(paper) {
   const pageWidth = doc.internal.pageSize.getWidth();
   let currentY = 18;
 
+  const instVal = (paper.instName || paper.institution_name || paper.institution || AppState.settings?.institution || "INSTITUTE OF TECHNOLOGY").trim();
+  const deptVal = (paper.deptName || paper.department_name || paper.department || AppState.settings?.department || "Department of Computer Science & Engineering").trim();
+  const courseCodeVal = (paper.courseCode || paper.course_code || "").trim();
+
   // Header
   doc.setFont("times", "bold");
   doc.setFontSize(14);
-  doc.text((paper.instName || "INSTITUTE OF SCIENCE & TECHNOLOGY").toUpperCase(), pageWidth / 2, currentY, { align: "center" });
+  doc.text(instVal.toUpperCase(), pageWidth / 2, currentY, { align: "center" });
   currentY += 6;
 
   doc.setFontSize(10);
   doc.setFont("times", "normal");
-  doc.text(paper.deptName || "Department of Computer Science & Engineering", pageWidth / 2, currentY, { align: "center" });
+  doc.text(deptVal, pageWidth / 2, currentY, { align: "center" });
   currentY += 6;
 
   doc.setFont("times", "bold");
@@ -2829,7 +2931,8 @@ function generateStudentQuestionPaperPdf(paper) {
   currentY += Math.max(subjLines.length * 4.8, 5) + 1;
 
   doc.setFont("times", "normal");
-  const codeLines = doc.splitTextToSize(`Course/Code: ${paper.courseCode || paper.course_code || "CS402"}`, pageWidth - 28 - 45);
+  const codeLabel = courseCodeVal ? `Course/Code: ${courseCodeVal}` : `Course: ${paper.subject || "Course Assessment"}`;
+  const codeLines = doc.splitTextToSize(codeLabel, pageWidth - 28 - 45);
   doc.text(codeLines, 14, currentY);
   doc.text(`Duration: ${paper.duration != null ? paper.duration : (paper.duration_minutes != null ? paper.duration_minutes : 90)} Minutes`, pageWidth - 14, currentY, { align: "right" });
   currentY += Math.max(codeLines.length * 4.8, 5) + 1;
@@ -2889,8 +2992,8 @@ function generateStudentQuestionPaperPdf(paper) {
 
     const totalQHeight = Math.max(wrappedText.length * 4.8, 6) + optionsHeight + 4;
 
-    // Check page break before printing question (Threshold 255mm so footer at 287mm is never collided with)
-    if (currentY + totalQHeight > 255) {
+    // Check page break before printing question (Threshold 265mm so footer at 287mm is never collided with)
+    if (currentY > 30 && currentY + totalQHeight > 265) {
       doc.addPage();
       currentY = 20;
     }
@@ -2934,8 +3037,8 @@ function generateStudentQuestionPaperPdf(paper) {
     currentY = startY + totalQHeight;
   });
 
-  // Footer on last page
-  if (currentY > 255) {
+  // Footer on last page - only add page if really tight (above footer at 287mm)
+  if (currentY > 275) {
     doc.addPage();
     currentY = 20;
   }
@@ -2982,12 +3085,16 @@ function generateFacultyAnswerKeyPdf(paper) {
 
   currentY = 26;
   doc.setFontSize(13);
-  doc.text((paper.instName || paper.institution_name || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY").toUpperCase(), pageWidth / 2, currentY, { align: "center" });
+  const instVal = (paper.instName || paper.institution_name || paper.institution || AppState.settings?.institution || "INSTITUTE OF TECHNOLOGY").trim();
+  const courseCodeVal = (paper.courseCode || paper.course_code || "").trim();
+
+  doc.text(instVal.toUpperCase(), pageWidth / 2, currentY, { align: "center" });
   currentY += 5;
 
   doc.setFontSize(10);
   doc.setFont("times", "normal");
-  const subMeta = doc.splitTextToSize(`Subject: ${paper.subject || ''} | Code: ${paper.courseCode || paper.course_code || "CS402"} | Total Marks: ${paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50)}`, pageWidth - 28);
+  const codePart = courseCodeVal ? ` | Code: ${courseCodeVal}` : "";
+  const subMeta = doc.splitTextToSize(`Subject: ${paper.subject || ''}${codePart} | Total Marks: ${paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50)}`, pageWidth - 28);
   doc.text(subMeta, pageWidth / 2, currentY, { align: "center" });
   currentY += subMeta.length * 4.6 + 2;
 
@@ -3011,7 +3118,7 @@ function generateFacultyAnswerKeyPdf(paper) {
     const rubricEstHeight = rubricCount > 0 ? (rubricCount * 8 + 16) : 0;
     const estimatedHeight = 12 + qLines.length * 4.6 + ansLines.length * 4.4 + rubricEstHeight + 15;
 
-    if (currentY + estimatedHeight > 255) {
+    if (currentY > 40 && currentY + estimatedHeight > 265) {
       doc.addPage();
       currentY = 20;
     }
@@ -3208,16 +3315,16 @@ async function openPdfPreviewModal(paperInput, type = "question-paper") {
   }
 
   // Normalize metadata properties (accommodating snake_case and camelCase)
-  const subjectName = paper.subject || "Subject Assessment";
-  const courseCodeVal = paper.courseCode || paper.course_code || "CS402";
+  const subjectName = (paper.subject || "Subject Assessment").trim();
+  const courseCodeVal = (paper.courseCode || paper.course_code || "").trim();
   const totalMarksVal = paper.totalMarks != null ? paper.totalMarks : (paper.total_marks != null ? paper.total_marks : 50);
   const examTypeVal = paper.examType || paper.exam_type || "MODEL EXAMINATION";
   const durationVal = paper.duration != null ? paper.duration : (paper.duration_minutes != null ? paper.duration_minutes : 90);
   const examDateVal = paper.examDate || paper.exam_date || new Date().toISOString().split("T")[0];
-  const instNameVal = paper.instName || paper.institution_name || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY";
-  const deptNameVal = paper.deptName || paper.department_name || AppState.settings?.department || "Dept of CSBS";
+  const instNameVal = (paper.instName || paper.institution_name || paper.institution || AppState.settings?.institution || "INSTITUTE OF SCIENCE & TECHNOLOGY").trim();
+  const deptNameVal = (paper.deptName || paper.department_name || paper.department || AppState.settings?.department || "Department of Computer Science & Engineering").trim();
   const instructionsVal = paper.instructions || "1. Answer all questions.\n2. State all assumptions clearly.";
-  const titleVal = paper.title || `${subjectName} (${courseCodeVal}) — ${examTypeVal}`;
+  const titleVal = paper.title || `${subjectName}${courseCodeVal ? ` (${courseCodeVal})` : ""} — ${examTypeVal}`;
 
   // Store normalized values on paper
   paper.subject = subjectName;
@@ -3323,13 +3430,12 @@ async function openPdfPreviewModal(paperInput, type = "question-paper") {
       <div class="text-right"><strong>Duration:</strong> ${durationVal} Minutes</div>
     </div>
 
-    ${
-      (!isAnswerKey && instructionsVal)
-        ? `<div class="exam-instructions-box">
+    ${(!isAnswerKey && instructionsVal)
+      ? `<div class="exam-instructions-box">
              <strong>Candidate Instructions:</strong><br>
              ${escapeHtml(instructionsVal).replace(/\n/g, "<br>")}
            </div>`
-        : ""
+      : ""
     }
 
     <div class="exam-questions-content" style="margin-top: 14px;">
@@ -3344,10 +3450,26 @@ async function openPdfPreviewModal(paperInput, type = "question-paper") {
   // Download button listener in modal
   const dlBtn = document.getElementById("btnModalDownloadPdf");
   dlBtn.onclick = () => {
-    if (isAnswerKey) {
-      generateFacultyAnswerKeyPdf(paper);
+    syncStep4DetailsToDraft();
+    if (paper.id && !paper.id.startsWith("paper-draft") && window.ExamCraftApi) {
+      const extraParams = {
+        instName: paper.instName || paper.institution_name || AppState.settings?.institution || '',
+        deptName: paper.deptName || paper.department_name || AppState.settings?.department || '',
+        courseCode: paper.courseCode || paper.course_code || '',
+        subject: paper.subject || '',
+        examDate: paper.examDate || paper.exam_date || ''
+      };
+      if (isAnswerKey) {
+        window.open(window.ExamCraftApi.getFacultyPdfUrl(paper.id, extraParams), '_blank');
+      } else {
+        window.open(window.ExamCraftApi.getStudentPdfUrl(paper.id, extraParams), '_blank');
+      }
     } else {
-      generateStudentQuestionPaperPdf(paper);
+      if (isAnswerKey) {
+        generateFacultyAnswerKeyPdf(paper);
+      } else {
+        generateStudentQuestionPaperPdf(paper);
+      }
     }
   };
 
@@ -3867,17 +3989,17 @@ async function renderReviewQueueView() {
         });
         AppState.papers = Array.from(existingMap.values());
       }
-    } catch(e) {
+    } catch (e) {
       console.warn("Review queue sync notice:", e.message);
     }
   }
 
   const filterStatus = document.getElementById("reviewQueueStatusFilter")?.value || "all";
-  
+
   // Calculate summary counts
   const pendingCount = AppState.papers.filter(p => p.status === "In Review").length;
   const approvedCount = AppState.papers.filter(p => p.status === "Approved").length;
-  
+
   const elPending = document.getElementById("statReviewPending");
   const elApproved = document.getElementById("statReviewApproved");
   const elNavReview = document.getElementById("navReviewCount");
@@ -3966,7 +4088,7 @@ async function renderReviewQueueView() {
             p = full.paper;
             p.questions = full.questions || [];
           }
-        } catch(e) {}
+        } catch (e) { }
       }
       if (p) {
         AppState.currentDraft = JSON.parse(JSON.stringify(p));
@@ -3989,7 +4111,7 @@ async function renderReviewQueueView() {
             try {
               const res = await window.ExamCraftApi.approvePaper(pId);
               if (res && res.success) approved = true;
-            } catch(e) {
+            } catch (e) {
               console.warn("Server approval notice:", e.message);
             }
           }
@@ -4025,7 +4147,7 @@ async function renderAnalyticsView() {
       if (res && res.success && res.analytics) {
         // Analytics retrieved from live database
       }
-    } catch(e) {
+    } catch (e) {
       console.warn("Analytics fetch notice:", e.message);
     }
   }
@@ -4034,7 +4156,7 @@ async function renderAnalyticsView() {
   const totalPapers = AppState.papers.length;
   let totalQuestions = 0;
   let approvedPapers = 0;
-  
+
   const bloomMap = { Remember: 0, Understand: 0, Apply: 0, Analyze: 0, Evaluate: 0, Create: 0 };
   const diffMap = { Easy: 0, Medium: 0, Hard: 0 };
   const typeMap = { Theory: 0, "Scenario-Based": 0, Numerical: 0, "Multiple Choice": 0, Application: 0 };
@@ -4216,7 +4338,7 @@ async function showAuthenticatedApp(user) {
     AppState.currentUser = user;
     try {
       sessionStorage.setItem("examcraft_current_user", JSON.stringify(user));
-    } catch (e) {}
+    } catch (e) { }
 
     AppState.settings.teacherName = user.fullName || "Faculty";
     if (user.department) {
@@ -4713,7 +4835,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btnStep1Next")?.addEventListener("click", () => {
     const hasSyllabus = AppState.currentDraft?.uploadedSyllabus?.text && AppState.currentDraft.uploadedSyllabus.text.trim().length > 20;
     const hasManualUnits = AppState.currentDraft?.verifiedStructure?.units?.length > 0 || (AppState.currentDraft?.unitsCovered && AppState.currentDraft.unitsCovered.length > 0);
-    
+
     if (!hasSyllabus && !hasManualUnits) {
       showToast("Please upload a syllabus document (PDF, DOCX, TXT) or paste curriculum content before proceeding.", "error");
       return;
@@ -4752,6 +4874,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("inputTotalMarks")?.addEventListener("input", recalculateBlueprintSummary);
   document.getElementById("inputDuration")?.addEventListener("input", recalculateBlueprintSummary);
 
+  ["inputInstName", "inputDeptName", "inputSubjectName", "inputCourseCode", "inputAcademicYear", "selectExamType"].forEach(id => {
+    document.getElementById(id)?.addEventListener("input", syncBlueprintFormToDraft);
+    document.getElementById(id)?.addEventListener("change", syncBlueprintFormToDraft);
+  });
+
+  ["editInstName", "editDeptName", "editExamDate", "editInstructions"].forEach(id => {
+    document.getElementById(id)?.addEventListener("input", syncStep4DetailsToDraft);
+    document.getElementById(id)?.addEventListener("change", syncStep4DetailsToDraft);
+  });
+
   // Difficulty sliders
   ["Easy", "Med", "Hard"].forEach((diff) => {
     const slider = document.getElementById(`sliderDiff${diff}`);
@@ -4762,6 +4894,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("btnStep2Back")?.addEventListener("click", () => setWizardStep(1));
   document.getElementById("btnStep2Next")?.addEventListener("click", () => {
+    syncBlueprintFormToDraft();
     const d = AppState.currentDraft;
     if (!d || !d.subject || d.subject.trim().length === 0) {
       showToast("Please enter a subject or course name.", "error");
@@ -4920,35 +5053,92 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Export Buttons in Step 4
-  document.getElementById("btnDownloadQuestionPaper")?.addEventListener("click", () => {
-    if (window.ExamCraftApi && AppState.currentDraft && AppState.currentDraft.id && !AppState.currentDraft.id.startsWith("paper-draft")) {
-      window.open(window.ExamCraftApi.getStudentPdfUrl(AppState.currentDraft.id), '_blank');
+  document.getElementById("btnDownloadQuestionPaper")?.addEventListener("click", async () => {
+    syncStep4DetailsToDraft();
+    const d = AppState.currentDraft;
+    if (window.ExamCraftApi && d && d.id && !d.id.startsWith("paper-draft")) {
+      try {
+        await window.ExamCraftApi.updatePaper(d.id, {
+          title: d.title,
+          instructions: d.instructions,
+          instName: d.instName,
+          deptName: d.deptName,
+          subject: d.subject,
+          courseCode: d.courseCode,
+          examDate: d.examDate,
+          status: d.status
+        });
+      } catch (e) {
+        console.warn("Could not sync paper header before export:", e);
+      }
+      const extraParams = {
+        instName: d.instName || d.institution_name || AppState.settings?.institution || '',
+        deptName: d.deptName || d.department_name || AppState.settings?.department || '',
+        courseCode: d.courseCode || d.course_code || '',
+        subject: d.subject || '',
+        examDate: d.examDate || d.exam_date || ''
+      };
+      window.open(window.ExamCraftApi.getStudentPdfUrl(d.id, extraParams), '_blank');
     } else {
-      generateStudentQuestionPaperPdf(AppState.currentDraft);
+      generateStudentQuestionPaperPdf(d);
     }
   });
 
   document.getElementById("btnPreviewQuestionPaper")?.addEventListener("click", () => {
+    syncStep4DetailsToDraft();
     openPdfPreviewModal(AppState.currentDraft, "question-paper");
   });
 
-  document.getElementById("btnDownloadAnswerKey")?.addEventListener("click", () => {
-    if (window.ExamCraftApi && AppState.currentDraft && AppState.currentDraft.id && !AppState.currentDraft.id.startsWith("paper-draft")) {
-      window.open(window.ExamCraftApi.getFacultyPdfUrl(AppState.currentDraft.id), '_blank');
+  document.getElementById("btnDownloadAnswerKey")?.addEventListener("click", async () => {
+    syncStep4DetailsToDraft();
+    const d = AppState.currentDraft;
+    if (window.ExamCraftApi && d && d.id && !d.id.startsWith("paper-draft")) {
+      try {
+        await window.ExamCraftApi.updatePaper(d.id, {
+          title: d.title,
+          instructions: d.instructions,
+          instName: d.instName,
+          deptName: d.deptName,
+          subject: d.subject,
+          courseCode: d.courseCode,
+          examDate: d.examDate,
+          status: d.status
+        });
+      } catch (e) {
+        console.warn("Could not sync paper header before export:", e);
+      }
+      const extraParams = {
+        instName: d.instName || d.institution_name || AppState.settings?.institution || '',
+        deptName: d.deptName || d.department_name || AppState.settings?.department || '',
+        courseCode: d.courseCode || d.course_code || '',
+        subject: d.subject || '',
+        examDate: d.examDate || d.exam_date || ''
+      };
+      window.open(window.ExamCraftApi.getFacultyPdfUrl(d.id, extraParams), '_blank');
     } else {
-      generateFacultyAnswerKeyPdf(AppState.currentDraft);
+      generateFacultyAnswerKeyPdf(d);
     }
   });
 
   document.getElementById("btnPreviewAnswerKey")?.addEventListener("click", () => {
+    syncStep4DetailsToDraft();
     openPdfPreviewModal(AppState.currentDraft, "answer-key");
   });
 
-  document.getElementById("btnDownloadTraceability")?.addEventListener("click", () => {
-    if (window.ExamCraftApi && AppState.currentDraft && AppState.currentDraft.id && !AppState.currentDraft.id.startsWith("paper-draft")) {
-      window.open(window.ExamCraftApi.getAuditPdfUrl(AppState.currentDraft.id), '_blank');
+  document.getElementById("btnDownloadTraceability")?.addEventListener("click", async () => {
+    syncStep4DetailsToDraft();
+    const d = AppState.currentDraft;
+    if (window.ExamCraftApi && d && d.id && !d.id.startsWith("paper-draft")) {
+      const extraParams = {
+        instName: d.instName || d.institution_name || AppState.settings?.institution || '',
+        deptName: d.deptName || d.department_name || AppState.settings?.department || '',
+        courseCode: d.courseCode || d.course_code || '',
+        subject: d.subject || '',
+        examDate: d.examDate || d.exam_date || ''
+      };
+      window.open(window.ExamCraftApi.getAuditPdfUrl(d.id, extraParams), '_blank');
     } else {
-      generateTraceabilityAuditPdf(AppState.currentDraft);
+      generateTraceabilityAuditPdf(d);
     }
   });
 

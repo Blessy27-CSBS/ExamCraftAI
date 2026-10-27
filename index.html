@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ExamCraft AI — AI-Powered Question Paper Generation Platform</title>
-  <meta name="description" content="Intelligent, syllabus-grounded question paper generator with traceable evidence, editable marking schemes, and academic assessment blueprints.">
-  
+  <meta name="description"
+    content="Intelligent, syllabus-grounded question paper generator with traceable evidence, editable marking schemes, and academic assessment blueprints.">
+
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+
   <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  
+
   <!-- jsPDF & jsPDF AutoTable CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-  
+
   <!-- Tesseract.js OCR CDN for Client-Side Optical Character Recognition -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  
+
   <link rel="stylesheet" href="style.css?v=5.0">
 
   <!-- Self-Contained Critical Styles for Login Portal (Guarantees zero browser-cache misalignment) -->
@@ -45,12 +49,14 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       transition: opacity 0.35s ease, visibility 0.35s ease;
     }
+
     .auth-portal-wrapper.hidden {
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
       display: none !important;
     }
+
     .auth-ambient-orb {
       position: absolute;
       border-radius: 50%;
@@ -60,6 +66,7 @@
       opacity: 0.65;
       animation: floatAmbient 12s ease-in-out infinite alternate;
     }
+
     .auth-orb-1 {
       width: 460px;
       height: 460px;
@@ -67,6 +74,7 @@
       top: -80px;
       left: 3%;
     }
+
     .auth-orb-2 {
       width: 500px;
       height: 500px;
@@ -74,6 +82,7 @@
       bottom: -100px;
       left: 28%;
     }
+
     .auth-orb-3 {
       width: 400px;
       height: 400px;
@@ -81,11 +90,21 @@
       top: 10%;
       right: 5%;
     }
+
     @keyframes floatAmbient {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(25px, -20px) scale(1.04); }
-      100% { transform: translate(-20px, 15px) scale(0.97); }
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(25px, -20px) scale(1.04);
+      }
+
+      100% {
+        transform: translate(-20px, 15px) scale(0.97);
+      }
     }
+
     .auth-portal-container {
       position: relative;
       z-index: 1;
@@ -105,6 +124,7 @@
       box-sizing: border-box;
       margin: auto;
     }
+
     .auth-hero-card {
       padding: 1.25rem 1.25rem 0.5rem 1.25rem;
       display: flex;
@@ -112,12 +132,14 @@
       justify-content: space-between;
       box-sizing: border-box;
     }
+
     .auth-brand-badge {
       display: flex;
       align-items: center;
       gap: 0.85rem;
       margin-bottom: 0.75rem;
     }
+
     .auth-brand-logo-wrap {
       width: 44px;
       height: 44px;
@@ -131,12 +153,14 @@
       box-sizing: border-box;
       flex-shrink: 0;
     }
+
     .auth-brand-logo {
       width: 100%;
       height: 100%;
       object-fit: contain;
       border-radius: 8px;
     }
+
     .auth-brand-name {
       font-size: 1.6rem;
       font-weight: 800;
@@ -144,12 +168,14 @@
       color: #0f172a;
       line-height: 1.1;
     }
+
     .auth-brand-accent {
       background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .auth-brand-sub {
       font-size: 0.7rem;
       font-weight: 700;
@@ -158,6 +184,7 @@
       margin-top: 0.2rem;
       text-transform: uppercase;
     }
+
     .auth-hero-headline {
       font-size: 2.05rem;
       font-weight: 800;
@@ -166,6 +193,7 @@
       color: #0f172a;
       margin: 0.6rem 0 0.4rem 0;
     }
+
     .hero-highlight {
       display: block;
       background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
@@ -173,6 +201,7 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
     .auth-hero-desc {
       font-size: 0.875rem;
       line-height: 1.55;
@@ -180,6 +209,7 @@
       max-width: 430px;
       margin: 0 0 1rem 0;
     }
+
     .auth-bottom-grid {
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
@@ -187,11 +217,13 @@
       gap: 0.85rem;
       margin-top: auto;
     }
+
     .auth-pills-col {
       display: flex;
       flex-direction: column;
       gap: 0.55rem;
     }
+
     .auth-feature-pill {
       display: flex;
       align-items: center;
@@ -206,10 +238,12 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       box-sizing: border-box;
     }
+
     .auth-feature-pill:hover {
       transform: translateX(4px);
       box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.08);
     }
+
     .auth-pill-icon {
       width: 36px;
       height: 36px;
@@ -219,15 +253,33 @@
       justify-content: center;
       flex-shrink: 0;
     }
+
     .auth-pill-icon svg,
     .auth-pill-icon i {
       width: 18px;
       height: 18px;
     }
-    .auth-pill-icon.icon-blue { background: #e0f2fe; color: #0284c7; }
-    .auth-pill-icon.icon-purple { background: #f3e8ff; color: #9333ea; }
-    .auth-pill-icon.icon-mint { background: #ccfbf1; color: #0d9488; }
-    .auth-pill-icon.icon-amber { background: #fef3c7; color: #d97706; }
+
+    .auth-pill-icon.icon-blue {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .auth-pill-icon.icon-purple {
+      background: #f3e8ff;
+      color: #9333ea;
+    }
+
+    .auth-pill-icon.icon-mint {
+      background: #ccfbf1;
+      color: #0d9488;
+    }
+
+    .auth-pill-icon.icon-amber {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
     .auth-pill-content strong {
       display: block;
       font-size: 0.825rem;
@@ -235,17 +287,20 @@
       color: #0f172a;
       line-height: 1.25;
     }
+
     .auth-pill-content span {
       font-size: 0.72rem;
       color: #64748b;
       line-height: 1.2;
     }
+
     .auth-art-col {
       display: flex;
       align-items: flex-end;
       justify-content: center;
       height: 100%;
     }
+
     .auth-hero-3d-img {
       width: 100%;
       max-width: 275px;
@@ -256,21 +311,30 @@
       animation: floatSubtle 6s ease-in-out infinite alternate;
       display: block;
     }
+
     @keyframes floatSubtle {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-8px); }
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-8px);
+      }
     }
+
     .auth-form-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
     }
+
     @media (max-width: 540px) {
       .auth-form-grid-2col {
         grid-template-columns: 1fr;
         gap: 0;
       }
     }
+
     .auth-form-card {
       background: #ffffff;
       border-radius: 24px;
@@ -281,6 +345,7 @@
       justify-content: center;
       box-sizing: border-box;
     }
+
     .auth-card-title {
       font-size: 1.65rem;
       font-weight: 800;
@@ -288,11 +353,13 @@
       color: #0f172a;
       margin: 0 0 0.3rem 0;
     }
+
     .auth-card-subtitle {
       font-size: 0.85rem;
       color: #64748b;
       margin: 0 0 1.5rem 0;
     }
+
     .auth-label {
       display: block;
       font-size: 0.8rem;
@@ -300,12 +367,14 @@
       color: #1e293b;
       margin-bottom: 0.35rem;
     }
+
     .auth-input-wrap {
       position: relative;
       display: flex;
       align-items: center;
       width: 100%;
     }
+
     .auth-input-icon {
       position: absolute;
       left: 0.85rem;
@@ -314,6 +383,7 @@
       color: #94a3b8;
       pointer-events: none;
     }
+
     .auth-input {
       width: 100%;
       height: 44px;
@@ -327,12 +397,14 @@
       box-sizing: border-box;
       font-family: inherit;
     }
+
     .auth-input:focus {
       border-color: #0284c7;
       background-color: #ffffff;
       box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
       outline: none;
     }
+
     .btn-toggle-password {
       position: absolute;
       right: 0.75rem;
@@ -347,14 +419,17 @@
       border-radius: 6px;
       transition: color 0.2s ease;
     }
+
     .btn-toggle-password:hover {
       color: #334155;
     }
+
     .auth-forgot-row {
       display: flex;
       justify-content: flex-end;
       margin: 0.3rem 0 1.25rem 0;
     }
+
     .auth-forgot-link {
       font-size: 0.78rem;
       font-weight: 600;
@@ -362,10 +437,12 @@
       text-decoration: none;
       transition: color 0.2s ease;
     }
+
     .auth-forgot-link:hover {
       color: #0369a1;
       text-decoration: underline;
     }
+
     .btn-hero-signin {
       width: 100%;
       height: 48px;
@@ -384,32 +461,38 @@
       transition: all 0.25s ease;
       box-sizing: border-box;
     }
+
     .btn-hero-signin:hover {
       transform: translateY(-2px);
       box-shadow: 0 12px 24px -4px rgba(2, 132, 199, 0.55);
       filter: brightness(1.05);
     }
+
     .btn-hero-signin:active {
       transform: translateY(0);
     }
+
     .auth-divider {
       display: flex;
       align-items: center;
       margin: 1.15rem 0;
       text-align: center;
     }
+
     .auth-divider::before,
     .auth-divider::after {
       content: "";
       flex: 1;
       border-bottom: 1px solid #e2e8f0;
     }
+
     .auth-divider span {
       padding: 0 0.75rem;
       font-size: 0.75rem;
       font-weight: 500;
       color: #94a3b8;
     }
+
     .btn-social-google {
       width: 100%;
       height: 46px;
@@ -427,17 +510,20 @@
       transition: all 0.2s ease;
       box-sizing: border-box;
     }
+
     .btn-social-google:hover {
       background: #f8fafc;
       border-color: #cbd5e1;
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
     }
+
     .auth-bottom-switch {
       margin-top: 1.35rem;
       text-align: center;
       font-size: 0.8rem;
       color: #64748b;
     }
+
     .auth-link-bold {
       color: #0284c7;
       font-weight: 700;
@@ -445,22 +531,26 @@
       margin-left: 0.35rem;
       transition: color 0.2s ease;
     }
+
     .auth-link-bold:hover {
       color: #0369a1;
       text-decoration: underline;
     }
+
     @media (max-width: 960px) {
       .auth-portal-container {
         grid-template-columns: 1fr;
         max-width: 480px;
         padding: 1.25rem;
       }
+
       .auth-hero-card {
         display: none !important;
       }
     }
   </style>
 </head>
+
 <body>
   <!-- ======================================================== -->
   <!-- DEDICATED FACULTY LOGIN & AUTHENTICATION LANDING SCREEN  -->
@@ -472,7 +562,7 @@
     <div class="auth-ambient-orb auth-orb-3"></div>
 
     <div class="auth-portal-container">
-      
+
       <!-- Brand & Capabilities Left Column -->
       <div class="auth-hero-card">
         <div class="auth-brand-badge">
@@ -500,7 +590,14 @@
           <div class="auth-pills-col">
             <div class="auth-feature-pill">
               <div class="auth-pill-icon icon-blue">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <line x1="10" y1="9" x2="8" y2="9" />
+                </svg>
               </div>
               <div class="auth-pill-content">
                 <strong>Upload Syllabus</strong>
@@ -510,7 +607,15 @@
 
             <div class="auth-feature-pill">
               <div class="auth-pill-icon icon-purple">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                  <path d="M5 3v4" />
+                  <path d="M19 17v4" />
+                  <path d="M3 5h4" />
+                  <path d="M17 19h4" />
+                </svg>
               </div>
               <div class="auth-pill-content">
                 <strong>AI-Powered Generation</strong>
@@ -520,7 +625,11 @@
 
             <div class="auth-feature-pill">
               <div class="auth-pill-icon icon-mint">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 11 12 14 22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
               </div>
               <div class="auth-pill-content">
                 <strong>Model Answers & Rubrics</strong>
@@ -530,7 +639,13 @@
 
             <div class="auth-feature-pill">
               <div class="auth-pill-icon icon-amber">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <path d="M12 18v-6" />
+                  <path d="m9 15 3 3 3-3" />
+                </svg>
               </div>
               <div class="auth-pill-content">
                 <strong>Export with Ease</strong>
@@ -541,7 +656,9 @@
 
           <!-- 3D Book & Cap Illustration -->
           <div class="auth-art-col">
-            <img src="login-hero-3d.png" alt="ExamCraft AI Academic Illustration" class="auth-hero-3d-img" width="275" height="245" style="max-width: 275px; max-height: 250px; width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 14px 22px rgba(37, 99, 235, 0.18));">
+            <img src="login-hero-3d.png" alt="ExamCraft AI Academic Illustration" class="auth-hero-3d-img" width="275"
+              height="245"
+              style="max-width: 275px; max-height: 250px; width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 14px 22px rgba(37, 99, 235, 0.18));">
           </div>
         </div>
       </div>
@@ -565,18 +682,33 @@
             <div class="form-group mb-3">
               <label for="portalLoginEmail" class="auth-label">Email Address</label>
               <div class="auth-input-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <input type="email" id="portalLoginEmail" class="auth-input" placeholder="Enter your email address" required autocomplete="email">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <input type="email" id="portalLoginEmail" class="auth-input" placeholder="Enter your email address"
+                  required autocomplete="email">
               </div>
             </div>
 
             <div class="form-group mb-2">
               <label for="portalLoginPassword" class="auth-label">Password</label>
               <div class="auth-input-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <input type="password" id="portalLoginPassword" class="auth-input" placeholder="Enter your password" required autocomplete="current-password">
-                <button type="button" class="btn-toggle-password" id="btnTogglePortalPassword" title="Toggle password visibility">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="iconPortalPasswordEye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input type="password" id="portalLoginPassword" class="auth-input" placeholder="Enter your password"
+                  required autocomplete="current-password">
+                <button type="button" class="btn-toggle-password" id="btnTogglePortalPassword"
+                  title="Toggle password visibility">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" id="iconPortalPasswordEye">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -587,7 +719,11 @@
 
             <button type="submit" class="btn-hero-signin" id="btnPortalSubmitLogin">
               <span>Sign In</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
             </button>
 
             <div class="auth-bottom-switch">
@@ -608,7 +744,11 @@
             <div class="form-group mb-2">
               <label for="portalRegName" class="auth-label">Full Name & Academic Title</label>
               <div class="auth-input-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
                 <input type="text" id="portalRegName" class="auth-input" placeholder="Dr. Jane Doe" required>
               </div>
             </div>
@@ -616,16 +756,26 @@
             <div class="form-group mb-2">
               <label for="portalRegEmail" class="auth-label">Institutional Email</label>
               <div class="auth-input-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <input type="email" id="portalRegEmail" class="auth-input" placeholder="jane.doe@university.edu" required>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                  <rect width="20" height="16" x="2" y="4" rx="2" />
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+                <input type="email" id="portalRegEmail" class="auth-input" placeholder="jane.doe@university.edu"
+                  required>
               </div>
             </div>
 
             <div class="form-group mb-2">
               <label for="portalRegPassword" class="auth-label">Create Password</label>
               <div class="auth-input-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <input type="password" id="portalRegPassword" class="auth-input" placeholder="Minimum 6 characters" required minlength="6">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input type="password" id="portalRegPassword" class="auth-input" placeholder="Minimum 6 characters"
+                  required minlength="6">
               </div>
             </div>
 
@@ -633,7 +783,20 @@
               <div class="form-group">
                 <label for="portalRegDept" class="auth-label">Department</label>
                 <div class="auth-input-wrap">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                    <rect width="16" height="20" x="4" y="2" rx="2" ry="2" />
+                    <path d="M9 22v-4h6v4" />
+                    <path d="M8 6h.01" />
+                    <path d="M16 6h.01" />
+                    <path d="M12 6h.01" />
+                    <path d="M12 10h.01" />
+                    <path d="M12 14h.01" />
+                    <path d="M16 10h.01" />
+                    <path d="M16 14h.01" />
+                    <path d="M8 10h.01" />
+                    <path d="M8 14h.01" />
+                  </svg>
                   <input type="text" id="portalRegDept" class="auth-input" placeholder="Computer Science" required>
                 </div>
               </div>
@@ -641,15 +804,25 @@
               <div class="form-group">
                 <label for="portalRegInstitution" class="auth-label">University / Institution</label>
                 <div class="auth-input-wrap">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                  <input type="text" id="portalRegInstitution" class="auth-input" placeholder="National Institute of Technology" required>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="auth-input-icon">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                  </svg>
+                  <input type="text" id="portalRegInstitution" class="auth-input"
+                    placeholder="National Institute of Technology" required>
                 </div>
               </div>
             </div>
 
             <button type="submit" class="btn-hero-signin mb-3" id="btnPortalSubmitRegister">
               <span>Create Faculty Account</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <polyline points="16 11 18 13 22 9" />
+              </svg>
             </button>
 
             <div class="auth-bottom-switch">
@@ -664,7 +837,7 @@
 
   <!-- Main Application Wrapper -->
   <div class="app-layout" id="appLayout" style="display: none;">
-    
+
     <!-- Left Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
@@ -728,7 +901,8 @@
       <!-- Faculty Profile Footer -->
       <div class="sidebar-profile">
         <div class="profile-avatar">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Faculty Profile" id="profileImg">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+            alt="Faculty Profile" id="profileImg">
         </div>
         <div class="profile-info">
           <span class="profile-name" id="sidebarProfileName">Faculty</span>
@@ -747,7 +921,7 @@
 
     <!-- Main Content Area -->
     <div class="main-wrapper">
-      
+
       <!-- Top Navigation Bar -->
       <header class="topbar">
         <div class="topbar-left">
@@ -780,7 +954,8 @@
                 <button class="link-btn" id="btnMarkAllRead">Mark all read</button>
               </div>
               <div class="notification-list" id="notificationList">
-                <div class="empty-state p-3 text-center text-xs text-muted" id="notificationEmptyState">No new notifications</div>
+                <div class="empty-state p-3 text-center text-xs text-muted" id="notificationEmptyState">No new
+                  notifications</div>
               </div>
             </div>
           </div>
@@ -806,7 +981,7 @@
         <!-- VIEW 1: DASHBOARD                          -->
         <!-- ========================================== -->
         <section class="view-section active" id="view-dashboard">
-          
+
           <!-- Welcome Banner -->
           <div class="dashboard-hero">
             <div class="hero-content">
@@ -815,8 +990,9 @@
                 <span>Syllabus-Aligned Assessment Platform</span>
               </div>
               <h1 class="hero-title">Good morning, <span id="dashTeacherGreeting">Faculty</span>.</h1>
-              <p class="hero-subtitle">Create balanced, syllabus-aligned assessments with confidence. Grounded in your curriculum with verified answer keys.</p>
-              
+              <p class="hero-subtitle">Create balanced, syllabus-aligned assessments with confidence. Grounded in your
+                curriculum with verified answer keys.</p>
+
               <div class="hero-actions">
                 <button class="btn btn-primary" id="btnHeroCreatePaper">
                   <i data-lucide="file-plus"></i>
@@ -938,14 +1114,14 @@
         <!-- VIEW 2: CREATE QUESTION PAPER (WIZARD)     -->
         <!-- ========================================== -->
         <section class="view-section" id="view-create">
-          
+
           <!-- Wizard Stepper Navigation Header -->
           <div class="stepper-header-card">
             <div class="stepper-meta">
               <span class="stepper-tag">ASSESSMENT CREATION WIZARD</span>
               <h2 class="stepper-title" id="stepperMainTitle">Configure Blueprint & Assessment Rules</h2>
             </div>
-            
+
             <div class="stepper-progress-bar">
               <div class="step-item active" data-step="1">
                 <div class="step-circle">1</div>
@@ -990,17 +1166,18 @@
             <!-- STEP 1: UPLOAD MATERIALS -->
             <div class="wizard-step-pane active" id="wizardStep1">
               <div class="wizard-two-col">
-                
+
                 <!-- Left: Upload Areas -->
                 <div class="step-col-main">
                   <div class="card mb-4">
                     <div class="card-header-flex">
                       <div>
                         <h3 class="card-title">1. Course Syllabus & Reference Document</h3>
-                        <p class="card-subtitle">Upload your course syllabus (PDF, TXT) or paste curriculum topics to establish the grounded knowledge base.</p>
+                        <p class="card-subtitle">Upload your course syllabus (PDF, TXT) or paste curriculum topics to
+                          establish the grounded knowledge base.</p>
                       </div>
                       <div class="d-flex align-center gap-2">
-                        
+
                         <button class="btn btn-sm btn-outline-primary" id="btnTogglePasteSyllabus">
                           <i data-lucide="edit-3"></i>
                           <span>Paste / Type Syllabus</span>
@@ -1014,7 +1191,8 @@
                         <strong>Paste Course Syllabus / Modules Text:</strong>
                         <span class="text-muted">Extracts units and topics automatically</span>
                       </label>
-                      <textarea id="pastedSyllabusText" class="form-control" rows="6" placeholder="Paste your course units, learning objectives, and topics here...&#10;e.g.&#10;UNIT 1: Core Principles and Foundations...&#10;UNIT 2: Applied Architecture and Methodologies..."></textarea>
+                      <textarea id="pastedSyllabusText" class="form-control" rows="6"
+                        placeholder="Paste your course units, learning objectives, and topics here...&#10;e.g.&#10;UNIT 1: Core Principles and Foundations...&#10;UNIT 2: Applied Architecture and Methodologies..."></textarea>
                       <div class="d-flex justify-end gap-2 mt-2">
                         <button class="btn btn-sm btn-primary" id="btnApplyPastedSyllabus">
                           <i data-lucide="check"></i> Apply Syllabus Text
@@ -1039,7 +1217,8 @@
                       <i data-lucide="scan"></i>
                       <div class="alert-content">
                         <strong>Scanned Document Detected (No Digital Text Layer)</strong>
-                        <p>This PDF contains scanned image pages. ExamCraft AI can run Optical Character Recognition (OCR) to extract curriculum text, units, and learning objectives.</p>
+                        <p>This PDF contains scanned image pages. ExamCraft AI can run Optical Character Recognition
+                          (OCR) to extract curriculum text, units, and learning objectives.</p>
                         <div class="alert-action-buttons mt-2 d-flex flex-wrap gap-2">
                           <button class="btn btn-xs btn-primary" id="btnRunOcrRecovery">
                             <i data-lucide="scan-line"></i>
@@ -1082,13 +1261,14 @@
                       <div class="file-info">
                         <div class="file-name" id="uploadedFileName">Uploaded_Curriculum.pdf</div>
                         <div class="file-meta">
-                          <span id="uploadedFileSize">0 MB</span> • 
-                          <span id="uploadedFilePages">0 Pages</span> • 
+                          <span id="uploadedFileSize">0 MB</span> •
+                          <span id="uploadedFilePages">0 Pages</span> •
                           <span class="badge badge-success" id="uploadedFileStatus">Text Extracted</span>
                         </div>
                       </div>
                       <div class="file-actions">
-                        <button class="btn btn-sm btn-outline-primary" id="btnRunOcrOnLoadedDoc" title="Re-scan or run OCR on this document">
+                        <button class="btn btn-sm btn-outline-primary" id="btnRunOcrOnLoadedDoc"
+                          title="Re-scan or run OCR on this document">
                           <i data-lucide="scan"></i> Run OCR
                         </button>
                         <button class="btn btn-sm btn-outline-secondary" id="btnPreviewExtractedText">
@@ -1110,13 +1290,15 @@
                     </div>
 
                     <!-- Detected Syllabus Units & Topics Verification (Editable before generation) -->
-                    <div class="card mb-4 hidden" id="syllabusStructureCard" style="background: rgba(240, 253, 250, 0.6); border: 1px solid rgba(13, 148, 136, 0.3);">
+                    <div class="card mb-4 hidden" id="syllabusStructureCard"
+                      style="background: rgba(240, 253, 250, 0.6); border: 1px solid rgba(13, 148, 136, 0.3);">
                       <div class="card-header-flex">
                         <div>
                           <h4 class="card-title text-emerald" style="display: flex; align-items: center; gap: 8px;">
                             <i data-lucide="check-check"></i> 2. Verify Syllabus Units & Topics
                           </h4>
-                          <p class="card-subtitle">ExamCraft AI extracted the following curriculum units and topics. Review, edit titles, or add topics before constructing the blueprint.</p>
+                          <p class="card-subtitle">ExamCraft AI extracted the following curriculum units and topics.
+                            Review, edit titles, or add topics before constructing the blueprint.</p>
                         </div>
                         <button class="btn btn-xs btn-outline-primary" id="btnAddUnitToStructure">
                           <i data-lucide="plus"></i> Add Unit
@@ -1134,7 +1316,8 @@
                     <div class="card-header-flex">
                       <div>
                         <h3 class="card-title">2. Supplemental Reference Notes & Question Repositories (Optional)</h3>
-                        <p class="card-subtitle">Add lecture transcripts or question banks to improve phrasing and question depth.</p>
+                        <p class="card-subtitle">Add lecture transcripts or question banks to improve phrasing and
+                          question depth.</p>
                       </div>
                       <span class="badge badge-subtle">Recommended for Numerical/Case-Study</span>
                     </div>
@@ -1143,7 +1326,8 @@
                       <input type="file" id="referenceFileInput" accept=".pdf,.txt" class="dropzone-input" multiple>
                       <div class="dropzone-content">
                         <i data-lucide="paperclip" class="dropzone-icon-sm"></i>
-                        <p class="dropzone-text-sm">Attach supplementary lecture notes or previous term exams (PDF/TXT)</p>
+                        <p class="dropzone-text-sm">Attach supplementary lecture notes or previous term exams (PDF/TXT)
+                        </p>
                       </div>
                     </div>
                     <div class="supplemental-list" id="supplementalList">
@@ -1156,7 +1340,8 @@
                 <div class="step-col-side">
                   <div class="card">
                     <h4 class="card-title"><i data-lucide="info"></i> Syllabus Grounding Guarantee</h4>
-                    <p class="text-sm text-muted mb-3">ExamCraft AI strictly adheres to your provided syllabus to prevent hallucinated concepts or out-of-syllabus testing.</p>
+                    <p class="text-sm text-muted mb-3">ExamCraft AI strictly adheres to your provided syllabus to
+                      prevent hallucinated concepts or out-of-syllabus testing.</p>
 
                     <div class="feature-checklist">
                       <div class="check-item">
@@ -1178,7 +1363,9 @@
                     </div>
 
                     <div class="info-callout mt-4">
-                      <strong>Curriculum Grounding:</strong> Upload your course syllabus PDF, TXT file, or paste course learning objectives to ground all generated questions and marking schemes directly in your syllabus.
+                      <strong>Curriculum Grounding:</strong> Upload your course syllabus PDF, TXT file, or paste course
+                      learning objectives to ground all generated questions and marking schemes directly in your
+                      syllabus.
                     </div>
                   </div>
                 </div>
@@ -1197,10 +1384,10 @@
             <!-- STEP 2: CONFIGURE BLUEPRINT -->
             <div class="wizard-step-pane" id="wizardStep2">
               <div class="wizard-two-col">
-                
+
                 <!-- Left: Assessment Configuration Form -->
                 <div class="step-col-main">
-                  
+
                   <!-- Basic Exam Metadata -->
                   <div class="card mb-4">
                     <div class="card-header-flex">
@@ -1211,15 +1398,31 @@
                       </button>
                     </div>
 
+                    <div class="form-grid-2 mb-3">
+                      <div class="form-group">
+                        <label for="inputInstName">College / University Name <span class="req">*</span></label>
+                        <input type="text" id="inputInstName" class="form-control"
+                          placeholder="e.g. KGiSL Institute of Technology" value="INSTITUTE OF TECHNOLOGY">
+                      </div>
+                      <div class="form-group">
+                        <label for="inputDeptName">Department Name</label>
+                        <input type="text" id="inputDeptName" class="form-control"
+                          placeholder="e.g. Department of Computer Science & Engineering"
+                          value="Department of Computer Science & Engineering">
+                      </div>
+                    </div>
+
                     <div class="form-grid-3">
                       <div class="form-group">
                         <label for="inputSubjectName">Subject Name <span class="req">*</span></label>
-                        <input type="text" id="inputSubjectName" class="form-control" placeholder="e.g. Data Structures & Algorithms, Network Security, etc." value="">
+                        <input type="text" id="inputSubjectName" class="form-control"
+                          placeholder="e.g. Data Structures & Algorithms, Network Security, etc." value="">
                       </div>
 
                       <div class="form-group">
                         <label for="inputCourseCode">Course / Class <span class="req">*</span></label>
-                        <input type="text" id="inputCourseCode" class="form-control" placeholder="e.g. CS301 / B.Tech CSE" value="">
+                        <input type="text" id="inputCourseCode" class="form-control"
+                          placeholder="e.g. CS301 / B.Tech CSE" value="">
                       </div>
 
                       <div class="form-group">
@@ -1241,12 +1444,14 @@
 
                       <div class="form-group">
                         <label for="inputTotalMarks">Target Total Marks <span class="req">*</span></label>
-                        <input type="number" id="inputTotalMarks" class="form-control" value="50" min="10" max="150" step="5">
+                        <input type="number" id="inputTotalMarks" class="form-control" value="50" min="10" max="150"
+                          step="5">
                       </div>
 
                       <div class="form-group">
                         <label for="inputDuration">Duration (Minutes) <span class="req">*</span></label>
-                        <input type="number" id="inputDuration" class="form-control" value="90" min="30" max="240" step="15">
+                        <input type="number" id="inputDuration" class="form-control" value="90" min="30" max="240"
+                          step="15">
                       </div>
                     </div>
 
@@ -1261,7 +1466,8 @@
                       <div class="units-chip-group" id="unitsChipContainer">
                         <div class="units-empty-state" id="unitsEmptyState">
                           <i data-lucide="book-open"></i>
-                          <span>Upload a syllabus PDF or TXT above to extract units automatically, or click <strong>+ Add Unit</strong> to specify modules manually.</span>
+                          <span>Upload a syllabus PDF or TXT above to extract units automatically, or click <strong>+
+                              Add Unit</strong> to specify modules manually.</span>
                         </div>
                       </div>
                     </div>
@@ -1278,7 +1484,8 @@
                             <span class="diff-name text-emerald">Easy (Remember/Understand)</span>
                             <span class="diff-val" id="valDiffEasy">30%</span>
                           </div>
-                          <input type="range" id="sliderDiffEasy" min="10" max="70" step="5" value="30" class="range-slider slider-easy">
+                          <input type="range" id="sliderDiffEasy" min="10" max="70" step="5" value="30"
+                            class="range-slider slider-easy">
                         </div>
 
                         <div class="diff-slider-box">
@@ -1286,7 +1493,8 @@
                             <span class="diff-name text-blue">Medium (Apply/Analyze)</span>
                             <span class="diff-val" id="valDiffMed">50%</span>
                           </div>
-                          <input type="range" id="sliderDiffMed" min="10" max="80" step="5" value="50" class="range-slider slider-med">
+                          <input type="range" id="sliderDiffMed" min="10" max="80" step="5" value="50"
+                            class="range-slider slider-med">
                         </div>
 
                         <div class="diff-slider-box">
@@ -1294,7 +1502,8 @@
                             <span class="diff-name text-amber">Hard (Evaluate/Design)</span>
                             <span class="diff-val" id="valDiffHard">20%</span>
                           </div>
-                          <input type="range" id="sliderDiffHard" min="5" max="60" step="5" value="20" class="range-slider slider-hard">
+                          <input type="range" id="sliderDiffHard" min="5" max="60" step="5" value="20"
+                            class="range-slider slider-hard">
                         </div>
                       </div>
                     </div>
@@ -1305,7 +1514,8 @@
                     <div class="card-header-flex">
                       <div>
                         <h3 class="card-title">Question Paper Sections & Groups</h3>
-                        <p class="card-subtitle">Define sections (Part A, Part B, etc.), question styles, marks per question, and unit allocations.</p>
+                        <p class="card-subtitle">Define sections (Part A, Part B, etc.), question styles, marks per
+                          question, and unit allocations.</p>
                       </div>
                       <button class="btn btn-sm btn-outline-primary" id="btnAddQuestionGroup">
                         <i data-lucide="plus-circle"></i>
@@ -1324,7 +1534,7 @@
                 <div class="step-col-side">
                   <div class="card sticky-sidebar">
                     <h4 class="card-title"><i data-lucide="pie-chart"></i> Live Assessment Blueprint</h4>
-                    
+
                     <!-- Real-Time Validation Box -->
                     <div class="validation-status-box valid" id="blueprintValidationBox">
                       <div class="val-icon" id="valStatusIcon"><i data-lucide="check-circle-2"></i></div>
@@ -1389,7 +1599,7 @@
 
             <!-- STEP 3: GENERATE QUESTIONS -->
             <div class="wizard-step-pane" id="wizardStep3">
-              
+
               <!-- Blueprint Summary Strip -->
               <div class="blueprint-summary-strip">
                 <div class="strip-item">
@@ -1421,7 +1631,8 @@
                     <h3 class="card-title" style="display: flex; align-items: center; gap: 8px;">
                       <i data-lucide="clipboard-list" class="text-primary"></i> Assessment Generation Plan
                     </h3>
-                    <p class="card-subtitle">Review planned question slots, mapped curriculum topics, question types, and marks. Every slot targets a distinct topic to eliminate repeats.</p>
+                    <p class="card-subtitle">Review planned question slots, mapped curriculum topics, question types,
+                      and marks. Every slot targets a distinct topic to eliminate repeats.</p>
                   </div>
                   <button class="btn btn-xs btn-outline-secondary" id="btnRefreshPlan">
                     <i data-lucide="refresh-cw"></i> Recalculate Plan
@@ -1455,15 +1666,17 @@
                   <i data-lucide="cpu" class="gen-icon"></i>
                 </div>
                 <h3 class="gen-title">Ready to Synthesize Syllabus-Grounded Questions</h3>
-                <p class="gen-subtitle">ExamCraft will analyze your uploaded curriculum, apply Bloom's cognitive criteria, and generate traceable questions with model answers and scoring schemes.</p>
-                
+                <p class="gen-subtitle">ExamCraft will analyze your uploaded curriculum, apply Bloom's cognitive
+                  criteria, and generate traceable questions with model answers and scoring schemes.</p>
+
                 <div class="gen-controls">
                   <button class="btn btn-lg btn-primary" id="btnStartGeneration">
                     <i data-lucide="sparkles"></i>
                     <span>Generate Assessment Draft</span>
                   </button>
                   <p class="text-xs text-muted mt-2">
-                    <i data-lucide="shield-check"></i> Questions and rubrics are synthesized and grounded strictly in your provided course syllabus.
+                    <i data-lucide="shield-check"></i> Questions and rubrics are synthesized and grounded strictly in
+                    your provided course syllabus.
                   </p>
                 </div>
               </div>
@@ -1472,16 +1685,20 @@
               <div class="generation-progress-card hidden" id="generationProgressCard">
                 <div class="loading-spinner"></div>
                 <h3 class="loading-title" id="loadingStageTitle">Analyzing Syllabus Modules...</h3>
-                <p class="loading-sub" id="loadingStageSub">Aligning questions with Units 1 through 4 and target difficulty ratios.</p>
-                
+                <p class="loading-sub" id="loadingStageSub">Aligning questions with Units 1 through 4 and target
+                  difficulty ratios.</p>
+
                 <div class="progress-bar-wrap">
                   <div class="progress-bar-fill" id="genProgressBar"></div>
                 </div>
                 <div class="progress-steps-list">
                   <div class="prog-step done" id="progStep1"><i data-lucide="check"></i> Parse learning objectives</div>
-                  <div class="prog-step active" id="progStep2"><i data-lucide="loader"></i> Synthesize scenario & theory questions</div>
-                  <div class="prog-step" id="progStep3"><i data-lucide="circle"></i> Structure model answers & key concepts</div>
-                  <div class="prog-step" id="progStep4"><i data-lucide="circle"></i> Generate criterion-based marking rubrics</div>
+                  <div class="prog-step active" id="progStep2"><i data-lucide="loader"></i> Synthesize scenario & theory
+                    questions</div>
+                  <div class="prog-step" id="progStep3"><i data-lucide="circle"></i> Structure model answers & key
+                    concepts</div>
+                  <div class="prog-step" id="progStep4"><i data-lucide="circle"></i> Generate criterion-based marking
+                    rubrics</div>
                 </div>
               </div>
 
@@ -1490,7 +1707,8 @@
                 <div class="results-header-bar">
                   <div>
                     <h3 class="results-title">Generated Assessment Questions Draft</h3>
-                    <p class="results-sub">Review questions, examine source citations, or regenerate individual questions before entering the detailed review workspace.</p>
+                    <p class="results-sub">Review questions, examine source citations, or regenerate individual
+                      questions before entering the detailed review workspace.</p>
                   </div>
                   <div class="results-actions">
                     <button class="btn btn-outline-danger btn-sm" id="btnRegenerateAll">
@@ -1525,7 +1743,7 @@
 
             <!-- STEP 4: REVIEW AND EXPORT -->
             <div class="wizard-step-pane" id="wizardStep4">
-              
+
               <!-- Review Workspace Controls & Status Bar -->
               <div class="review-status-bar">
                 <div class="review-status-left">
@@ -1535,11 +1753,13 @@
                   </div>
                   <div class="review-checklist-item" id="chkTotalMarksValid">
                     <i data-lucide="check-circle" class="text-emerald"></i>
-                    <span>Marks: <strong id="reviewAllocatedMarks">50</strong> / <strong id="reviewTargetMarks">50</strong></span>
+                    <span>Marks: <strong id="reviewAllocatedMarks">50</strong> / <strong
+                        id="reviewTargetMarks">50</strong></span>
                   </div>
                   <div class="review-checklist-item" id="chkReviewedCount">
                     <i data-lucide="check-circle" class="text-emerald"></i>
-                    <span>Approved: <strong id="reviewApprovedCount">0</strong> / <strong id="reviewTotalQCount">7</strong></span>
+                    <span>Approved: <strong id="reviewApprovedCount">0</strong> / <strong
+                        id="reviewTotalQCount">7</strong></span>
                   </div>
                   <div class="review-checklist-item" id="chkRubricValid">
                     <i data-lucide="check-circle" class="text-emerald"></i>
@@ -1561,8 +1781,10 @@
               <div class="card mb-4">
                 <div class="card-header-flex cursor-pointer" id="toggleExamDetails">
                   <div>
-                    <h3 class="card-title"><i data-lucide="settings-2"></i> Examination Header & Candidate Instructions</h3>
-                    <p class="card-subtitle">Customize institution name, date, and candidate instructions printed on the question paper.</p>
+                    <h3 class="card-title"><i data-lucide="settings-2"></i> Examination Header & Candidate Instructions
+                    </h3>
+                    <p class="card-subtitle">Customize institution name, date, and candidate instructions printed on the
+                      question paper.</p>
                   </div>
                   <i data-lucide="chevron-down" id="examDetailsChevron"></i>
                 </div>
@@ -1571,11 +1793,13 @@
                   <div class="form-grid-3">
                     <div class="form-group">
                       <label for="editInstName">Institution Name</label>
-                      <input type="text" id="editInstName" class="form-control" value="INSTITUTE OF SCIENCE & TECHNOLOGY">
+                      <input type="text" id="editInstName" class="form-control"
+                        value="INSTITUTE OF SCIENCE & TECHNOLOGY">
                     </div>
                     <div class="form-group">
                       <label for="editDeptName">Department</label>
-                      <input type="text" id="editDeptName" class="form-control" value="Department of Computer Science & Engineering">
+                      <input type="text" id="editDeptName" class="form-control"
+                        value="Department of Computer Science & Engineering">
                     </div>
                     <div class="form-group">
                       <label for="editExamDate">Examination Date</label>
@@ -1610,18 +1834,20 @@
                 <div class="card-header-flex">
                   <div>
                     <h3 class="card-title"><i data-lucide="printer"></i> Academic PDF Export Suite</h3>
-                    <p class="card-subtitle">Separate, cleanly formatted downloads for student question paper and confidential faculty marking key.</p>
+                    <p class="card-subtitle">Separate, cleanly formatted downloads for student question paper and
+                      confidential faculty marking key.</p>
                   </div>
                   <span class="badge badge-primary">Official Academic Format</span>
                 </div>
 
                 <div class="export-cards-grid">
-                  
+
                   <!-- Option 1: Student Question Paper PDF -->
                   <div class="export-box">
                     <div class="export-icon text-emerald"><i data-lucide="file-text"></i></div>
                     <h4>Student Question Paper PDF</h4>
-                    <p>Clean academic format with college header, instructions, parts, numbered questions, and marks. <strong>No answers or hints included.</strong></p>
+                    <p>Clean academic format with college header, instructions, parts, numbered questions, and marks.
+                      <strong>No answers or hints included.</strong></p>
                     <div class="export-box-actions">
                       <button class="btn btn-primary btn-sm" id="btnDownloadQuestionPaper">
                         <i data-lucide="download"></i> Download Question Paper
@@ -1636,7 +1862,8 @@
                   <div class="export-box">
                     <div class="export-icon text-teal"><i data-lucide="award"></i></div>
                     <h4>Model Answer & Marking Key PDF</h4>
-                    <p>Confidential faculty evaluation guide featuring complete model answers, key keywords, expected steps, and criterion mark splits.</p>
+                    <p>Confidential faculty evaluation guide featuring complete model answers, key keywords, expected
+                      steps, and criterion mark splits.</p>
                     <div class="export-box-actions">
                       <button class="btn btn-teal btn-sm" id="btnDownloadAnswerKey">
                         <i data-lucide="download"></i> Download Faculty Key
@@ -1651,7 +1878,8 @@
                   <div class="export-box">
                     <div class="export-icon text-blue"><i data-lucide="compass"></i></div>
                     <h4>Curriculum Traceability Audit PDF</h4>
-                    <p>Verification dossier showing direct mapping of each question to syllabus unit, Bloom's level, source paragraph, and confidence metrics.</p>
+                    <p>Verification dossier showing direct mapping of each question to syllabus unit, Bloom's level,
+                      source paragraph, and confidence metrics.</p>
                     <div class="export-box-actions">
                       <button class="btn btn-outline-primary btn-sm" id="btnDownloadTraceability">
                         <i data-lucide="download"></i> Download Audit Matrix
@@ -1684,11 +1912,12 @@
         <!-- VIEW 3: MY QUESTION PAPERS                 -->
         <!-- ========================================== -->
         <section class="view-section" id="view-papers">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">My Question Papers</h2>
-              <p class="section-subtitle">Manage, duplicate, edit, and export saved examination papers saved to your faculty account.</p>
+              <p class="section-subtitle">Manage, duplicate, edit, and export saved examination papers saved to your
+                faculty account.</p>
             </div>
             <button class="btn btn-primary" id="btnCreateFromPapersView">
               <i data-lucide="plus"></i> Create New Paper
@@ -1740,7 +1969,8 @@
 
           <div class="persistence-notice">
             <i data-lucide="shield-check"></i>
-            <span>All generated assessment drafts and approved question papers are securely saved to your faculty account.</span>
+            <span>All generated assessment drafts and approved question papers are securely saved to your faculty
+              account.</span>
           </div>
 
         </section>
@@ -1749,11 +1979,12 @@
         <!-- VIEW 4: QUESTION BANK                      -->
         <!-- ========================================== -->
         <section class="view-section" id="view-bank">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">Institutional Question Bank</h2>
-              <p class="section-subtitle">Browse, filter, and reuse vetted questions indexed by Bloom's cognitive taxonomy and syllabus module.</p>
+              <p class="section-subtitle">Browse, filter, and reuse vetted questions indexed by Bloom's cognitive
+                taxonomy and syllabus module.</p>
             </div>
             <button class="btn btn-primary" id="btnBankAddQuestion">
               <i data-lucide="plus"></i> Add New Question
@@ -1802,11 +2033,12 @@
         <!-- VIEW 5: SYLLABUS LIBRARY                   -->
         <!-- ========================================== -->
         <section class="view-section" id="view-syllabus">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">Syllabus & Curriculum Library</h2>
-              <p class="section-subtitle">Manage extracted syllabi, lecture notes, and source documents available for assessment generation.</p>
+              <p class="section-subtitle">Manage extracted syllabi, lecture notes, and source documents available for
+                assessment generation.</p>
             </div>
             <button class="btn btn-primary" id="btnUploadSyllabusDoc">
               <i data-lucide="upload"></i> Upload New Document
@@ -1824,11 +2056,12 @@
         <!-- VIEW 6: REVIEW QUEUE                       -->
         <!-- ========================================== -->
         <section class="view-section" id="view-reviews">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">Assessment Review & Certification Queue</h2>
-              <p class="section-subtitle">Formal faculty moderation workflow to verify syllabus grounding, validate rubric balancing, and grant final exam certification.</p>
+              <p class="section-subtitle">Formal faculty moderation workflow to verify syllabus grounding, validate
+                rubric balancing, and grant final exam certification.</p>
             </div>
             <div class="d-flex gap-2">
               <select id="reviewQueueStatusFilter" class="form-control form-control-sm" style="width: auto;">
@@ -1892,11 +2125,12 @@
         <!-- VIEW 7: REPORTS AND ANALYTICS              -->
         <!-- ========================================== -->
         <section class="view-section" id="view-analytics">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">Institutional Assessment Reports & Analytics</h2>
-              <p class="section-subtitle">Real-time curriculum coverage, Bloom's Taxonomy cognitive distribution, and assessment rigor metrics computed from actual database records.</p>
+              <p class="section-subtitle">Real-time curriculum coverage, Bloom's Taxonomy cognitive distribution, and
+                assessment rigor metrics computed from actual database records.</p>
             </div>
             <button class="btn btn-outline-secondary btn-sm" id="btnRefreshAnalytics">
               <i data-lucide="refresh-cw"></i> Refresh Data
@@ -1939,7 +2173,7 @@
 
           <!-- Deep Analytic Breakdowns Grid -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
-            
+
             <!-- Card 1: Bloom's Taxonomy Cognitive Distribution -->
             <div class="card p-4">
               <div class="d-flex justify-between align-center mb-3">
@@ -2004,11 +2238,12 @@
         <!-- VIEW 8: SETTINGS                           -->
         <!-- ========================================== -->
         <section class="view-section" id="view-settings">
-          
+
           <div class="section-top-bar">
             <div>
               <h2 class="section-title">Platform & Faculty Settings</h2>
-              <p class="section-subtitle">Configure academic credentials, exam default parameters, and export appearance preferences.</p>
+              <p class="section-subtitle">Configure academic credentials, exam default parameters, and export appearance
+                preferences.</p>
             </div>
             <button class="btn btn-primary" id="btnSaveSettings">
               <i data-lucide="check"></i> Save Settings
@@ -2016,11 +2251,11 @@
           </div>
 
           <div class="settings-grid">
-            
+
             <!-- Theme & Appearance Customization Card (Matching Reference UI) -->
             <div class="card appearance-panel-card full-width-card">
               <div class="appearance-layout">
-                
+
                 <!-- Left: Appearance Controls -->
                 <div class="appearance-controls-col">
                   <h3 class="appearance-section-title">Appearance</h3>
@@ -2042,15 +2277,23 @@
                       <span class="swatch-active-name" id="swatchActiveName">Ocean</span>
                     </div>
                     <div class="swatches-palette-row" id="swatchesPalette">
-                      <button type="button" class="swatch-btn swatch-aurora" data-swatch="aurora" title="Pastel Aurora"></button>
-                      <button type="button" class="swatch-btn swatch-mist" data-swatch="mist" title="Mist White"></button>
-                      <button type="button" class="swatch-btn swatch-pearl" data-swatch="pearl" title="Soft Pearl"></button>
-                      <button type="button" class="swatch-btn swatch-sage" data-swatch="sage" title="Sage Green"></button>
-                      <button type="button" class="swatch-btn swatch-ocean active" data-swatch="ocean" title="Ocean Blue"></button>
-                      <button type="button" class="swatch-btn swatch-periwinkle" data-swatch="periwinkle" title="Periwinkle"></button>
+                      <button type="button" class="swatch-btn swatch-aurora" data-swatch="aurora"
+                        title="Pastel Aurora"></button>
+                      <button type="button" class="swatch-btn swatch-mist" data-swatch="mist"
+                        title="Mist White"></button>
+                      <button type="button" class="swatch-btn swatch-pearl" data-swatch="pearl"
+                        title="Soft Pearl"></button>
+                      <button type="button" class="swatch-btn swatch-sage" data-swatch="sage"
+                        title="Sage Green"></button>
+                      <button type="button" class="swatch-btn swatch-ocean active" data-swatch="ocean"
+                        title="Ocean Blue"></button>
+                      <button type="button" class="swatch-btn swatch-periwinkle" data-swatch="periwinkle"
+                        title="Periwinkle"></button>
                       <button type="button" class="swatch-btn swatch-lilac" data-swatch="lilac" title="Lilac"></button>
-                      <button type="button" class="swatch-btn swatch-mocha" data-swatch="mocha" title="Warm Mocha"></button>
-                      <button type="button" class="swatch-btn swatch-slate" data-swatch="slate" title="Slate Glass"></button>
+                      <button type="button" class="swatch-btn swatch-mocha" data-swatch="mocha"
+                        title="Warm Mocha"></button>
+                      <button type="button" class="swatch-btn swatch-slate" data-swatch="slate"
+                        title="Slate Glass"></button>
                     </div>
                   </div>
 
@@ -2078,7 +2321,8 @@
                   <div class="appearance-row">
                     <span class="appearance-label">Corner radius</span>
                     <div class="radius-slider-wrap">
-                      <input type="range" class="glass-slider" id="appearanceRadius" min="8" max="28" step="2" value="16">
+                      <input type="range" class="glass-slider" id="appearanceRadius" min="8" max="28" step="2"
+                        value="16">
                       <span class="radius-val-badge" id="radiusValBadge">16</span>
                     </div>
                   </div>
@@ -2184,7 +2428,7 @@
             <!-- Faculty Information Card -->
             <div class="card">
               <h3 class="card-title mb-3"><i data-lucide="user"></i> Faculty Profile</h3>
-              
+
               <div class="form-group mb-3">
                 <label for="setTeacherName">Faculty Name & Title</label>
                 <input type="text" id="setTeacherName" class="form-control" value="Faculty Member">
@@ -2192,7 +2436,8 @@
 
               <div class="form-group mb-3">
                 <label for="setDepartment">Department</label>
-                <input type="text" id="setDepartment" class="form-control" value="Department of Computer Science & Engineering">
+                <input type="text" id="setDepartment" class="form-control"
+                  value="Department of Computer Science & Engineering">
               </div>
 
               <div class="form-group mb-3">
@@ -2204,7 +2449,7 @@
             <!-- Examination Defaults Card -->
             <div class="card">
               <h3 class="card-title mb-3"><i data-lucide="sliders"></i> Assessment Defaults</h3>
-              
+
               <div class="form-group mb-3">
                 <label for="setDefaultDuration">Default Examination Duration (Minutes)</label>
                 <input type="number" id="setDefaultDuration" class="form-control" value="90">
@@ -2228,7 +2473,7 @@
             <!-- PDF Export Preferences -->
             <div class="card">
               <h3 class="card-title mb-3"><i data-lucide="file-output"></i> PDF Export Standards</h3>
-              
+
               <label class="setting-checkbox-row">
                 <input type="checkbox" id="setIncludeInstructions" checked>
                 <div>
@@ -2257,8 +2502,9 @@
             <!-- Workspace & Data Management -->
             <div class="card">
               <h3 class="card-title mb-3"><i data-lucide="database"></i> Workspace Data & Storage</h3>
-              <p class="text-sm text-muted mb-4">Manage saved examination blueprints, question bank items, and faculty configuration.</p>
-              
+              <p class="text-sm text-muted mb-4">Manage saved examination blueprints, question bank items, and faculty
+                configuration.</p>
+
               <div class="d-flex gap-2">
                 <button class="btn btn-outline-danger btn-sm" id="btnResetAllData">
                   <i data-lucide="trash-2"></i> Clear Workspace Data
@@ -2408,12 +2654,14 @@
 
         <div class="form-group mb-3">
           <label for="modalQKeyConcepts">Key Concepts & Keywords (Comma-separated)</label>
-          <input type="text" id="modalQKeyConcepts" class="form-control" placeholder="e.g. Core Principle, Architectural Foundation, Latency Optimization">
+          <input type="text" id="modalQKeyConcepts" class="form-control"
+            placeholder="e.g. Core Principle, Architectural Foundation, Latency Optimization">
         </div>
 
         <div class="form-group mb-3">
           <label for="modalQExpectedPoints">Expected Answer Points (One point per line)</label>
-          <textarea id="modalQExpectedPoints" class="form-control" rows="3" placeholder="- Defines the core concept&#10;- Provides architectural diagram&#10;- Explains failure modes"></textarea>
+          <textarea id="modalQExpectedPoints" class="form-control" rows="3"
+            placeholder="- Defines the core concept&#10;- Provides architectural diagram&#10;- Explains failure modes"></textarea>
         </div>
 
         <!-- Marking Scheme Criteria Editor -->
@@ -2484,7 +2732,8 @@
   </div>
 
   <!-- App REST API Client & Main Script (Versioned for Instant Cache Busting) -->
-  <script src="api.js?v=2.4"></script>
-  <script src="script.js?v=2.4"></script>
+  <script src="api.js?v=2.5"></script>
+  <script src="script.js?v=2.5"></script>
 </body>
+
 </html>

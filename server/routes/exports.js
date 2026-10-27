@@ -11,12 +11,18 @@ const {
 /**
  * Helper to fetch complete paper and questions
  */
-async function getPaperWithQuestions(paperId, userId) {
+async function getPaperWithQuestions(paperId, userId, queryOverrides = {}) {
   const paper = await queryOne(`
     SELECT * FROM question_papers WHERE id = ? AND user_id = ?
   `, [paperId, userId]);
 
   if (!paper) return null;
+
+  if (queryOverrides.instName) paper.institution_name = queryOverrides.instName.trim();
+  if (queryOverrides.deptName) paper.department_name = queryOverrides.deptName.trim();
+  if (queryOverrides.courseCode) paper.course_code = queryOverrides.courseCode.trim();
+  if (queryOverrides.subject) paper.subject = queryOverrides.subject.trim();
+  if (queryOverrides.examDate) paper.exam_date = queryOverrides.examDate.trim();
 
   const questions = await query(`
     SELECT q.*, a.model_answer, a.key_concepts, a.expected_points
@@ -47,7 +53,7 @@ async function getPaperWithQuestions(paperId, userId) {
  */
 router.get('/:id/student-pdf', requireAuth, async (req, res) => {
   try {
-    const data = await getPaperWithQuestions(req.params.id, req.user.id);
+    const data = await getPaperWithQuestions(req.params.id, req.user.id, req.query);
     if (!data) {
       return res.status(404).json({ success: false, error: 'Question paper not found.' });
     }
@@ -72,7 +78,7 @@ router.get('/:id/student-pdf', requireAuth, async (req, res) => {
  */
 router.get('/:id/faculty-pdf', requireAuth, async (req, res) => {
   try {
-    const data = await getPaperWithQuestions(req.params.id, req.user.id);
+    const data = await getPaperWithQuestions(req.params.id, req.user.id, req.query);
     if (!data) {
       return res.status(404).json({ success: false, error: 'Question paper not found.' });
     }
@@ -97,7 +103,7 @@ router.get('/:id/faculty-pdf', requireAuth, async (req, res) => {
  */
 router.get('/:id/audit-pdf', requireAuth, async (req, res) => {
   try {
-    const data = await getPaperWithQuestions(req.params.id, req.user.id);
+    const data = await getPaperWithQuestions(req.params.id, req.user.id, req.query);
     if (!data) {
       return res.status(404).json({ success: false, error: 'Question paper not found.' });
     }
